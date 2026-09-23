@@ -67,6 +67,11 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     )
     p.add_argument("--kinds", type=_csv, default=["decision", "workflow"])
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument(
+        "--sample",
+        help="named decision-case sample, e.g. tiny_live_v1 "
+        "(decision kind only; its split overrides --split)",
+    )
     p.add_argument("--order-permutations", type=int, default=3)
     p.add_argument(
         "--distractor-levels", type=lambda v: [int(x) for x in _csv(v)], default=[8, 16, 32, 48]
@@ -111,6 +116,11 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
         p.error(f"unknown experiments {sorted(bad)}")
     if args.mode == "live" and args.faults:
         p.error("--faults injects fake behaviour and is only allowed in offline mode")
+    args.sample_data = None
+    if args.sample:
+        args.sample_data = ds.load_sample(args.sample)
+        args.split = args.sample_data["split"]
+        args.kinds = ["decision"]
     return args
 
 
@@ -153,6 +163,9 @@ def main(argv: list[str] | None = None) -> int:
         distractor_levels=args.distractor_levels,
         kinds=args.kinds,
         trace_dir=None if args.no_traces else out / "traces",
+        decision_case_ids=(
+            frozenset(args.sample_data["decision_cases"]) if args.sample_data else None
+        ),
         progress=None if args.quiet else (lambda m: print(f"  … {m}", file=sys.stderr)),
     )
     results = run(list(slots.values()), catalog, cfg, systems)
@@ -240,6 +253,11 @@ def build_manifest(
             "decision": sorted({r["case_id"] for r in results.decisions}),
             "unseen_composition": [s.case_id for s in specs if s.unseen_composition],
         },
+        "sample": (
+            {"name": args.sample, "digest": stable_digest(args.sample_data)}
+            if args.sample_data
+            else None
+        ),
         "experiments": args.experiments,
         "kinds": args.kinds,
         "repetitions": args.repetitions,

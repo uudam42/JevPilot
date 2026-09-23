@@ -1,0 +1,18 @@
+{
+  "sample": "tiny_live_v1",
+  "split": "eval",
+  "purpose": "Engineering validation of live adapters (prompts, Jev option encoding, schemas, refusals, tokens, latency). NOT an experiment; do not compare routers on it.",
+  "decision_cases": {
+    "eval_l1_notify_chat@0": "direct",
+    "eval_l1_validate@0": "direct",
+    "eval_l2_outliers_loaded@0": "state-dependent",
+    "eval_l2_outliers_validated@0": "state-dependent (two acceptable actions)",
+    "eval_sim_report_with_chart@1": "multi-step state (similar capabilities)",
+    "eval_sim_report_with_chart@2": "multi-step state (similar capabilities)",
+    "eval_mi_no_source_export@0": "missing information / ask-human",
+    "eval_fin_outliers_export_done@0": "finish",
+    "eval_u_compare_export@1": "unseen composition (paraphrased goal)",
+    "eval_u_trend_outliers_literal@2": "unseen composition (literal goal)",
+    "eval_u4_trend_outliers_mirror@1": "state after a permanent failure observation"
+  }
+}

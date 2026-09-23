@@ -85,6 +85,14 @@ def load_split(split: str, directory: Path = BENCHMARK_DIR) -> list[WorkflowSpec
     return [WorkflowSpec.model_validate(c) for c in data["cases"]]
 
 
+def load_sample(name: str, directory: Path = BENCHMARK_DIR) -> dict[str, Any]:
+    """A named, versioned subset of decision cases (``samples/<name>.json``)."""
+    data: dict[str, Any] = json.loads(
+        (directory / "samples" / f"{name}.json").read_text(encoding="utf-8")
+    )
+    return data
+
+
 def split_digest(split: str, directory: Path = BENCHMARK_DIR) -> str:
     return stable_digest(json.loads((directory / split / "workflows.json").read_text()))
 

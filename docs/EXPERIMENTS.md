@@ -35,6 +35,12 @@ python -m experiments.routing.benchmark --mode live --routers rule,llm,jev \
     --split eval --repetitions 5 --strict \
     --llm-model claude-opus-5 --llm-price 5,25 --pricing-source "<where/when>"
 
+# LIVE validation before any full run: one smoke call per provider, then an
+# 11-case engineering sample (benchmarks/routing/samples/tiny_live_v1.json)
+JEVPILOT_LIVE_TESTS=1 pytest tests/integrations/test_live_smoke.py -s
+python -m experiments.routing.benchmark --mode live --routers rule,llm,jev \
+    --sample tiny_live_v1 --repetitions 1 --strict
+
 # develop against dev and validation, not eval
 python -m experiments.routing.benchmark --mode live --routers llm --split validation
 ```

@@ -49,6 +49,7 @@ class RunConfig:
     kinds: Sequence[str] = ("decision", "workflow")
     trace_dir: Path | None = None
     progress: Callable[[str], None] | None = None
+    decision_case_ids: frozenset[str] | None = None  # restrict to a named sample
 
 
 @dataclass
@@ -310,6 +311,11 @@ def run(
 ) -> Results:
     results = Results()
     cases = ds.decision_cases(cfg.split, catalog) if "decision" in cfg.kinds else []
+    if cfg.decision_case_ids is not None:
+        missing = cfg.decision_case_ids - {c.case_id for c in cases}
+        if missing:
+            raise ValueError(f"sample cases not found in split {cfg.split!r}: {sorted(missing)}")
+        cases = [c for c in cases if c.case_id in cfg.decision_case_ids]
     specs = ds.load_split(cfg.split) if "workflow" in cfg.kinds else []
     say = cfg.progress or (lambda _msg: None)
     runnable = [s for s in slots if s.available]
