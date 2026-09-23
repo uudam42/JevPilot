@@ -27,6 +27,10 @@ CANONICAL_BY_PROPERTY: dict[str, str] = {
     "ply_transverse_modulus": "GPa",
     "ply_inplane_shear_modulus": "GPa",
     "ply_major_poisson_ratio": "1",
+    "laminate_ex": "GPa",
+    "laminate_ey": "GPa",
+    "laminate_gxy": "GPa",
+    "laminate_nuxy": "1",
 }
 
 

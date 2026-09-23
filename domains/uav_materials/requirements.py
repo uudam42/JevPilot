@@ -35,8 +35,13 @@ free-form or model-generated semantics. Rules:
 "Missing" is not a resolution status: it is a RESOLVED requirement whose
 property has no value for the candidate (reported by the evaluator).
 
-To add laminate observables later (CLT: Ex, Ey, Gxy, νxy), register a new
-system table; requirement semantics do not change.
+* ``continuous_fiber_laminate``: laminate directions ``x`` / ``y`` / ``xy``
+  resolve to Ex / Ey / Gxy / νxy; ``unspecified`` stays AMBIGUOUS (no
+  quasi-isotropy is inferred from a layup); strength and failure are
+  UNSUPPORTED (ply S11T is not a laminate strength).
+
+New observables are added by registering a system table; requirement
+semantics do not change.
 """
 
 from __future__ import annotations
@@ -427,9 +432,82 @@ UD_PLY = MaterialSystemSemantics(
     },
 )
 
+_LAM = "continuous_fiber_laminate"
+_LAM_MODEL = "not predicted by the laminate model (classical lamination theory, stiffness only)"
+_NEED_LAM_DIR = "a laminate is in general anisotropic; state the laminate direction (x, y, xy)"
+_lam_rules: dict[tuple[Aspect, Direction], Rule] = {
+    (Aspect.NORMAL_STIFFNESS, Direction.LAMINATE_X): _resolved(
+        "laminate_ex",
+        "in-plane normal stiffness along laminate x is Ex",
+        "membrane (in-plane) response of a symmetric laminate; bending stiffness is D",
+    ),
+    (Aspect.NORMAL_STIFFNESS, Direction.LAMINATE_Y): _resolved(
+        "laminate_ey",
+        "in-plane normal stiffness along laminate y is Ey",
+        "membrane (in-plane) response of a symmetric laminate; bending stiffness is D",
+    ),
+    (Aspect.NORMAL_STIFFNESS, Direction.UNSPECIFIED): _ambiguous(
+        f"{_NEED_LAM_DIR}; no quasi-isotropy is assumed from the layup",
+        "laminate_ex",
+        "laminate_ey",
+    ),
+    (Aspect.SHEAR_STIFFNESS, Direction.LAMINATE_XY): _resolved(
+        "laminate_gxy",
+        "in-plane shear stiffness in the x-y plane is Gxy",
+        "membrane (in-plane) response of a symmetric laminate",
+    ),
+    (Aspect.SHEAR_STIFFNESS, Direction.UNSPECIFIED): _ambiguous(_NEED_LAM_DIR, "laminate_gxy"),
+    (Aspect.POISSON_RATIO, Direction.LAMINATE_XY): _resolved(
+        "laminate_nuxy", "in-plane Poisson ratio nuxy (-ey/ex under load along x)"
+    ),
+    (Aspect.POISSON_RATIO, Direction.UNSPECIFIED): _ambiguous(_NEED_LAM_DIR, "laminate_nuxy"),
+    **{
+        (a, d): _unsupported(
+            "material axes differ from ply to ply in a laminate; state a laminate direction"
+        )
+        for a in (Aspect.NORMAL_STIFFNESS, Aspect.SHEAR_STIFFNESS, Aspect.POISSON_RATIO)
+        for d in MATERIAL_AXES
+    },
+}
+LAMINATE = MaterialSystemSemantics(
+    system=_LAM,
+    description="symmetric laminate of identical unidirectional plies (laminate axes x, y)",
+    rules=_lam_rules,
+    any_direction={
+        Aspect.DENSITY: _resolved("density", "laminate density", SCALAR),
+        **{
+            a: _unsupported(
+                "laminate strength and failure are not implemented; ply S11T is not a "
+                "laminate strength"
+            )
+            for a in (
+                Aspect.TENSILE_ULTIMATE,
+                Aspect.TENSILE_YIELD,
+                Aspect.COMPRESSIVE_ULTIMATE,
+                Aspect.COMPRESSIVE_YIELD,
+                Aspect.SHEAR_ULTIMATE,
+                Aspect.TENSILE_FAILURE_STRAIN,
+                Aspect.YIELD_STRAIN,
+            )
+        },
+        Aspect.DUCTILITY: _unsupported(
+            "ductility (metallic elongation at break) has no laminate observable"
+        ),
+        **{
+            a: _unsupported(f"{a} is {_LAM_MODEL}")
+            for a in (
+                Aspect.CORROSION_PENETRATION,
+                Aspect.WATER_UPTAKE,
+                *(a for a, fam in FAMILY.items() if fam is Category.TEMPERATURE),
+            )
+        },
+    },
+)
+
 SYSTEMS: dict[str, MaterialSystemSemantics] = {
     ISOTROPIC_BULK.system: ISOTROPIC_BULK,
     UD_PLY.system: UD_PLY,
+    LAMINATE.system: LAMINATE,
     # the synthetic architecture-test space predicts generic isotropic properties
     "synthetic_two_fraction_v0": ISOTROPIC_BULK,
 }
@@ -447,6 +525,10 @@ LIFT: dict[str, tuple[Aspect, Direction]] = {
         Aspect.TENSILE_FAILURE_STRAIN,
         Direction.MATERIAL_1,
     ),
+    "laminate_ex": (Aspect.NORMAL_STIFFNESS, Direction.LAMINATE_X),
+    "laminate_ey": (Aspect.NORMAL_STIFFNESS, Direction.LAMINATE_Y),
+    "laminate_gxy": (Aspect.SHEAR_STIFFNESS, Direction.LAMINATE_XY),
+    "laminate_nuxy": (Aspect.POISSON_RATIO, Direction.LAMINATE_XY),
 }
 # nominal property per aspect: only a key/unit carrier for native engineering requirements
 NOMINAL: dict[Aspect, str] = {

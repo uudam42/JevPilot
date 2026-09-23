@@ -58,3 +58,41 @@ def example_ply(vf: float = 0.60) -> MaterialCandidate:
         generation_method="manual (example)",
     )
     return space.candidate_from_design(design)
+
+
+def laminate_demo_target() -> EngineeringTarget:
+    """Demonstration only: in-plane laminate requirements stated in laminate axes x, y, xy."""
+    in_plane = "in-plane (membrane) loading of a flat symmetric panel, laminate axes x, y"
+
+    def stiff(aspect: Aspect, direction: Direction, value: float) -> EngineeringRequirement:
+        return EngineeringRequirement(
+            aspect=aspect,
+            direction=direction,
+            loading=in_plane,
+            operator=">=",
+            value=value,
+            unit="GPa",
+            priority="hard",
+        )
+
+    return EngineeringTarget(
+        profile_id="demo-directional-laminate",
+        name="Direction-aware laminate demonstration target (architecture test; not the UAV "
+        "target)",
+        requirements=(
+            EngineeringRequirement(
+                aspect=Aspect.DENSITY, operator="<=", value=3000, unit="kg/m^3", priority="hard"
+            ),
+            stiff(Aspect.NORMAL_STIFFNESS, Direction.LAMINATE_X, 40),
+            stiff(Aspect.NORMAL_STIFFNESS, Direction.LAMINATE_Y, 40),
+            stiff(Aspect.SHEAR_STIFFNESS, Direction.LAMINATE_XY, 15),
+        ),
+    )
+
+
+def example_laminate(half: str = "0/45/-45/90", vf: float = 0.60) -> MaterialCandidate:
+    """AS/IMLS symmetric laminate, 0.127 mm plies (the RP-1351 example ply thickness)."""
+    from domains.uav_materials.clt import ContinuousFiberLaminateDesignSpace, layup_design
+
+    design = layup_design(half, vf=vf, ply_thickness_mm=0.127, generation_method="manual (demo)")
+    return ContinuousFiberLaminateDesignSpace().candidate_from_design(design)

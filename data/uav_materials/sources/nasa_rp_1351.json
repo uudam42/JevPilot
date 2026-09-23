@@ -1,0 +1,32 @@
+{
+  "id": "NASA-RP-1351",
+  "title": "Basic Mechanics of Laminated Composite Plates",
+  "citation": "Nettles, A. T.: Basic Mechanics of Laminated Composite Plates. NASA Reference Publication 1351, NASA Marshall Space Flight Center, October 1994.",
+  "ntrs": "19950009349",
+  "retrieved": "2026-09-23",
+  "retrieved_from": "https://ntrs.nasa.gov/citations/19950009349",
+  "reuse": {
+    "statement_in_document": "Unclassified-unlimited (report documentation page)",
+    "basis": "NTRS record metadata: distribution PUBLIC; copyright determination GOV_PUBLIC_USE_PERMITTED (U.S. Government work).",
+    "redistribution_of_extracts": "permitted"
+  },
+  "files": [
+    {
+      "path": "raw/nasa_rp_1351/19950009349.pdf",
+      "bytes": 3423960,
+      "sha256": "a1dba312026a7495abd9183fd89d32f8fdf220b1bc7a1a36ff6af98a0bd69ed9",
+      "committed": false,
+      "note": "https://ntrs.nasa.gov/api/citations/19950009349/downloads/19950009349.pdf"
+    },
+    {
+      "path": "raw/nasa_rp_1351/pages.jsonl",
+      "bytes": 11048,
+      "sha256": "24d1712ea6da842b34c936894a80f2604f9583de4f022c2b3d0c0b1e1284f041",
+      "committed": true,
+      "note": "cited pages only: the PDF's embedded OCR text layer, pypdf 6.19.0, unmodified"
+    }
+  ],
+  "used": "CLT equations (reduced stiffness eq. 10, transformation eq. 22, A/B/D eqs. 53/54/56, symmetric-laminate engineering constants sec. V.B) implemented in domains/uav_materials/clt.py; the machine-readable numbers of examples 2 and 9 (lamina properties p.82; Q, Qbar(45), A and B values pp.46, 84) as validation data in tests.",
+  "not_used": "Pages whose equations and example inputs exist only as images (e.g. example 1); hygrothermal and stress-analysis sections.",
+  "caveats": "The source rounds nu21 to 0.02; its printed Q11 follows from that rounding. The documentation page states 'Strength of laminated composites is not covered'."
+}

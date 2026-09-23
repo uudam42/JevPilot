@@ -115,6 +115,13 @@ for _p in (
     PropertyDef(
         "ply_major_poisson_ratio", D, Dimension.FRACTION, "ply Poisson ratio nu12 (-e2/e1)"
     ),
+    # Symmetric-laminate in-plane (membrane) engineering constants, laminate axes x, y.
+    PropertyDef("laminate_ex", D, Dimension.STRESS, "laminate in-plane modulus Ex (axis x)"),
+    PropertyDef("laminate_ey", D, Dimension.STRESS, "laminate in-plane modulus Ey (axis y)"),
+    PropertyDef("laminate_gxy", D, Dimension.STRESS, "laminate in-plane shear modulus Gxy"),
+    PropertyDef(
+        "laminate_nuxy", D, Dimension.FRACTION, "laminate in-plane Poisson ratio nuxy (-ey/ex)"
+    ),
     PropertyDef(
         "ply_longitudinal_tensile_failure_strain",
         D,

@@ -54,6 +54,7 @@ class VariableKind(StrEnum):
     CONTINUOUS = "continuous"
     INTEGER = "integer"
     CATEGORICAL = "categorical"
+    SEQUENCE = "sequence"  # "a/b/c": numbers, each within [lower, upper], 1..max_length items
 
 
 class DesignVariable(FrozenModel):
@@ -65,9 +66,12 @@ class DesignVariable(FrozenModel):
     lower: float | None = None
     upper: float | None = None
     choices: tuple[str, ...] = ()  # categorical only
+    max_length: int | None = None  # sequence only
     description: str = ""
 
     def violations(self, value: Any) -> list[str]:
+        if self.kind is VariableKind.SEQUENCE:
+            return self._sequence_violations(value)
         if self.kind is VariableKind.CATEGORICAL:
             ok = isinstance(value, str) and value in self.choices
             return [] if ok else [f"{self.name}={value!r} is not one of {list(self.choices)}"]
@@ -83,6 +87,25 @@ class DesignVariable(FrozenModel):
         if self.upper is not None and value > self.upper:
             out.append(f"{self.name}={value} > upper bound {self.upper}")
         return out
+
+    def _sequence_violations(self, value: Any) -> list[str]:
+        items = parse_sequence(value) if isinstance(value, str) else None
+        if items is None:
+            return [f"{self.name}={value!r} is not a '/'-separated sequence of numbers"]
+        if not items or (self.max_length is not None and len(items) > self.max_length):
+            return [f"{self.name}: needs 1..{self.max_length} items, got {len(items)}"]
+        element = DesignVariable(
+            name=self.name, kind=VariableKind.CONTINUOUS, lower=self.lower, upper=self.upper
+        )
+        return [v for x in items for v in element.violations(x)]
+
+
+def parse_sequence(text: str) -> list[float] | None:
+    """'0/+45/-45/90' → [0, 45, -45, 90]; None if any item is not a number."""
+    try:
+        return [float(x) for x in text.split("/")] if text.strip() else []
+    except ValueError:
+        return None
 
 
 class LinearConstraint(FrozenModel):
