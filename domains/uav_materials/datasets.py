@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from domains.uav_materials.schema import CandidateOrigin, MaterialCandidate, MaterialRecord
+from domains.uav_materials.schema import MaterialCandidate, MaterialRecord
 
 
 @lru_cache(maxsize=1)
@@ -17,7 +17,6 @@ def load_real_materials() -> tuple[MaterialRecord, ...]:
 
 
 def real_candidates() -> list[MaterialCandidate]:
-    return [
-        MaterialCandidate(candidate_id=m.material_id, origin=CandidateOrigin.EXISTING, material=m)
-        for m in load_real_materials()
-    ]
+    from domains.uav_materials.evaluation import candidate_from_record
+
+    return [candidate_from_record(m) for m in load_real_materials()]

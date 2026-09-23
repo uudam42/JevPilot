@@ -39,6 +39,15 @@ Classification of a candidate (first rule that applies):
 :func:`design_gap_preconditions` lists which of its preconditions are unmet;
 missing evidence always leaves at least one unmet.
 
+Predictions (``basis=predicted``) are judged by the same factors, and are
+never rejected merely for being predictions: whether a forward model is
+trustworthy belongs to a future model-validation policy, which does not exist
+yet. Instead every requirement reports its ``evidence_type`` and model, and
+each assessment lists the requirements that rest on predictions
+(``relies_on_predictions``), so the distinction stays explicit and is never
+folded into a score. (Today's only predictor is synthetic, so its outputs
+already fail the provenance test.)
+
 Coverage is counted, not weighted: hard coverage = hard constraints with
 sufficient evidence / hard constraints; soft coverage likewise over soft
 preferences. A weighted soft coverage is reported too, using only the
@@ -75,9 +84,11 @@ from typing import Any
 
 from pydantic import Field
 
+from domains.uav_materials.harmonize import canonical_unit
 from domains.uav_materials.identity import MatchLevel
 from domains.uav_materials.profile import Priority, PropertyRequirement, TargetMaterialProfile
 from domains.uav_materials.schema import (
+    EvidenceType,
     MaterialCandidate,
     Measurement,
     ProvenanceStatus,
@@ -139,6 +150,8 @@ class RequirementEvidence(FrozenModel):
     source: str | None = None
     identity_match: str | None = None  # native / exact / alloy
     statistical_basis: str | None = None
+    evidence_type: str | None = None  # measured / datasheet / derived / predicted
+    model: str | None = None  # forward model name/version for predictions
     uncertainty_known: bool = False
     check: str | None = None  # hard constraints: satisfied / violated / undetermined
     value: str | None = None
@@ -176,6 +189,7 @@ class EvidenceAssessment(FrozenModel):
     missing_critical: tuple[str, ...]  # hard-constraint gaps, as labels
     violated: tuple[str, ...]  # hard constraints violated by sufficient evidence
     incompatible_evidence: tuple[str, ...]  # measurements present but not usable, and why
+    relies_on_predictions: tuple[str, ...] = ()  # requirements answered by a prediction
     provenance_quality: dict[str, Any]
     next_evidence: tuple[str, ...]  # gaps in acquisition-priority order
 
@@ -304,7 +318,15 @@ def _assess_requirement(
         reasons.append(GapReason.UNCERTAINTY_TOO_HIGH)
     if hard and status is CheckStatus.UNDETERMINED:
         reasons.append(GapReason.INCONCLUSIVE_BOUND)
-    unit = r.unit or m.unit
+    model = next(
+        (
+            f"{s.identifier}"
+            for s in (m.provenance.sources if m.provenance else ())
+            if s.kind == "model"
+        ),
+        None,
+    )
+    unit = r.unit or canonical_unit(r.property)  # soft preferences: the ranking's unit
     shown = m.value_in(unit) if unit else m.value
     return RequirementEvidence(
         **base,
@@ -313,6 +335,8 @@ def _assess_requirement(
         source=source_label(m),
         identity_match=identity,
         statistical_basis=m.statistical_basis.value if m.statistical_basis else None,
+        evidence_type=m.evidence_type.value,
+        model=model,
         uncertainty_known=known,
         check=status.value if status else None,
         value=f"{m.qualifier.value if m.qualifier.value != '=' else ''}{shown:.4g} {unit}".strip(),
@@ -421,11 +445,15 @@ def assess(
             e.label for e in hard if e.sufficient and e.check == CheckStatus.VIOLATED.value
         ),
         incompatible_evidence=incompatible,
+        relies_on_predictions=tuple(
+            e.label for e in reqs if e.evidence_type == EvidenceType.PREDICTED.value
+        ),
         provenance_quality={
             "selected_measurements": len(used),
             "sourced": sum(e.provenance == ProvenanceStatus.SOURCED.value for e in used),
             "identity": _count(e.identity_match for e in used),
             "statistical_basis": _count(e.statistical_basis or "unstated" for e in used),
+            "evidence_type": _count(e.evidence_type for e in used),
             "uncertainty_known": sum(e.uncertainty_known for e in used),
         },
         next_evidence=tuple(dict.fromkeys(e.label for e in gaps)),

@@ -42,6 +42,23 @@ class MeasurementBasis(StrEnum):
     PREDICTED = "predicted"  # model / simulation output (future candidates)
 
 
+class EvidenceType(StrEnum):
+    """How a value is known, as the evaluator reports it (a view of MeasurementBasis)."""
+
+    MEASURED = "measured"  # experimental test result
+    DATASHEET = "datasheet"  # handbook / datasheet / specification value (basis=specified)
+    DERIVED = "derived"  # computed from other measurements
+    PREDICTED = "predicted"  # forward-model output; never experimental evidence
+
+
+EVIDENCE_TYPE: dict[MeasurementBasis, EvidenceType] = {
+    MeasurementBasis.MEASURED: EvidenceType.MEASURED,
+    MeasurementBasis.SPECIFIED: EvidenceType.DATASHEET,
+    MeasurementBasis.DERIVED: EvidenceType.DERIVED,
+    MeasurementBasis.PREDICTED: EvidenceType.PREDICTED,
+}
+
+
 class ProvenanceStatus(StrEnum):
     SOURCED = "sourced"  # provenance with at least one source
     UNSOURCED = "unsourced"  # allowed during development, never silently
@@ -180,6 +197,10 @@ class Measurement(FrozenModel):
     @builtins.property  # the field named 'property' shadows the builtin here
     def category(self) -> Category:
         return property_def(self.property).category
+
+    @builtins.property  # the field named 'property' shadows the builtin here
+    def evidence_type(self) -> EvidenceType:
+        return EVIDENCE_TYPE[self.basis]
 
     @builtins.property  # the field named 'property' shadows the builtin here
     def is_missing(self) -> bool:

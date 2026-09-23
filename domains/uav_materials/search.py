@@ -227,18 +227,8 @@ class SimilarityRanker:
     def search(
         self, profile: TargetMaterialProfile, candidates: Sequence[MaterialCandidate]
     ) -> MaterialSearchResult:
-        from domains.uav_materials.ranking import TargetRelativeExtractor
-
         screened = [(c, screen(profile, c)) for c in candidates]
-        # Infeasible candidates must not set the scale for "how far from the best viable".
-        viable = [c.material for c, a in screened if a.feasibility is not Feasibility.INFEASIBLE]
-        pool = viable if len(viable) >= 2 else [c.material for c in candidates]
-        pool_label = (
-            f"non-infeasible candidates ({len(pool)})"
-            if pool is viable
-            else f"all candidates ({len(pool)}); fewer than 2 were non-infeasible"
-        )
-        extractor = TargetRelativeExtractor.fit(profile, pool)
+        extractor, pool_label = fit_normalization(profile, screened)
         ranked: list[RankedCandidate] = []
         for c, base in screened:
             scored = extractor.score(c.material)
@@ -279,6 +269,26 @@ class SimilarityRanker:
                 "are only comparable within one search result"
             ),
         )
+
+
+def fit_normalization(
+    profile: TargetMaterialProfile, screened: Sequence[tuple[MaterialCandidate, RankedCandidate]]
+) -> tuple[Any, str]:
+    """Fit the ranking scale on the normalisation pool; returns (extractor, pool label).
+
+    Infeasible candidates must not set the scale for "how far from the best viable":
+    the pool is the non-infeasible candidates, or all of them if fewer than two remain.
+    """
+    from domains.uav_materials.ranking import TargetRelativeExtractor
+
+    viable = [c.material for c, a in screened if a.feasibility is not Feasibility.INFEASIBLE]
+    pool = viable if len(viable) >= 2 else [c.material for c, _ in screened]
+    label = (
+        f"non-infeasible candidates ({len(pool)})"
+        if pool is viable
+        else f"all candidates ({len(pool)}); fewer than 2 were non-infeasible"
+    )
+    return TargetRelativeExtractor.fit(profile, pool), label
 
 
 def _counts(assessed: Sequence[RankedCandidate]) -> dict[str, int]:
