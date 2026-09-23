@@ -1,0 +1,213 @@
+{
+  "benchmark": "jevpilot.routing.generalization",
+  "version": "1",
+  "split": "validation",
+  "cases": [
+    {
+      "case_id": "val_l3_trend_report",
+      "level": 3,
+      "categories": [
+        "multiple_valid"
+      ],
+      "goal": "Fit a trend over time to the dataset at the given source and write a text report of its descriptive statistics.",
+      "goal_facts": [
+        "trend_fitted",
+        "report_generated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "val_l3_bar_chart",
+      "level": 3,
+      "categories": [],
+      "goal": "Draw a bar chart of the descriptive statistics of the dataset at the given source.",
+      "goal_facts": [
+        "plot_created"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "plot_kind": "bar"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "val_l3_compare_share",
+      "level": 3,
+      "categories": [
+        "forbidden_action",
+        "multiple_valid"
+      ],
+      "goal": "Compare statistics across the 'site' groups of the dataset at the given source and share a report with the internal team only.",
+      "goal_facts": [
+        "groups_compared",
+        "shared_internal"
+      ],
+      "forbidden_facts": [
+        "published_public"
+      ],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "group_field": "site"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "val_l2_trend_normalized",
+      "level": 2,
+      "categories": [
+        "state_dependent"
+      ],
+      "goal": "Fit a trend over time to the dataset; units are already normalized.",
+      "goal_facts": [
+        "trend_fitted"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "units_normalized"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "val_l4_transient_stats",
+      "level": 4,
+      "categories": [
+        "failure_recovery"
+      ],
+      "goal": "Compute descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "statistics_computed"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {
+        "tk.compute_statistics": {
+          "mode": "transient",
+          "times": 1
+        }
+      },
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "val_mi_no_reference",
+      "level": 3,
+      "categories": [
+        "missing_information"
+      ],
+      "goal": "Join the dataset at the given source with its reference table.",
+      "goal_facts": [
+        "reference_merged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "val_fin_export_done",
+      "level": 2,
+      "categories": [
+        "finish"
+      ],
+      "goal": "Export the cleaned records of the dataset at the given source.",
+      "goal_facts": [
+        "table_exported"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "records_cleaned",
+        "table_exported"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "val_imp_encrypt",
+      "level": 3,
+      "categories": [
+        "impossible"
+      ],
+      "goal": "Encrypt the exported table of the dataset at the given source.",
+      "goal_facts": [
+        "table_encrypted"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "val_dis_trend",
+      "level": 3,
+      "categories": [
+        "distractors"
+      ],
+      "goal": "Fit a trend over time to the dataset at the given source.",
+      "goal_facts": [
+        "trend_fitted"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 15,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    }
+  ]
+}

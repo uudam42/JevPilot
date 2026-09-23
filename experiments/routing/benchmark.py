@@ -1,19 +1,17 @@
-"""Routing benchmark: same states, same capabilities, different routers.
+"""Routing generalization benchmark: same benchmark, state and capabilities; different router.
 
-    python -m experiments.routing.benchmark                      # all simulated routers
-    python -m experiments.routing.benchmark --router rule --router jev+rule
-    python -m experiments.routing.benchmark --mode decision --repeats 5 --seed 7
-    python -m experiments.routing.benchmark --router llm-anthropic   # real API calls
+    # offline: RuleRouter + FAKE model adapters (infrastructure test, no network, free)
+    python -m experiments.routing.benchmark --mode offline --routers rule,llm,jev --split eval
 
-Two modes:
+    # live: real Claude and real Jev, strict single-model mode, 5 repetitions
+    python -m experiments.routing.benchmark --mode live --routers rule,llm,jev \\
+        --split eval --repetitions 5 --strict
 
-* ``decision``: every decision case is routed once per repeat. The result is
-  scored against the case's acceptable/forbidden/unnecessary sets.
-* ``workflow``: every workflow case runs end to end on the unmodified
-  :class:`~jevpilot.Controller` and the metrics are read from its trace.
+    # robustness and reliability experiments
+    python -m experiments.routing.benchmark --experiments main,order,names,distractors
+    python -m experiments.routing.benchmark --experiments fallback --systems 'jev>rule,llm>rule'
 
-Each run writes ``manifest.json``, ``decisions.jsonl``, ``workflows.jsonl``,
-``summary.json`` and ``summary.csv`` under ``--out/<run_id>/``.
+See docs/BENCHMARK_DESIGN.md and docs/EXPERIMENTS.md.
 """
 
 from __future__ import annotations
@@ -22,479 +20,393 @@ import argparse
 import csv
 import json
 import platform
+import subprocess
 import sys
-import time
-from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import jevpilot
-from experiments.routing.cases import (
-    FIXTURE_DIR,
-    DecisionFixtureFile,
-    Expected,
-    WorkflowCase,
-    WorkflowFixtureFile,
-    build_capabilities,
-    build_state,
-    fixture_digest,
-    load_decision_fixtures,
-    load_workflow_fixtures,
+from experiments.routing.generalization import dataset as ds
+from experiments.routing.generalization.metrics import summarize
+from experiments.routing.generalization.routers import (
+    MODES,
+    ROUTERS,
+    LiveOptions,
+    RouterSlot,
+    build_chain,
+    build_slot,
 )
-from experiments.routing.metrics import USAGE_FIELDS, decision_metrics, workflow_metrics
-from experiments.routing.routers import (
-    REAL_ROUTERS,
-    SIMULATED_ROUTERS,
-    fault_config,
-    make_router,
-)
-from experiments.routing.suites import SUITES
-from jevpilot import (
-    DefaultControlPolicy,
-    RoutingDecision,
-    Runtime,
-    TraceEvent,
-    TraceEventType,
-    stable_digest,
-    validate_decision,
-)
-from jevpilot.exceptions import RoutingError
+from experiments.routing.generalization.runner import EXPERIMENTS, RunConfig, run
+from experiments.routing.generalization.world import BENCHMARK_DIR, load_catalog
+from jevpilot import stable_digest
+from jevpilot.routing import ROUTING_PROMPT_VERSION
 
-BENCHMARK_VERSION = "jevpilot.routing-benchmark/1"
+BENCHMARK_VERSION = "jevpilot.routing.generalization/1"
 DEFAULT_OUT = Path(__file__).parent / "results"
-Record = dict[str, Any]
+OFFLINE_FAULTS = {"malformed": 0.03, "invalid_capability": 0.03, "invalid_inputs": 0.03}
 
 
-def case_seed(seed: int, case_id: str, repeat: int) -> int:
-    """Deterministic per-(case, repeat) seed derived from the run seed."""
-    return int(stable_digest([seed, case_id, repeat])[:8], 16)
+def _csv(value: str) -> list[str]:
+    return [v.strip() for v in value.split(",") if v.strip()]
 
 
-# -- decision benchmark ---------------------------------------------------------
-
-
-def run_decision_benchmark(
-    router: str,
-    fixtures: DecisionFixtureFile,
-    *,
-    seed: int = 0,
-    repeats: int = 1,
-    faults: bool = True,
-) -> list[Record]:
-    if fixtures.suite is None or fixtures.suite not in SUITES:
-        raise ValueError(f"decision fixtures must name a known suite, got {fixtures.suite!r}")
-    suite = SUITES[fixtures.suite]
-    records = []
-    for repeat in range(repeats):
-        for case in fixtures.cases:
-            s = case_seed(seed, case.case_id, repeat)
-            instance = make_router(router, suite, seed=s, faults=faults)
-            state = build_state(case)
-            capabilities = build_capabilities(case, fixtures.capability_catalog)
-            decision: RoutingDecision | None = None
-            error_type: str | None = None
-            t0 = time.perf_counter()
-            try:
-                outcome = instance.route(state, capabilities)
-                validate_decision(outcome.decision, capabilities)  # as the controller does
-                decision, attempts = (
-                    outcome.decision,
-                    [a.model_dump(mode="json") for a in outcome.attempts],
-                )
-                fallback_used = outcome.fallback_used
-            except RoutingError as exc:
-                error_type = type(exc).__name__
-                attempts = [
-                    a.model_dump(mode="json") for a in exc.attempts if hasattr(a, "model_dump")
-                ]
-                fallback_used = len(attempts) > 1
-            latency_ms = (time.perf_counter() - t0) * 1000
-            records.append(
-                {
-                    "benchmark": fixtures.benchmark,
-                    "case_id": case.case_id,
-                    "pattern": case.pattern,
-                    "router": router,
-                    "repeat": repeat,
-                    "seed": s,
-                    "valid": decision is not None,
-                    "error_type": error_type,
-                    "capability_id": decision.capability_id if decision else None,
-                    "intent": str(decision.intent) if decision else None,
-                    "inputs": decision.inputs if decision else None,
-                    **score(decision, case.expected),
-                    "confidence": decision.confidence if decision else None,
-                    "routing_latency_ms": latency_ms,
-                    "fallback_used": fallback_used,
-                    "decided_by": decision.router_id if decision else None,
-                    **_attempt_summary(attempts),
-                }
-            )
-    return records
-
-
-def score(decision: RoutingDecision | None, expected: Expected) -> dict[str, Any]:
-    """Compare one decision with the case's expected behaviour."""
-    if decision is None:
-        return {"acceptable": False, "forbidden": False, "unnecessary": False, "inputs_match": None}
-    cid = decision.capability_id
-    if cid is None:
-        return {
-            "acceptable": str(decision.intent) in expected.no_action_intents,
-            "forbidden": False,
-            "unnecessary": False,
-            "inputs_match": None,
-        }
-    required = expected.required_inputs.get(cid, {})
-    inputs_match = all(decision.inputs.get(k) == v for k, v in required.items())
-    return {
-        "acceptable": cid in expected.valid_capabilities and inputs_match,
-        "forbidden": cid in expected.forbidden_capabilities,
-        "unnecessary": cid in expected.unnecessary_capabilities,
-        "inputs_match": inputs_match,
-    }
-
-
-# -- workflow benchmark ---------------------------------------------------------
-
-
-def run_workflow_benchmark(
-    router: str,
-    fixtures: WorkflowFixtureFile,
-    *,
-    seed: int = 0,
-    repeats: int = 1,
-    faults: bool = True,
-    max_steps: int = 30,
-) -> list[Record]:
-    records = []
-    for repeat in range(repeats):
-        for case in fixtures.cases:
-            records.append(
-                _run_workflow(
-                    router, case, repeat=repeat, seed=seed, faults=faults, max_steps=max_steps
-                )
-            )
-    return records
-
-
-def _run_workflow(
-    router: str, case: WorkflowCase, *, repeat: int, seed: int, faults: bool, max_steps: int
-) -> Record:
-    suite = SUITES[case.suite]
-    s = case_seed(seed, case.case_id, repeat)
-    runtime = Runtime()
-    domain = runtime.load(suite.domain())
-    controller = runtime.controller(
-        make_router(router, suite, seed=s, faults=faults),
-        domains=[domain.name],
-        policy=DefaultControlPolicy(max_steps=max_steps),
+def parse_args(argv: list[str] | None) -> argparse.Namespace:
+    p = argparse.ArgumentParser(description=(__doc__ or "").split("\n\n")[0])
+    p.add_argument("--mode", choices=MODES, default="offline")
+    p.add_argument(
+        "--routers", type=_csv, default=list(ROUTERS), help="comma-separated: rule,llm,jev"
     )
-    initial = suite.new_state(domain, dict(case.params))
-    t0 = time.perf_counter()
-    result = controller.run(initial)
-    total_ms = (time.perf_counter() - t0) * 1000
-    t = _trace_summary(result.trace)
-    state = result.state
-    unnecessary = sum(
-        1 for o in state.observations if o.capability_id in case.unnecessary_capabilities
+    p.add_argument("--split", choices=ds.SPLITS, default="eval")
+    p.add_argument("--repetitions", type=int, default=1)
+    p.add_argument(
+        "--experiments",
+        type=_csv,
+        default=["main"],
+        help=f"comma-separated subset of {','.join(EXPERIMENTS)}",
     )
-    return {
-        "benchmark": "workflow",
-        "case_id": case.case_id,
-        "suite": case.suite,
-        "pattern": case.pattern,
-        "router": router,
-        "repeat": repeat,
-        "seed": s,
-        "status": str(state.status),
-        "expected_status": case.expected_status,
-        "completed": str(state.status) == case.expected_status,
-        "steps": state.step,
-        "excess_steps": state.step - case.optimal_steps if case.optimal_steps is not None else None,
-        "unnecessary_calls": unnecessary,
-        "capability_sequence": [o.capability_id for o in state.observations],
-        "final_control": str(result.control.action),
-        "final_reason": result.control.reason,
-        "orchestration_error": result.error.type if result.error else None,
-        "total_latency_ms": total_ms,
-        **t,
-    }
+    p.add_argument("--kinds", type=_csv, default=["decision", "workflow"])
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--order-permutations", type=int, default=3)
+    p.add_argument(
+        "--distractor-levels", type=lambda v: [int(x) for x in _csv(v)], default=[8, 16, 32, 48]
+    )
+    p.add_argument(
+        "--systems",
+        type=_csv,
+        default=["jev>rule", "llm>rule", "jev>llm>rule"],
+        help="fallback chains for the 'fallback' experiment",
+    )
+    strict = p.add_mutually_exclusive_group()
+    strict.add_argument(
+        "--strict",
+        dest="strict",
+        action="store_true",
+        default=True,
+        help="single-model attribution (default)",
+    )
+    strict.add_argument(
+        "--no-strict",
+        dest="strict",
+        action="store_false",
+        help="allow provider-side model substitution (production mode)",
+    )
+    p.add_argument(
+        "--faults", action="store_true", help="offline only: inject faults into the fake adapters"
+    )
+    p.add_argument("--llm-model")
+    p.add_argument("--llm-effort", choices=["low", "medium", "high", "xhigh", "max"])
+    p.add_argument("--llm-max-tokens", type=int, default=16000)
+    p.add_argument("--llm-price", help="USD per MTok 'input,output' (records cost)")
+    p.add_argument("--jev-model")
+    p.add_argument("--jev-price-input", type=float, help="USD per MTok of input")
+    p.add_argument("--pricing-source", help="where/when the prices were taken from")
+    p.add_argument("--timeout", type=float, default=120.0)
+    p.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    p.add_argument("--no-traces", action="store_true")
+    p.add_argument("--quiet", action="store_true")
+    args = p.parse_args(argv)
+    bad = set(args.experiments) - set(EXPERIMENTS)
+    if bad:
+        p.error(f"unknown experiments {sorted(bad)}")
+    if args.mode == "live" and args.faults:
+        p.error("--faults injects fake behaviour and is only allowed in offline mode")
+    return args
 
 
-def _trace_summary(trace: Sequence[TraceEvent]) -> Record:
-    routing_ms: list[float] = []
-    execution_ms: list[float] = []
-    attempts: list[Record] = []
-    fallbacks = failures = retries = replans = 0
-    routing_errors: list[str] = []
-    for e in trace:
-        p = e.payload
-        if e.type is TraceEventType.ROUTING_DECISION:
-            if "retry_of" in p["decision"]["metadata"] or "attempts" not in p:
-                continue  # re-executions and "nothing available" involve no router call
-            routing_ms.append(p["routing_latency_s"] * 1000)
-            fallbacks += bool(p.get("fallback_used"))
-            attempts += p["attempts"]
-        elif e.type is TraceEventType.ROUTING_FAILURE:
-            failures += 1
-            routing_ms.append(p["routing_latency_s"] * 1000)
-            routing_errors.append(p["error"]["type"])
-            attempts += p["attempts"]
-        elif e.type is TraceEventType.OBSERVATION:
-            execution_ms.append(p["observation"]["execution_time"] * 1000)
-        elif e.type is TraceEventType.CONTROL_DECISION:
-            action = p["control"]["action"]
-            retries += action == "retry"
-            replans += action == "replan"
-    return {
-        "routing_decisions": len(routing_ms) - failures,
-        "routing_failures": failures,
-        "routing_errors": routing_errors,
-        "fallback_decisions": fallbacks,
-        "retries": retries,
-        "replans": replans,
-        "routing_latencies_ms": routing_ms,
-        "execution_latencies_ms": execution_ms,
-        "routing_latency_ms": sum(routing_ms),
-        "execution_latency_ms": sum(execution_ms),
-        **_attempt_summary(attempts),
-    }
-
-
-def _attempt_summary(attempts: list[Record]) -> Record:
-    summary: Record = {
-        "attempts": len(attempts),
-        "attempt_routers": [a["router_id"] for a in attempts],
-        "attempt_errors": [a["error"]["type"] for a in attempts if a.get("error")],
-        "models": sorted({a["model"] for a in attempts if a.get("model")}),
-    }
-    for key in USAGE_FIELDS:
-        known = [
-            a["usage"][key] for a in attempts if a.get("usage") and a["usage"].get(key) is not None
-        ]
-        summary[key] = sum(known) if known else None
-    return summary
-
-
-# -- run orchestration ----------------------------------------------------------
-
-
-def run(
-    routers: Sequence[str],
-    *,
-    mode: str = "all",
-    seed: int = 0,
-    repeats: int = 1,
-    faults: bool = True,
-    decision_fixtures: Path | None = None,
-    workflow_fixtures: Path | None = None,
-) -> dict[str, Any]:
-    """Run the benchmark in memory. Returns the manifest, records and summary."""
-    dpath = decision_fixtures or FIXTURE_DIR / "decision_cases.json"
-    wpath = workflow_fixtures or FIXTURE_DIR / "workflow_cases.json"
-    decisions: list[Record] = []
-    workflows: list[Record] = []
-    summary: dict[str, Any] = {"decision": {}, "workflow": {}}
-    dfx = load_decision_fixtures(dpath) if mode in ("all", "decision") else None
-    wfx = load_workflow_fixtures(wpath) if mode in ("all", "workflow") else None
-    for name in routers:
-        if dfx is not None:
-            recs = run_decision_benchmark(name, dfx, seed=seed, repeats=repeats, faults=faults)
-            decisions += recs
-            summary["decision"][name] = decision_metrics(recs)
-        if wfx is not None:
-            recs = run_workflow_benchmark(name, wfx, seed=seed, repeats=repeats, faults=faults)
-            workflows += recs
-            summary["workflow"][name] = workflow_metrics(recs)
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    catalog = load_catalog()
     started = datetime.now(UTC)
-    run_id = f"{started:%Y%m%dT%H%M%SZ}-{stable_digest([list(routers), mode, seed, repeats])[:6]}"
-    for r in decisions + workflows:
-        r["run_id"] = run_id
-    manifest = {
+    run_id = (
+        f"{started:%Y%m%dT%H%M%SZ}-{args.mode}-{args.split}-"
+        + stable_digest([args.routers, args.experiments, args.seed, args.repetitions])[:6]
+    )
+    out = args.out / run_id
+    live = LiveOptions(
+        strict=args.strict,
+        llm_model=args.llm_model,
+        llm_effort=args.llm_effort,
+        llm_max_tokens=args.llm_max_tokens,
+        llm_price=tuple(float(x) for x in _csv(args.llm_price)) if args.llm_price else None,  # type: ignore[arg-type]
+        jev_model=args.jev_model,
+        jev_price_input=args.jev_price_input,
+        pricing_source=args.pricing_source,
+        timeout_s=args.timeout,
+    )
+    faults = OFFLINE_FAULTS if args.faults else {}
+    slots = {n: build_slot(n, args.mode, faults=faults, live=live) for n in args.routers}
+    systems = (
+        [build_chain(c, _components(c, slots, args, faults, live)) for c in args.systems]
+        if "fallback" in args.experiments
+        else []
+    )
+    for s in [*slots.values(), *systems]:
+        if not s.available:
+            print(f"[unavailable] {s.name}: {s.unavailable}", file=sys.stderr)
+    cfg = RunConfig(
+        split=args.split,
+        experiments=args.experiments,
+        repetitions=args.repetitions,
+        seed=args.seed,
+        order_permutations=args.order_permutations,
+        distractor_levels=args.distractor_levels,
+        kinds=args.kinds,
+        trace_dir=None if args.no_traces else out / "traces",
+        progress=None if args.quiet else (lambda m: print(f"  … {m}", file=sys.stderr)),
+    )
+    results = run(list(slots.values()), catalog, cfg, systems)
+    summary = summarize(results.decisions, results.workflows)
+    manifest = build_manifest(run_id, started, args, slots, systems, results)
+    write(out, manifest, results, summary)
+    print(format_table(summary, manifest))
+    print(f"\nresults: {out}")
+    return 0
+
+
+def _components(
+    chain: str,
+    slots: dict[str, RouterSlot],
+    args: argparse.Namespace,
+    faults: dict[str, float],
+    live: LiveOptions,
+) -> dict[str, RouterSlot]:
+    have = dict(slots)
+    for part in chain.split(">"):
+        have.setdefault(part, build_slot(part, args.mode, faults=faults, live=live))
+    return have
+
+
+def git_state() -> dict[str, Any]:
+    try:
+        commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=BENCHMARK_DIR,
+        ).stdout.strip()
+        dirty = bool(
+            subprocess.run(
+                ["git", "status", "--porcelain"],
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=BENCHMARK_DIR,
+            ).stdout.strip()
+        )
+        return {"commit": commit, "dirty": dirty}
+    except (OSError, subprocess.CalledProcessError):
+        return {"commit": None, "dirty": None}
+
+
+def _version(module: str) -> str | None:
+    try:
+        from importlib.metadata import version
+
+        return version(module)
+    except Exception:
+        return None
+
+
+def build_manifest(
+    run_id: str,
+    started: datetime,
+    args: argparse.Namespace,
+    slots: dict[str, RouterSlot],
+    systems: list[RouterSlot],
+    results: Any,
+) -> dict[str, Any]:
+    catalog_files = ("catalog.json", "distractors.json")
+    specs = ds.load_split(args.split)
+    return {
         "run_id": run_id,
-        "benchmark_version": BENCHMARK_VERSION,
         "timestamp": started.isoformat(),
-        "mode": mode,
-        "seed": seed,
-        "repeats": repeats,
-        "faults": faults,
-        "routers": {name: _router_record(name, faults) for name in routers},
-        "real_model_calls": any(n in REAL_ROUTERS for n in routers),
-        "fixtures": {
-            str(p.name): {"digest": fixture_digest(p)}
-            for p, used in ((dpath, dfx), (wpath, wfx))
-            if used is not None
+        "git": git_state(),
+        "jevpilot_version": jevpilot.__version__,
+        "benchmark_version": BENCHMARK_VERSION,
+        "mode": args.mode,
+        "evaluation_type": "live model routing"
+        if args.mode == "live"
+        else "OFFLINE INFRASTRUCTURE TEST: fake adapters, not model performance",
+        "strict_single_model": args.strict,
+        "split": args.split,
+        "split_digest": ds.split_digest(args.split),
+        "catalog_digests": {
+            f: stable_digest(json.loads((BENCHMARK_DIR / f).read_text())) for f in catalog_files
         },
-        "case_ids": {
-            "decision": [c.case_id for c in dfx.cases] if dfx else [],
-            "workflow": [c.case_id for c in wfx.cases] if wfx else [],
+        "cases": {
+            "workflow": [s.case_id for s in specs],
+            "decision": sorted({r["case_id"] for r in results.decisions}),
+            "unseen_composition": [s.case_id for s in specs if s.unseen_composition],
         },
-        "framework": {
-            "jevpilot": jevpilot.__version__,
+        "experiments": args.experiments,
+        "kinds": args.kinds,
+        "repetitions": args.repetitions,
+        "seeds": {
+            "benchmark_seed": args.seed,
+            "item_seed": "sha256([seed, experiment, perturbation, case_id, repetition])[:8]",
+            "order_seed": "sha256(['order', seed, case_id, k])",
+            "name_seed": "sha256(['names', seed, workflow_case_id])",
+            "distractor_seed": "sha256(['scale', seed, case_id, total])",
+            "fault_seed": "item_seed (offline fakes only)",
+        },
+        "order_permutations": args.order_permutations,
+        "distractor_levels": args.distractor_levels,
+        "offline_fault_rates": OFFLINE_FAULTS if args.faults else {},
+        "prompt_version": ROUTING_PROMPT_VERSION,
+        "routers": {name: _slot_record(s) for name, s in slots.items()},
+        "fallback_systems": {s.name: _slot_record(s) for s in systems},
+        "main_comparison_uses_fallback": False,
+        "determinism": (
+            "Offline runs are deterministic given the seed (except latencies). Live model outputs "
+            "are not assumed deterministic; repetitions are recorded separately."
+        ),
+        "environment": {
             "python": platform.python_version(),
             "platform": platform.platform(),
+            "anthropic_sdk": _version("anthropic"),
+            "typesafe_sdk": _version("typesafe-sdk"),
+            "pydantic": _version("pydantic"),
         },
     }
+
+
+def _slot_record(s: RouterSlot) -> dict[str, Any]:
     return {
-        "manifest": manifest,
-        "decisions": decisions,
-        "workflows": workflows,
-        "summary": summary,
+        "kind": s.kind,
+        "status": "available" if s.available else "unavailable",
+        "unavailable_reason": s.unavailable,
+        "preflight": s.preflight,
+        "config": s.config,
     }
 
 
-def _router_record(name: str, faults: bool) -> dict[str, Any]:
-    configs: dict[str, Any] = {}
-    for suite in SUITES.values():
-        try:
-            configs[suite.name] = make_router(name, suite, seed=0, faults=faults).config()
-        except Exception as exc:  # e.g. optional SDK missing for a real router
-            configs[suite.name] = {"unavailable": f"{type(exc).__name__}: {exc}"}
-    return {
-        "kind": "real" if name in REAL_ROUTERS else "simulated/deterministic",
-        "faults": fault_config(name, faults),
-        "config_by_suite": configs,
-    }
-
-
-def write_results(result: dict[str, Any], out: Path) -> Path:
-    directory: Path = out / str(result["manifest"]["run_id"])
-    directory.mkdir(parents=True, exist_ok=True)
-    (directory / "manifest.json").write_text(json.dumps(result["manifest"], indent=2) + "\n")
-    for name in ("decisions", "workflows"):
-        with (directory / f"{name}.jsonl").open("w", encoding="utf-8") as fh:
-            for record in result[name]:
-                fh.write(json.dumps(record, sort_keys=True) + "\n")
-    (directory / "summary.json").write_text(json.dumps(result["summary"], indent=2) + "\n")
-    rows = summary_rows(result["summary"])
-    with (directory / "summary.csv").open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(rows[0]) if rows else ["mode"])
+def write(out: Path, manifest: dict[str, Any], results: Any, summary: dict[str, Any]) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    for name, rows in (("decisions", results.decisions), ("workflows", results.workflows)):
+        with (out / f"{name}.jsonl").open("w", encoding="utf-8") as fh:
+            for row in rows:
+                fh.write(json.dumps(row, sort_keys=True) + "\n")
+    with (out / "requests.jsonl").open("w", encoding="utf-8") as fh:
+        for fp, req in sorted(results.requests.items()):
+            fh.write(json.dumps({"fingerprint": fp, "request": req}, sort_keys=True) + "\n")
+    (out / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    rows = summary_rows(summary, manifest)
+    with (out / "summary.csv").open("w", encoding="utf-8", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=list(rows[0]) if rows else ["router"])
         writer.writeheader()
         writer.writerows(rows)
-    return directory
 
 
-def summary_rows(summary: dict[str, Any]) -> list[dict[str, Any]]:
+def _v(block: Any, *path: str) -> Any:
+    for key in path:
+        if not isinstance(block, dict) or key not in block:
+            return None
+        block = block[key]
+    return block
+
+
+def summary_rows(summary: dict[str, Any], manifest: dict[str, Any]) -> list[dict[str, Any]]:
     rows = []
-    for router, m in summary["decision"].items():
+    for router, m in summary.items():
         rows.append(
             {
-                "mode": "decision",
+                "run_id": manifest["run_id"],
+                "mode": manifest["mode"],
+                "split": manifest["split"],
                 "router": router,
-                "n": m["decisions"],
-                "valid_decision_rate": m["valid_decision_rate"]["value"],
-                "routing_accuracy": m["routing_accuracy"]["value"],
-                "invalid_capability_rate": m["invalid_capability_rate"]["value"],
-                "unnecessary_rate": m["unnecessary_selection_rate"]["value"],
-                "fallback_rate": m["fallback_rate"]["value"],
-                "task_completion_rate": None,
-                "mean_steps": None,
-                "routing_ms_mean": m["routing_latency_ms"]["mean"],
-                "execution_ms_mean": None,
-                "input_tokens": m["usage"]["input_tokens"],
-            }
-        )
-    for router, m in summary["workflow"].items():
-        rows.append(
-            {
-                "mode": "workflow",
-                "router": router,
-                "n": m["workflows"],
-                "valid_decision_rate": None,
-                "routing_accuracy": None,
-                "invalid_capability_rate": None,
-                "unnecessary_rate": None,
-                "fallback_rate": m["fallback_rate"]["value"],
-                "task_completion_rate": m["task_completion_rate"]["value"],
-                "mean_steps": m["steps_to_completion"]["mean"],
-                "routing_ms_mean": m["routing_latency_ms_per_decision"]["mean"],
-                "execution_ms_mean": m["execution_latency_ms_per_call"]["mean"],
-                "input_tokens": m["usage"]["input_tokens"],
+                "decisions": _v(m, "decision", "decisions"),
+                "valid_decision_rate": _v(m, "decision", "valid_decision_rate", "value"),
+                "routing_accuracy": _v(m, "decision", "routing_accuracy", "value"),
+                "routing_accuracy_std": _v(
+                    m, "decision", "routing_accuracy", "across_repetitions", "std"
+                ),
+                "preferred_rate": _v(m, "decision", "preferred_rate", "value"),
+                "invalid_capability_rate": _v(m, "decision", "invalid_capability_rate", "value"),
+                "ask_human_recall": _v(m, "decision", "ask_human", "recall", "value"),
+                "ask_human_precision": _v(m, "decision", "ask_human", "precision", "value"),
+                "finish_recall": _v(m, "decision", "finish", "recall", "value"),
+                "workflows": _v(m, "workflow", "workflows"),
+                "task_completion_rate": _v(m, "workflow", "task_completion_rate", "value"),
+                "unseen_composition_success": _v(m, "unseen_composition_success", "value"),
+                "failure_recovery_success": _v(m, "failure_recovery_success", "value"),
+                "unnecessary_call_rate": _v(m, "workflow", "unnecessary_call_rate", "value"),
+                "mean_steps": _v(m, "workflow", "steps_to_completion", "mean"),
+                "order_decision_changed": _v(m, "order_sensitivity", "decision_changed", "value"),
+                "name_accuracy_delta": _v(m, "name_sensitivity", "accuracy_delta"),
+                "routing_latency_ms_mean": _v(m, "decision", "routing_latency_ms", "mean"),
+                "input_tokens": _v(m, "decision", "usage", "input_tokens"),
+                "output_tokens": _v(m, "decision", "usage", "output_tokens"),
             }
         )
     return rows
 
 
-def format_table(summary: dict[str, Any]) -> str:
+def format_table(summary: dict[str, Any], manifest: dict[str, Any]) -> str:
     def pct(x: Any) -> str:
-        return "   -  " if x is None else f"{100 * x:5.1f}%"
+        return "    -" if x is None else f"{100 * x:5.1f}%"
 
-    def num(x: Any, fmt: str = "{:6.3f}") -> str:
-        return "   -  " if x is None else fmt.format(x)
+    def num(x: Any) -> str:
+        return "    -" if x is None else f"{x:7.2f}"
 
-    lines = []
-    if summary["decision"]:
-        lines.append("decision benchmark (single routing step)")
+    lines = [
+        f"{manifest['evaluation_type']} · split={manifest['split']} · "
+        f"repetitions={manifest['repetitions']}"
+    ]
+    for name, r in manifest["routers"].items():
+        if r["status"] != "available":
+            lines.append(f"  {name}: UNAVAILABLE ({r['unavailable_reason']})")
+    header = (
+        f"  {'router':<14} {'VDR':>6} {'RA':>6} {'pref':>6} {'ask-R':>6} {'fin-R':>6} "
+        f"{'TCR':>6} {'unseen':>6} {'recov':>6} {'UCR':>6} {'steps':>7} {'ms/dec':>7}"
+    )
+    lines.append(header)
+    for router, m in summary.items():
         lines.append(
-            f"  {'router':<14} {'n':>4} {'VDR':>7} {'RA':>7} {'ICR*':>7} "
-            f"{'unnec':>7} {'fallbk':>7} {'route ms':>9}"
+            f"  {router:<14} {pct(_v(m, 'decision', 'valid_decision_rate', 'value')):>6} "
+            f"{pct(_v(m, 'decision', 'routing_accuracy', 'value')):>6} "
+            f"{pct(_v(m, 'decision', 'preferred_rate', 'value')):>6} "
+            f"{pct(_v(m, 'decision', 'ask_human', 'recall', 'value')):>6} "
+            f"{pct(_v(m, 'decision', 'finish', 'recall', 'value')):>6} "
+            f"{pct(_v(m, 'workflow', 'task_completion_rate', 'value')):>6} "
+            f"{pct(_v(m, 'unseen_composition_success', 'value')):>6} "
+            f"{pct(_v(m, 'failure_recovery_success', 'value')):>6} "
+            f"{pct(_v(m, 'workflow', 'unnecessary_call_rate', 'value')):>6} "
+            f"{num(_v(m, 'workflow', 'steps_to_completion', 'mean')):>7} "
+            f"{num(_v(m, 'decision', 'routing_latency_ms', 'mean')):>7}"
         )
-        for r, m in summary["decision"].items():
-            lines.append(
-                f"  {r:<14} {m['decisions']:>4} {pct(m['valid_decision_rate']['value']):>7} "
-                f"{pct(m['routing_accuracy']['value']):>7} "
-                f"{pct(m['invalid_capability_rate']['value']):>7} "
-                f"{pct(m['unnecessary_selection_rate']['value']):>7} "
-                f"{pct(m['fallback_rate']['value']):>7} "
-                f"{num(m['routing_latency_ms']['mean']):>9}"
+    robust = [
+        (r, m)
+        for r, m in summary.items()
+        if any(k in m for k in ("order_sensitivity", "name_sensitivity", "distractor_robustness"))
+    ]
+    for router, m in robust:
+        parts = []
+        if "order_sensitivity" in m:
+            parts.append(
+                "order-changed " + pct(m["order_sensitivity"]["decision_changed"]["value"])
             )
-        lines.append("  * ICR is per router attempt, including failed primaries behind a fallback")
-    if summary["workflow"]:
-        lines.append("workflow benchmark (end to end)")
-        lines.append(
-            f"  {'router':<14} {'n':>4} {'TCR':>7} {'steps':>6} {'rfail':>7} "
-            f"{'fallbk':>7} {'retry':>7} {'route ms':>9} {'exec ms':>8}"
-        )
-        for r, m in summary["workflow"].items():
-            lines.append(
-                f"  {r:<14} {m['workflows']:>4} {pct(m['task_completion_rate']['value']):>7} "
-                f"{num(m['steps_to_completion']['mean'], '{:6.2f}'):>6} "
-                f"{pct(m['routing_failure_rate']['value']):>7} "
-                f"{pct(m['fallback_rate']['value']):>7} {pct(m['retry_rate']['value']):>7} "
-                f"{num(m['routing_latency_ms_per_decision']['mean']):>9} "
-                f"{num(m['execution_latency_ms_per_call']['mean']):>8}"
+        if "name_sensitivity" in m:
+            ns = m["name_sensitivity"]
+            parts.append(
+                "opaque-names RA "
+                + pct(ns["accuracy_opaque_names"]["value"])
+                + " vs "
+                + pct(ns["accuracy_original"]["value"])
             )
+        if "distractor_robustness" in m:
+            curve = m["distractor_robustness"]
+            parts.append(
+                "distractors RA "
+                + " ".join(
+                    f"{n}:{pct(_v(c, 'routing_accuracy', 'value')).strip()}"
+                    for n, c in curve.items()
+                )
+            )
+        lines.append(f"  {router:<14} " + " · ".join(parts))
     return "\n".join(lines)
-
-
-def main(argv: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0] if __doc__ else None)
-    parser.add_argument(
-        "--router",
-        action="append",
-        dest="routers",
-        help=f"router to benchmark (repeatable); simulated: "
-        f"{', '.join(SIMULATED_ROUTERS)}; real: {', '.join(REAL_ROUTERS)}",
-    )
-    parser.add_argument("--mode", choices=("all", "decision", "workflow"), default="all")
-    parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--repeats", type=int, default=1)
-    parser.add_argument(
-        "--no-faults",
-        action="store_true",
-        help="disable fault injection in simulated model adapters",
-    )
-    parser.add_argument("--decision-fixtures", type=Path)
-    parser.add_argument("--workflow-fixtures", type=Path)
-    parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--no-write", action="store_true", help="print the summary only")
-    args = parser.parse_args(argv)
-    routers = args.routers or list(SIMULATED_ROUTERS)
-    result = run(
-        routers,
-        mode=args.mode,
-        seed=args.seed,
-        repeats=args.repeats,
-        faults=not args.no_faults,
-        decision_fixtures=args.decision_fixtures,
-        workflow_fixtures=args.workflow_fixtures,
-    )
-    print(format_table(result["summary"]))
-    if not args.no_write:
-        print(f"\nresults: {write_results(result, args.out)}")
-    return 0
 
 
 if __name__ == "__main__":

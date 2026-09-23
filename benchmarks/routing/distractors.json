@@ -1,0 +1,431 @@
+{
+  "version": "1",
+  "note": "Plausible but irrelevant capabilities, used for distractor cases and scaling.",
+  "capabilities": [
+    {
+      "id": "tk.sample_preview_rows",
+      "name": "sample_preview_rows",
+      "description": "Show the first few rows of the loaded dataset for a visual check.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "preview_shown"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.count_rows",
+      "name": "count_rows",
+      "description": "Report how many rows the loaded dataset contains.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "row_count_known"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.convert_format",
+      "name": "convert_format",
+      "description": "Convert the loaded dataset into another in-memory representation.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "dataset_converted"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "target": {
+          "type": "string",
+          "enum": [
+            "columnar",
+            "row"
+          ],
+          "description": "representation"
+        }
+      }
+    },
+    {
+      "id": "tk.rename_columns",
+      "name": "rename_columns",
+      "description": "Rename dataset columns to a house naming style.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "columns_renamed"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.compress_files",
+      "name": "compress_files",
+      "description": "Compress the files in the scratch directory to save space.",
+      "requires": [],
+      "produces": [
+        "files_compressed"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.backup_workspace",
+      "name": "backup_workspace",
+      "description": "Copy the current workspace to backup storage.",
+      "requires": [],
+      "produces": [
+        "workspace_backed_up"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.check_disk_quota",
+      "name": "check_disk_quota",
+      "description": "Report remaining disk quota for the workspace.",
+      "requires": [],
+      "produces": [
+        "quota_checked"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.list_recent_files",
+      "name": "list_recent_files",
+      "description": "List files modified in the workspace during the last week.",
+      "requires": [],
+      "produces": [
+        "recent_files_listed"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.spellcheck_notes",
+      "name": "spellcheck_notes",
+      "description": "Spell-check the free-text notes attached to the project.",
+      "requires": [],
+      "produces": [
+        "notes_spellchecked"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.schedule_meeting",
+      "name": "schedule_meeting",
+      "description": "Put a review meeting on the team calendar.",
+      "requires": [],
+      "produces": [
+        "meeting_scheduled"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.estimate_budget",
+      "name": "estimate_budget",
+      "description": "Estimate the compute budget of the project for next month.",
+      "requires": [],
+      "produces": [
+        "budget_estimated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.refresh_cache",
+      "name": "refresh_cache",
+      "description": "Refresh the local package cache.",
+      "requires": [],
+      "produces": [
+        "cache_refreshed"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.lint_config",
+      "name": "lint_config",
+      "description": "Check project configuration files for syntax errors.",
+      "requires": [],
+      "produces": [
+        "config_linted"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.rotate_logs",
+      "name": "rotate_logs",
+      "description": "Rotate the service log files.",
+      "requires": [],
+      "produces": [
+        "logs_rotated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.generate_thumbnail",
+      "name": "generate_thumbnail",
+      "description": "Create small preview images for image files in the workspace.",
+      "requires": [],
+      "produces": [
+        "thumbnails_generated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.index_documents",
+      "name": "index_documents",
+      "description": "Build a full-text search index over project documents.",
+      "requires": [],
+      "produces": [
+        "documents_indexed"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.tag_images",
+      "name": "tag_images",
+      "description": "Attach keyword tags to image files.",
+      "requires": [],
+      "produces": [
+        "images_tagged"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.send_newsletter",
+      "name": "send_newsletter",
+      "description": "Send the monthly newsletter to all subscribers.",
+      "requires": [],
+      "produces": [
+        "newsletter_sent"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.update_contact_list",
+      "name": "update_contact_list",
+      "description": "Synchronize the team contact list with the directory service.",
+      "requires": [],
+      "produces": [
+        "contacts_updated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.compute_checksum",
+      "name": "compute_checksum",
+      "description": "Compute a checksum of the loaded dataset file for integrity records.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "checksum_computed"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.pack_archive",
+      "name": "pack_archive",
+      "description": "Bundle the scratch directory into a compressed archive file for download.",
+      "requires": [],
+      "produces": [
+        "scratch_packed"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.translate_labels",
+      "name": "translate_labels",
+      "description": "Translate category labels in the user interface into another language.",
+      "requires": [],
+      "produces": [
+        "labels_translated"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "language": {
+          "type": "string",
+          "enum": [
+            "de",
+            "fr",
+            "ja"
+          ],
+          "description": "target language"
+        }
+      }
+    },
+    {
+      "id": "tk.sync_calendar",
+      "name": "sync_calendar",
+      "description": "Synchronize personal calendars with the team calendar.",
+      "requires": [],
+      "produces": [
+        "calendar_synced"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.render_theme",
+      "name": "render_theme",
+      "description": "Apply the corporate color theme to dashboards and charts.",
+      "requires": [],
+      "produces": [
+        "theme_applied"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.draft_email",
+      "name": "draft_email",
+      "description": "Draft, but do not send, an email to a colleague.",
+      "requires": [],
+      "produces": [
+        "email_drafted"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.summarize_meeting_notes",
+      "name": "summarize_meeting_notes",
+      "description": "Summarize the latest meeting notes into bullet points.",
+      "requires": [],
+      "produces": [
+        "meeting_notes_summarized"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.choose_color_palette",
+      "name": "choose_color_palette",
+      "description": "Pick an accessible color palette for future charts.",
+      "requires": [],
+      "produces": [
+        "palette_chosen"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.estimate_sample_size",
+      "name": "estimate_sample_size",
+      "description": "Estimate how many records a future data collection would need.",
+      "requires": [],
+      "produces": [
+        "sample_size_estimated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.validate_credentials",
+      "name": "validate_credentials",
+      "description": "Check that stored service credentials are still valid.",
+      "requires": [],
+      "produces": [
+        "credentials_validated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.clear_temp_files",
+      "name": "clear_temp_files",
+      "description": "Delete temporary files from the scratch directory.",
+      "requires": [],
+      "produces": [
+        "temp_files_cleared"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.archive_old_logs",
+      "name": "archive_old_logs",
+      "description": "Move log files older than a year into cold storage.",
+      "requires": [],
+      "produces": [
+        "old_logs_archived"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.export_contacts",
+      "name": "export_contacts",
+      "description": "Export the team contact list as a file.",
+      "requires": [],
+      "produces": [
+        "contacts_exported"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.fetch_weather",
+      "name": "fetch_weather",
+      "description": "Retrieve the local weather forecast.",
+      "requires": [],
+      "produces": [
+        "weather_fetched"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.benchmark_disk_speed",
+      "name": "benchmark_disk_speed",
+      "description": "Measure read and write speed of the workspace disk.",
+      "requires": [],
+      "produces": [
+        "disk_benchmarked"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.generate_invoice",
+      "name": "generate_invoice",
+      "description": "Generate an invoice for consulting hours.",
+      "requires": [],
+      "produces": [
+        "invoice_generated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.spellcheck_report_template",
+      "name": "spellcheck_report_template",
+      "description": "Spell-check the empty report template shipped with the project.",
+      "requires": [],
+      "produces": [
+        "template_spellchecked"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    }
+  ]
+}

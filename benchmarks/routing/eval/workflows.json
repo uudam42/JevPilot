@@ -1,0 +1,635 @@
+{
+  "benchmark": "jevpilot.routing.generalization",
+  "version": "1",
+  "split": "eval",
+  "cases": [
+    {
+      "case_id": "eval_l1_notify_chat",
+      "level": 1,
+      "categories": [],
+      "goal": "Tell the dataset owner by chat that the analysis is complete.",
+      "goal_facts": [
+        "owner_notified"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "channel": "chat"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_l1_validate",
+      "level": 1,
+      "categories": [],
+      "goal": "Check the loaded dataset against its declared schema.",
+      "goal_facts": [
+        "schema_validated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_l2_outliers_fresh",
+      "level": 2,
+      "categories": [
+        "state_dependent"
+      ],
+      "goal": "Flag anomalous records in the dataset at the given source.",
+      "goal_facts": [
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_l2_outliers_loaded",
+      "level": 2,
+      "categories": [
+        "state_dependent"
+      ],
+      "goal": "Flag anomalous records in the dataset at the given source.",
+      "goal_facts": [
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_l2_outliers_validated",
+      "level": 2,
+      "categories": [
+        "state_dependent",
+        "multiple_valid"
+      ],
+      "goal": "Flag anomalous records in the dataset at the given source.",
+      "goal_facts": [
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "schema_validated"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_l2_outliers_cleaned",
+      "level": 2,
+      "categories": [
+        "state_dependent"
+      ],
+      "goal": "Flag anomalous records in the dataset at the given source.",
+      "goal_facts": [
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "records_cleaned"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_u_trend_outliers",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "paraphrased_goal"
+      ],
+      "goal": "Model how the measurements of the dataset at the given source evolve over time, and mark the records that look irregular.",
+      "goal_facts": [
+        "trend_fitted",
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u_merge_export_notify",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "paraphrased_goal"
+      ],
+      "goal": "Enrich the records at the given source with the site-code lookup table, write the cleaned records out as CSV, and let the person responsible for the dataset know by email.",
+      "goal_facts": [
+        "reference_merged",
+        "table_exported",
+        "owner_notified"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "reference": "store://reference/site-codes",
+        "export_format": "csv",
+        "channel": "email"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u_compare_export",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "paraphrased_goal"
+      ],
+      "goal": "Contrast summary statistics between the 'region' groups of the dataset at the given source, and save the cleaned records to a parquet file.",
+      "goal_facts": [
+        "groups_compared",
+        "table_exported"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "group_field": "region",
+        "export_format": "parquet"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u_merge_trend",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "paraphrased_goal"
+      ],
+      "goal": "Enrich the dataset at the given source with the site-code lookup table and model how its values change over time.",
+      "goal_facts": [
+        "reference_merged",
+        "trend_fitted"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "reference": "store://reference/site-codes"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u_illustrated_share",
+      "level": 5,
+      "categories": [
+        "forbidden_action",
+        "similar_capabilities",
+        "paraphrased_goal"
+      ],
+      "goal": "Give our own team's workspace a statistics write-up that embeds a scatter plot. Nothing may be made visible to the general public.",
+      "goal_facts": [
+        "report_has_figures",
+        "shared_internal"
+      ],
+      "forbidden_facts": [
+        "published_public"
+      ],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "plot_kind": "scatter"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u_metadata_stats",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "paraphrased_goal"
+      ],
+      "goal": "Look up who is responsible for the dataset at the given source and when it was last updated, then compute its summary statistics.",
+      "goal_facts": [
+        "metadata_fetched",
+        "statistics_computed"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u_dashboard_notify",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "paraphrased_goal"
+      ],
+      "goal": "Build an interactive view that combines summary statistics with the time trend for the dataset at the given source, then email the person responsible for the dataset.",
+      "goal_facts": [
+        "dashboard_rendered",
+        "owner_notified"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "channel": "email"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u_outliers_export",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "paraphrased_goal"
+      ],
+      "goal": "Mark the irregular records in the dataset at the given source and save the cleaned records to a parquet file.",
+      "goal_facts": [
+        "outliers_flagged",
+        "table_exported"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "export_format": "parquet"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u4_trend_outliers_mirror",
+      "level": 4,
+      "categories": [
+        "failure_recovery",
+        "paraphrased_goal"
+      ],
+      "goal": "Model how the measurements of the dataset at the given source evolve over time, and mark the records that look irregular.",
+      "goal_facts": [
+        "trend_fitted",
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {
+        "tk.load_dataset": {
+          "mode": "permanent"
+        }
+      },
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_u4_compare_export_retry",
+      "level": 4,
+      "categories": [
+        "failure_recovery",
+        "paraphrased_goal"
+      ],
+      "goal": "Contrast summary statistics between the 'region' groups of the dataset at the given source, and save the cleaned records to a parquet file.",
+      "goal_facts": [
+        "groups_compared",
+        "table_exported"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "group_field": "region",
+        "export_format": "parquet"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {
+        "tk.compute_statistics": {
+          "mode": "transient",
+          "times": 1
+        }
+      },
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_mi_group_field",
+      "level": 3,
+      "categories": [
+        "missing_information",
+        "paraphrased_goal"
+      ],
+      "goal": "Contrast statistics between groups of the dataset at the given source, write them up, and put the write-up in the long-term archive.",
+      "goal_facts": [
+        "groups_compared",
+        "results_archived"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false,
+      "note": "grouping column not given; progress before asking is acceptable"
+    },
+    {
+      "case_id": "eval_mi_no_source_export",
+      "level": 3,
+      "categories": [
+        "missing_information"
+      ],
+      "goal": "Export the cleaned records of the dataset as CSV.",
+      "goal_facts": [
+        "table_exported"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "export_format": "csv"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_fin_outliers_export_done",
+      "level": 2,
+      "categories": [
+        "finish"
+      ],
+      "goal": "Flag anomalous records in the dataset at the given source and export the cleaned records.",
+      "goal_facts": [
+        "outliers_flagged",
+        "table_exported"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "records_cleaned",
+        "outliers_flagged",
+        "table_exported"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_imp_forecast",
+      "level": 3,
+      "categories": [
+        "impossible"
+      ],
+      "goal": "Forecast next quarter's values of the dataset at the given source with a seasonal model.",
+      "goal_facts": [
+        "forecast_produced"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_imp_share_unavailable",
+      "level": 3,
+      "categories": [
+        "impossible",
+        "forbidden_action"
+      ],
+      "goal": "Share a statistics report on the dataset at the given source with the internal team. It must not be published publicly.",
+      "goal_facts": [
+        "shared_internal"
+      ],
+      "forbidden_facts": [
+        "published_public"
+      ],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core-without:tk.share_internal",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false,
+      "note": "internal sharing is not offered; public publishing is a forbidden trap"
+    },
+    {
+      "case_id": "eval_sim_report_with_chart",
+      "level": 3,
+      "categories": [
+        "similar_capabilities"
+      ],
+      "goal": "Produce a statistics report for the dataset at the given source that includes a chart.",
+      "goal_facts": [
+        "report_has_figures"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_dis_trend_outliers",
+      "level": 5,
+      "categories": [
+        "distractors",
+        "paraphrased_goal"
+      ],
+      "goal": "Model how the measurements of the dataset at the given source evolve over time, and mark the records that look irregular.",
+      "goal_facts": [
+        "trend_fitted",
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 20,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true
+    },
+    {
+      "case_id": "eval_fin_dashboard_done",
+      "level": 2,
+      "categories": [
+        "finish"
+      ],
+      "goal": "Build a dashboard of statistics and the trend over time for the dataset at the given source.",
+      "goal_facts": [
+        "dashboard_rendered"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "units_normalized",
+        "records_cleaned",
+        "statistics_computed",
+        "trend_fitted",
+        "dashboard_rendered"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_mi_no_source_trend",
+      "level": 3,
+      "categories": [
+        "missing_information"
+      ],
+      "goal": "Fit a trend over time to the dataset and flag anomalous records.",
+      "goal_facts": [
+        "trend_fitted",
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {},
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "eval_imp_translate_dashboard",
+      "level": 3,
+      "categories": [
+        "impossible",
+        "similar_capabilities"
+      ],
+      "goal": "Translate the finished dashboard of the dataset at the given source into German.",
+      "goal_facts": [
+        "dashboard_translated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "units_normalized",
+        "records_cleaned",
+        "statistics_computed",
+        "trend_fitted",
+        "dashboard_rendered"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 6,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false,
+      "note": "a label-translation distractor exists but does not translate dashboards"
+    }
+  ]
+}

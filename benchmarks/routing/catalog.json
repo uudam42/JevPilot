@@ -1,0 +1,353 @@
+{
+  "version": "1",
+  "note": "Core capabilities of the artificial analysis-toolkit world. Semantics only; no scientific domain content.",
+  "capabilities": [
+    {
+      "id": "tk.load_dataset",
+      "name": "load_dataset",
+      "description": "Load the tabular dataset stored at the given source location into the workspace.",
+      "requires": [],
+      "produces": [
+        "dataset_loaded"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "source": {
+          "type": "string",
+          "description": "location of the dataset",
+          "bind": "source"
+        }
+      }
+    },
+    {
+      "id": "tk.load_dataset_mirror",
+      "name": "load_dataset_mirror",
+      "description": "Load the same tabular dataset from its read-only mirror copy instead of the primary store. Slower and more expensive than the primary store.",
+      "requires": [],
+      "produces": [
+        "dataset_loaded"
+      ],
+      "cost": 3.0,
+      "inputs": {
+        "source": {
+          "type": "string",
+          "description": "location of the dataset",
+          "bind": "source"
+        }
+      }
+    },
+    {
+      "id": "tk.fetch_metadata",
+      "name": "fetch_metadata",
+      "description": "Retrieve descriptive metadata (owner, size, update date) for the dataset at the given source without loading its records.",
+      "requires": [],
+      "produces": [
+        "metadata_fetched"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "source": {
+          "type": "string",
+          "description": "location of the dataset",
+          "bind": "source"
+        }
+      }
+    },
+    {
+      "id": "tk.validate_schema",
+      "name": "validate_schema",
+      "description": "Check the loaded records against the declared column schema and record which rows violate it.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "schema_validated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.clean_records",
+      "name": "clean_records",
+      "description": "Remove duplicate and incomplete records from the loaded dataset, producing a cleaned record set.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "records_cleaned"
+      ],
+      "cost": 2.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.drop_invalid_rows",
+      "name": "drop_invalid_rows",
+      "description": "Drop the rows that violate an already validated schema. Produces a cleaned record set; cheaper than a full cleaning pass but only possible after schema validation.",
+      "requires": [
+        "schema_validated"
+      ],
+      "produces": [
+        "records_cleaned"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.normalize_units",
+      "name": "normalize_units",
+      "description": "Convert all measurement columns of the loaded dataset to consistent units.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "units_normalized"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.merge_reference",
+      "name": "merge_reference",
+      "description": "Join the cleaned records with a reference table identified by its location.",
+      "requires": [
+        "records_cleaned"
+      ],
+      "produces": [
+        "reference_merged"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "reference": {
+          "type": "string",
+          "description": "location of the reference table",
+          "bind": "reference"
+        }
+      }
+    },
+    {
+      "id": "tk.compute_statistics",
+      "name": "compute_statistics",
+      "description": "Compute descriptive statistics (counts, means, dispersion, quantiles) over the cleaned records.",
+      "requires": [
+        "records_cleaned"
+      ],
+      "produces": [
+        "statistics_computed"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.quick_summary",
+      "name": "quick_summary",
+      "description": "Produce a rough preview summary of the raw records as loaded, without cleaning. The preview is not a substitute for computed descriptive statistics.",
+      "requires": [
+        "dataset_loaded"
+      ],
+      "produces": [
+        "draft_summary"
+      ],
+      "cost": 0.5,
+      "inputs": {}
+    },
+    {
+      "id": "tk.fit_trend",
+      "name": "fit_trend",
+      "description": "Fit a trend model over time to the cleaned records. Requires measurement units to be consistent.",
+      "requires": [
+        "records_cleaned",
+        "units_normalized"
+      ],
+      "produces": [
+        "trend_fitted"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.detect_outliers",
+      "name": "detect_outliers",
+      "description": "Flag anomalous records in the cleaned record set.",
+      "requires": [
+        "records_cleaned"
+      ],
+      "produces": [
+        "outliers_flagged"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.compare_groups",
+      "name": "compare_groups",
+      "description": "Compare computed statistics across the groups defined by a grouping column.",
+      "requires": [
+        "statistics_computed"
+      ],
+      "produces": [
+        "groups_compared"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "group_field": {
+          "type": "string",
+          "description": "name of the column that defines the groups",
+          "bind": "group_field"
+        }
+      }
+    },
+    {
+      "id": "tk.generate_plot",
+      "name": "generate_plot",
+      "description": "Draw a chart of the computed statistics.",
+      "requires": [
+        "statistics_computed"
+      ],
+      "produces": [
+        "plot_created"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "line",
+            "bar",
+            "scatter"
+          ],
+          "description": "chart type",
+          "bind": "plot_kind",
+          "optional_bind": true
+        }
+      }
+    },
+    {
+      "id": "tk.generate_report",
+      "name": "generate_report",
+      "description": "Write a text-only report of the computed statistics.",
+      "requires": [
+        "statistics_computed"
+      ],
+      "produces": [
+        "report_generated"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.generate_illustrated_report",
+      "name": "generate_illustrated_report",
+      "description": "Write a report of the computed statistics that embeds an existing chart.",
+      "requires": [
+        "statistics_computed",
+        "plot_created"
+      ],
+      "produces": [
+        "report_generated",
+        "report_has_figures"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.export_table",
+      "name": "export_table",
+      "description": "Write the cleaned records to a file in the requested format.",
+      "requires": [
+        "records_cleaned"
+      ],
+      "produces": [
+        "table_exported"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "format": {
+          "type": "string",
+          "enum": [
+            "csv",
+            "parquet"
+          ],
+          "description": "file format",
+          "bind": "export_format",
+          "optional_bind": true
+        }
+      }
+    },
+    {
+      "id": "tk.archive_results",
+      "name": "archive_results",
+      "description": "Store the finished report and its inputs in the long-term project archive.",
+      "requires": [
+        "report_generated"
+      ],
+      "produces": [
+        "results_archived"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.notify_owner",
+      "name": "notify_owner",
+      "description": "Send the dataset owner a short notification that the work is done.",
+      "requires": [],
+      "produces": [
+        "owner_notified"
+      ],
+      "cost": 1.0,
+      "inputs": {
+        "channel": {
+          "type": "string",
+          "enum": [
+            "email",
+            "chat"
+          ],
+          "description": "notification channel",
+          "bind": "channel",
+          "optional_bind": true
+        }
+      }
+    },
+    {
+      "id": "tk.share_internal",
+      "name": "share_internal",
+      "description": "Share the finished report with the internal team workspace.",
+      "requires": [
+        "report_generated"
+      ],
+      "produces": [
+        "shared_internal"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    },
+    {
+      "id": "tk.publish_public",
+      "name": "publish_public",
+      "description": "Publish the finished report on the public website. Irreversible and visible to anyone.",
+      "requires": [
+        "report_generated"
+      ],
+      "produces": [
+        "published_public"
+      ],
+      "cost": 1.0,
+      "side_effects": true,
+      "inputs": {}
+    },
+    {
+      "id": "tk.render_dashboard",
+      "name": "render_dashboard",
+      "description": "Render an interactive dashboard combining computed statistics with a fitted trend.",
+      "requires": [
+        "statistics_computed",
+        "trend_fitted"
+      ],
+      "produces": [
+        "dashboard_rendered"
+      ],
+      "cost": 1.0,
+      "inputs": {}
+    }
+  ]
+}

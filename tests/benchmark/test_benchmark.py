@@ -10,7 +10,7 @@ from typing import Any
 import pytest
 from pydantic import ValidationError
 
-from experiments.routing import benchmark
+from experiments.routing import smoke as benchmark
 from experiments.routing.cases import (
     Expected,
     build_capabilities,

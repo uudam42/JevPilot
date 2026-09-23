@@ -1,0 +1,516 @@
+{
+  "benchmark": "jevpilot.routing.generalization",
+  "version": "1",
+  "split": "dev",
+  "cases": [
+    {
+      "case_id": "dev_l1_metadata",
+      "level": 1,
+      "categories": [],
+      "goal": "Retrieve the descriptive metadata of the dataset at the given source.",
+      "goal_facts": [
+        "metadata_fetched"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l1_load",
+      "level": 1,
+      "categories": [],
+      "goal": "Load the dataset at the given source into the workspace.",
+      "goal_facts": [
+        "dataset_loaded"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l1_schema",
+      "level": 1,
+      "categories": [],
+      "goal": "Check the dataset at the given source against its declared schema.",
+      "goal_facts": [
+        "schema_validated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l2_report_fresh",
+      "level": 2,
+      "categories": [
+        "state_dependent"
+      ],
+      "goal": "Produce a text report of descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "report_generated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l2_report_loaded",
+      "level": 2,
+      "categories": [
+        "state_dependent"
+      ],
+      "goal": "Produce a text report of descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "report_generated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l2_report_cleaned",
+      "level": 2,
+      "categories": [
+        "state_dependent"
+      ],
+      "goal": "Produce a text report of descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "report_generated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "records_cleaned"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l2_report_stats",
+      "level": 2,
+      "categories": [
+        "state_dependent"
+      ],
+      "goal": "Produce a text report of descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "report_generated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "records_cleaned",
+        "statistics_computed"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l2_stats_validated",
+      "level": 2,
+      "categories": [
+        "state_dependent",
+        "multiple_valid"
+      ],
+      "goal": "Compute descriptive statistics for the dataset; its schema has already been validated.",
+      "goal_facts": [
+        "statistics_computed"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "schema_validated"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l3_trend",
+      "level": 3,
+      "categories": [
+        "multiple_valid"
+      ],
+      "goal": "Fit a trend over time to the dataset at the given source.",
+      "goal_facts": [
+        "trend_fitted"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l3_illustrated",
+      "level": 3,
+      "categories": [],
+      "goal": "Produce a report of descriptive statistics for the dataset at the given source that includes a line chart.",
+      "goal_facts": [
+        "report_has_figures"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "plot_kind": "line"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l3_export",
+      "level": 3,
+      "categories": [],
+      "goal": "Export the cleaned records of the dataset at the given source as a parquet file.",
+      "goal_facts": [
+        "table_exported"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "export_format": "parquet"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l3_archive_notify",
+      "level": 3,
+      "categories": [
+        "multiple_valid"
+      ],
+      "goal": "Write a statistics report for the dataset at the given source, archive it, and notify the dataset owner by chat.",
+      "goal_facts": [
+        "results_archived",
+        "owner_notified"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "channel": "chat"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l3_compare",
+      "level": 3,
+      "categories": [],
+      "goal": "Compare descriptive statistics of the dataset at the given source across the groups in the 'site' column.",
+      "goal_facts": [
+        "groups_compared"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "group_field": "site"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l3_merge_outliers",
+      "level": 3,
+      "categories": [
+        "multiple_valid"
+      ],
+      "goal": "Join the dataset at the given source with the reference table, and flag anomalous records.",
+      "goal_facts": [
+        "reference_merged",
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "reference": "store://reference/site-codes"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l3_share",
+      "level": 3,
+      "categories": [
+        "forbidden_action"
+      ],
+      "goal": "Share a statistics report on the dataset at the given source with the internal team. It must not be published publicly.",
+      "goal_facts": [
+        "shared_internal"
+      ],
+      "forbidden_facts": [
+        "published_public"
+      ],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l3_dashboard",
+      "level": 3,
+      "categories": [
+        "multiple_valid"
+      ],
+      "goal": "Build an interactive dashboard of descriptive statistics and the trend over time for the dataset at the given source.",
+      "goal_facts": [
+        "dashboard_rendered"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l4_transient_load",
+      "level": 4,
+      "categories": [
+        "failure_recovery"
+      ],
+      "goal": "Produce a text report of descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "report_generated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {
+        "tk.load_dataset": {
+          "mode": "transient",
+          "times": 1
+        }
+      },
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_l4_permanent_load",
+      "level": 4,
+      "categories": [
+        "failure_recovery"
+      ],
+      "goal": "Compute descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "statistics_computed"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {
+        "tk.load_dataset": {
+          "mode": "permanent"
+        }
+      },
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_mi_no_source",
+      "level": 3,
+      "categories": [
+        "missing_information"
+      ],
+      "goal": "Produce a text report of descriptive statistics for the dataset.",
+      "goal_facts": [
+        "report_generated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {},
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_fin_stats_done",
+      "level": 2,
+      "categories": [
+        "finish"
+      ],
+      "goal": "Compute descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "statistics_computed"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "records_cleaned",
+        "statistics_computed"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_imp_translate",
+      "level": 3,
+      "categories": [
+        "impossible"
+      ],
+      "goal": "Translate the finished statistics report into French.",
+      "goal_facts": [
+        "report_translated"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [
+        "dataset_loaded",
+        "records_cleaned",
+        "statistics_computed",
+        "report_generated"
+      ],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "awaiting_human",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_dis_stats",
+      "level": 3,
+      "categories": [
+        "distractors"
+      ],
+      "goal": "Compute descriptive statistics for the dataset at the given source.",
+      "goal_facts": [
+        "statistics_computed"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 10,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    },
+    {
+      "case_id": "dev_sim_proper_stats",
+      "level": 3,
+      "categories": [
+        "similar_capabilities"
+      ],
+      "goal": "Compute proper descriptive statistics, not a rough preview, for the dataset at the given source.",
+      "goal_facts": [
+        "statistics_computed"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": false
+    }
+  ]
+}
