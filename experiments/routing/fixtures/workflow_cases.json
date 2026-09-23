@@ -1,0 +1,119 @@
+{
+  "benchmark": "jevpilot.routing.workflows",
+  "version": "1",
+  "cases": [
+    {
+      "case_id": "arith_01_3_to_20",
+      "suite": "arithmetic",
+      "pattern": "sequential_dependency",
+      "params": {
+        "start": 3,
+        "target": 20
+      },
+      "optimal_steps": 4
+    },
+    {
+      "case_id": "arith_02_5_to_42",
+      "suite": "arithmetic",
+      "pattern": "sequential_dependency",
+      "params": {
+        "start": 5,
+        "target": 42
+      },
+      "optimal_steps": 4
+    },
+    {
+      "case_id": "arith_03_already_equal",
+      "suite": "arithmetic",
+      "pattern": "termination",
+      "params": {
+        "start": 7,
+        "target": 7
+      },
+      "optimal_steps": 1
+    },
+    {
+      "case_id": "stats_01_precise",
+      "suite": "stats",
+      "pattern": "replan_after_observation",
+      "params": {
+        "true_mean": 10.0,
+        "noise": 3.0,
+        "ci_half_width": 0.5
+      }
+    },
+    {
+      "case_id": "stats_02_loose",
+      "suite": "stats",
+      "pattern": "sequential_dependency",
+      "params": {
+        "true_mean": 1.0,
+        "noise": 1.0,
+        "ci_half_width": 0.3
+      }
+    },
+    {
+      "case_id": "pipe_01_happy_path",
+      "suite": "pipeline",
+      "pattern": "sequential_dependency",
+      "params": {
+        "source": "store://records/2026-q3",
+        "channel": "internal"
+      },
+      "optimal_steps": 5,
+      "unnecessary_capabilities": [
+        "pipe.cleanup_cache"
+      ]
+    },
+    {
+      "case_id": "pipe_02_public_channel",
+      "suite": "pipeline",
+      "pattern": "sequential_dependency",
+      "params": {
+        "source": "store://records/2026-q3",
+        "channel": "public"
+      },
+      "optimal_steps": 5,
+      "unnecessary_capabilities": [
+        "pipe.cleanup_cache"
+      ]
+    },
+    {
+      "case_id": "pipe_03_flaky_source",
+      "suite": "pipeline",
+      "pattern": "retry_after_failure",
+      "params": {
+        "source": "store://records/2026-q3",
+        "flaky": true
+      },
+      "optimal_steps": 6,
+      "unnecessary_capabilities": [
+        "pipe.cleanup_cache"
+      ]
+    },
+    {
+      "case_id": "pipe_04_dirty_data",
+      "suite": "pipeline",
+      "pattern": "replan_after_observation",
+      "params": {
+        "source": "store://records/2026-q3",
+        "dirty": true
+      },
+      "optimal_steps": 7,
+      "unnecessary_capabilities": [
+        "pipe.cleanup_cache"
+      ]
+    },
+    {
+      "case_id": "pipe_05_missing_source",
+      "suite": "pipeline",
+      "pattern": "missing_information",
+      "params": {},
+      "expected_status": "awaiting_human",
+      "optimal_steps": 0,
+      "unnecessary_capabilities": [
+        "pipe.cleanup_cache"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1005 @@
+{
+  "benchmark": "jevpilot.routing.decisions",
+  "version": "1",
+  "suite": "pipeline",
+  "capability_catalog": {
+    "pipe.fetch": {
+      "description": "Fetch raw records from a source location.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "tags": [
+        "acquire"
+      ],
+      "effects": [
+        "adds a raw dataset artifact",
+        "sets context.raw"
+      ],
+      "domain": "pipeline"
+    },
+    "pipe.fetch_mirror": {
+      "description": "Fetch the same raw records from a read-only mirror of the source.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "additionalProperties": false
+      },
+      "tags": [
+        "acquire"
+      ],
+      "effects": [
+        "adds a raw dataset artifact",
+        "sets context.raw"
+      ],
+      "domain": "pipeline"
+    },
+    "pipe.parse": {
+      "description": "Parse the fetched raw records into structured rows.",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "preconditions": [
+        "raw records fetched"
+      ],
+      "effects": [
+        "sets context.parsed"
+      ],
+      "domain": "pipeline"
+    },
+    "pipe.validate": {
+      "description": "Check parsed rows for consistency; reports issues if any are found.",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "preconditions": [
+        "records parsed"
+      ],
+      "effects": [
+        "sets context.validated to true or false"
+      ],
+      "domain": "pipeline"
+    },
+    "pipe.clean": {
+      "description": "Remove duplicate and incomplete rows. Validation must be re-run afterwards.",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "preconditions": [
+        "records parsed"
+      ],
+      "effects": [
+        "sets context.cleaned",
+        "clears context.validated"
+      ],
+      "domain": "pipeline"
+    },
+    "pipe.summarize": {
+      "description": "Summarize validated rows in the requested style.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "style": {
+            "type": "string",
+            "enum": [
+              "brief",
+              "detailed"
+            ]
+          }
+        },
+        "required": [
+          "style"
+        ],
+        "additionalProperties": false
+      },
+      "preconditions": [
+        "records validated"
+      ],
+      "effects": [
+        "adds a candidate summary",
+        "sets context.summarized"
+      ],
+      "domain": "pipeline"
+    },
+    "pipe.publish": {
+      "description": "Publish the summary on a channel. Irreversible.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "internal",
+              "public"
+            ]
+          }
+        },
+        "required": [
+          "channel"
+        ],
+        "additionalProperties": false
+      },
+      "preconditions": [
+        "summary exists"
+      ],
+      "effects": [
+        "sets context.published"
+      ],
+      "side_effects": true,
+      "domain": "pipeline"
+    },
+    "pipe.cleanup_cache": {
+      "description": "Clear the local scratch cache. Never required to reach any goal.",
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "tags": [
+        "maintenance"
+      ],
+      "domain": "pipeline"
+    }
+  },
+  "cases": [
+    {
+      "case_id": "seq_01_fetch_first",
+      "pattern": "sequential_dependency",
+      "description": "Nothing done yet; either fetch capability is a correct first step.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        }
+      },
+      "capabilities": [
+        "pipe.fetch",
+        "pipe.fetch_mirror",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.fetch",
+          "pipe.fetch_mirror"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.cleanup_cache"
+        ],
+        "required_inputs": {
+          "pipe.fetch": {
+            "source": "store://records/2026-q3"
+          },
+          "pipe.fetch_mirror": {
+            "source": "store://records/2026-q3"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "seq_02_parse_after_fetch",
+      "pattern": "sequential_dependency",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "fetched_from": "store://records/2026-q3"
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.fetch",
+        "pipe.fetch_mirror",
+        "pipe.parse",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.parse"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.fetch",
+          "pipe.fetch_mirror",
+          "pipe.cleanup_cache"
+        ]
+      }
+    },
+    {
+      "case_id": "info_01_missing_source",
+      "pattern": "missing_information",
+      "description": "The source is unknown and no capability can discover it.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {},
+          "success_criteria": {
+            "channel": "internal"
+          }
+        }
+      },
+      "capabilities": [
+        "pipe.fetch",
+        "pipe.fetch_mirror",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "forbidden_capabilities": [
+          "pipe.fetch",
+          "pipe.fetch_mirror"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.cleanup_cache"
+        ],
+        "no_action_intents": [
+          "ask_human",
+          "idle"
+        ]
+      }
+    },
+    {
+      "case_id": "pre_01_publish_not_available",
+      "pattern": "capability_preconditions",
+      "description": "Goal is to publish, but publishing is not available until a summary exists.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "parsed": true
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.parse",
+            "success": true,
+            "result": {
+              "rows": 5
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.fetch",
+        "pipe.fetch_mirror",
+        "pipe.parse",
+        "pipe.validate",
+        "pipe.clean",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.validate"
+        ],
+        "forbidden_capabilities": [
+          "pipe.publish",
+          "pipe.summarize"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.parse",
+          "pipe.cleanup_cache",
+          "pipe.fetch",
+          "pipe.fetch_mirror"
+        ]
+      }
+    },
+    {
+      "case_id": "red_01_redundant_reparse",
+      "pattern": "redundant_capability",
+      "description": "Parsing already succeeded and is still offered; repeating it is wasteful.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "parsed": true,
+          "validated": true
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.parse",
+            "success": true,
+            "result": {
+              "rows": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.validate",
+            "success": true,
+            "result": {
+              "valid": true,
+              "issues": []
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.fetch",
+        "pipe.parse",
+        "pipe.validate",
+        "pipe.clean",
+        "pipe.summarize",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.summarize"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.parse",
+          "pipe.validate",
+          "pipe.fetch",
+          "pipe.cleanup_cache",
+          "pipe.clean"
+        ]
+      }
+    },
+    {
+      "case_id": "inv_01_unoffered_export",
+      "pattern": "invalid_capability",
+      "description": "The goal text mentions an export tool that does not exist.",
+      "state": {
+        "goal": {
+          "description": "export the records with the export tool, then publish a validated summary internally",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "parsed": true,
+          "validated": true
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.parse",
+            "success": true,
+            "result": {
+              "rows": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.validate",
+            "success": true,
+            "result": {
+              "valid": true,
+              "issues": []
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.summarize",
+        "pipe.clean",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.summarize"
+        ],
+        "forbidden_capabilities": [
+          "pipe.export"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.cleanup_cache",
+          "pipe.clean"
+        ]
+      }
+    },
+    {
+      "case_id": "multi_01_summary_style",
+      "pattern": "multiple_valid_capabilities",
+      "description": "Either summary style is acceptable; any schema-valid style counts.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "parsed": true,
+          "validated": true
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.parse",
+            "success": true,
+            "result": {
+              "rows": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.validate",
+            "success": true,
+            "result": {
+              "valid": true,
+              "issues": []
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.summarize",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.summarize"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.cleanup_cache"
+        ]
+      }
+    },
+    {
+      "case_id": "retry_01_transient_fetch",
+      "pattern": "retry_after_failure",
+      "description": "The last fetch failed with a retryable error; fetching again (or from the mirror) is right.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": false,
+            "error": {
+              "type": "CapabilityError",
+              "message": "source temporarily unavailable",
+              "retryable": true
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.fetch",
+        "pipe.fetch_mirror",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.fetch",
+          "pipe.fetch_mirror"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.cleanup_cache"
+        ],
+        "required_inputs": {
+          "pipe.fetch": {
+            "source": "store://records/2026-q3"
+          },
+          "pipe.fetch_mirror": {
+            "source": "store://records/2026-q3"
+          }
+        }
+      }
+    },
+    {
+      "case_id": "replan_01_clean_after_failed_validation",
+      "pattern": "replan_after_observation",
+      "description": "Validation reported issues; the evaluator asked for a replan. Clean before re-validating.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "parsed": true,
+          "validated": false
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.parse",
+            "success": true,
+            "result": {
+              "rows": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.validate",
+            "success": true,
+            "result": {
+              "valid": false,
+              "issues": [
+                "duplicate ids",
+                "missing values"
+              ]
+            },
+            "control": "replan"
+          }
+        ],
+        "evaluations": [
+          {
+            "recommendation": "replan",
+            "goal_progress": 0.4,
+            "remaining_gaps": [
+              "validation failed"
+            ],
+            "rationale": "validation found issues"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.fetch",
+        "pipe.parse",
+        "pipe.validate",
+        "pipe.clean",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.clean"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.validate",
+          "pipe.parse",
+          "pipe.fetch",
+          "pipe.cleanup_cache"
+        ]
+      }
+    },
+    {
+      "case_id": "replan_02_revalidate_after_clean",
+      "pattern": "replan_after_observation",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "parsed": true,
+          "validated": null,
+          "cleaned": true
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.parse",
+            "success": true,
+            "result": {
+              "rows": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.validate",
+            "success": true,
+            "result": {
+              "valid": false,
+              "issues": [
+                "duplicate ids"
+              ]
+            },
+            "control": "replan"
+          },
+          {
+            "capability_id": "pipe.clean",
+            "success": true,
+            "result": {
+              "removed": 2
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.fetch",
+        "pipe.parse",
+        "pipe.validate",
+        "pipe.clean",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.validate"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.clean",
+          "pipe.parse",
+          "pipe.fetch",
+          "pipe.cleanup_cache"
+        ]
+      }
+    },
+    {
+      "case_id": "seq_03_publish_on_requested_channel",
+      "pattern": "sequential_dependency",
+      "description": "Publishing is irreversible; the channel must match the goal.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "parsed": true,
+          "validated": true,
+          "summarized": true
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.parse",
+            "success": true,
+            "result": {
+              "rows": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.validate",
+            "success": true,
+            "result": {
+              "valid": true,
+              "issues": []
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.summarize",
+            "inputs": {
+              "style": "brief"
+            },
+            "success": true,
+            "result": {
+              "style": "brief",
+              "rows": 5
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.summarize",
+        "pipe.publish",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "valid_capabilities": [
+          "pipe.publish"
+        ],
+        "required_inputs": {
+          "pipe.publish": {
+            "channel": "internal"
+          }
+        },
+        "unnecessary_capabilities": [
+          "pipe.summarize",
+          "pipe.cleanup_cache"
+        ]
+      }
+    },
+    {
+      "case_id": "term_01_already_published",
+      "pattern": "termination",
+      "description": "The goal is met; the router should stop rather than act.",
+      "state": {
+        "goal": {
+          "description": "publish a validated summary of the records on the internal channel",
+          "parameters": {
+            "source": "store://records/2026-q3"
+          },
+          "success_criteria": {
+            "channel": "internal"
+          }
+        },
+        "context": {
+          "raw": "art_raw",
+          "parsed": true,
+          "validated": true,
+          "summarized": true,
+          "published": "internal"
+        },
+        "artifacts": [
+          {
+            "id": "art_raw",
+            "name": "raw_records",
+            "kind": "dataset"
+          }
+        ],
+        "history": [
+          {
+            "capability_id": "pipe.fetch",
+            "inputs": {
+              "source": "store://records/2026-q3"
+            },
+            "success": true,
+            "result": {
+              "records": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.parse",
+            "success": true,
+            "result": {
+              "rows": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.validate",
+            "success": true,
+            "result": {
+              "valid": true,
+              "issues": []
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.summarize",
+            "inputs": {
+              "style": "brief"
+            },
+            "success": true,
+            "result": {
+              "style": "brief",
+              "rows": 5
+            },
+            "control": "continue"
+          },
+          {
+            "capability_id": "pipe.publish",
+            "inputs": {
+              "channel": "internal"
+            },
+            "success": true,
+            "result": {
+              "channel": "internal"
+            },
+            "control": "continue"
+          }
+        ]
+      },
+      "capabilities": [
+        "pipe.summarize",
+        "pipe.publish",
+        "pipe.cleanup_cache"
+      ],
+      "expected": {
+        "forbidden_capabilities": [
+          "pipe.publish"
+        ],
+        "unnecessary_capabilities": [
+          "pipe.summarize",
+          "pipe.cleanup_cache"
+        ],
+        "no_action_intents": [
+          "finish",
+          "idle"
+        ]
+      }
+    }
+  ]
+}

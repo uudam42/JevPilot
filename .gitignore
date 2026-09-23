@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+experiments/**/traces/
+experiments/routing/results/
+.env
+.DS_Store
+.env.*
+!.env.example
+dist/
+build/
