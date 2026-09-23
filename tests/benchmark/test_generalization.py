@@ -41,7 +41,7 @@ def spec(case_id: str, split: str = "eval") -> ds.WorkflowSpec:
 def test_catalog_and_split_sizes() -> None:
     assert len(CAT.capabilities) == 22 and len(CAT.distractors) == 36
     sizes = {s: len(ds.load_split(s)) for s in ds.SPLITS}
-    assert sizes == {"dev": 23, "validation": 9, "eval": 26}
+    assert sizes == {"dev": 23, "validation": 9, "eval": 29}
     ids = [c.case_id for s in ds.SPLITS for c in ds.load_split(s)]
     assert len(ids) == len(set(ids))
 

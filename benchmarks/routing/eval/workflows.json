@@ -630,6 +630,81 @@
       "expected_outcome": "awaiting_human",
       "unseen_composition": false,
       "note": "a label-translation distractor exists but does not translate dashboards"
+    },
+    {
+      "case_id": "eval_u_trend_outliers_literal",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "literal_goal"
+      ],
+      "goal": "Fit a trend over time to the dataset at the given source and flag anomalous records.",
+      "goal_facts": [
+        "trend_fitted",
+        "outliers_flagged"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true,
+      "note": "same composition as a paraphrased case, dev-style wording"
+    },
+    {
+      "case_id": "eval_u_compare_export_literal",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "literal_goal"
+      ],
+      "goal": "Compare descriptive statistics of the dataset at the given source across the groups in the 'region' column, and export the cleaned records as a parquet file.",
+      "goal_facts": [
+        "groups_compared",
+        "table_exported"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "group_field": "region",
+        "export_format": "parquet"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true,
+      "note": "same composition as a paraphrased case, dev-style wording"
+    },
+    {
+      "case_id": "eval_u_merge_trend_literal",
+      "level": 5,
+      "categories": [
+        "multiple_valid",
+        "literal_goal"
+      ],
+      "goal": "Join the dataset at the given source with the reference table and fit a trend over time.",
+      "goal_facts": [
+        "reference_merged",
+        "trend_fitted"
+      ],
+      "forbidden_facts": [],
+      "parameters": {
+        "source": "store://projects/alpha/measurements",
+        "reference": "store://reference/site-codes"
+      },
+      "initial_facts": [],
+      "capabilities": "core",
+      "extra_distractors": 0,
+      "failures": {},
+      "expected_outcome": "succeeded",
+      "unseen_composition": true,
+      "note": "same composition as a paraphrased case, dev-style wording"
     }
   ]
 }

@@ -2,6 +2,9 @@
 
 > A domain-agnostic agentic orchestration framework for scientific, engineering, and research workflows.
 
+**Version 0.1.0: experimental.** No API stability is promised. No license has
+been chosen yet; that decision is left to the project owner.
+
 JevPilot runs an explicit, inspectable control loop over **structured state** and a
 registry of **capabilities** (tools, models, simulators, databases, agents). The
 policy that decides what to do next (a *router*) is pluggable, so the same
@@ -20,6 +23,9 @@ of them is part of the core.
 
 ## Status
 
+**Phase 1.5: real routing integrations and a generalization benchmark.** See
+[Routing evaluation](#routing-evaluation) below.
+
 **Phase 1: routing intelligence, baselines and evaluation.** On top of the
 Phase 0 core (loop, interfaces, registries, provenance, tracing, two trivial
 demo domains), JevPilot now has a replaceable routing layer: `RuleRouter`,
@@ -30,8 +36,9 @@ the same state and capability descriptions and return the same validated
 | Integration | Status |
 |---|---|
 | Rule baseline | implemented, deterministic |
-| LLM routing | `LLMRouter` + real `AnthropicLLMAdapter` (optional extra) + offline `FakeLLMAdapter` |
-| Jev routing | `JevRouter` + offline `FakeJevAdapter`. **No real Jev adapter yet**; the `RoutingModelAdapter` contract is in place |
+| LLM routing | `LLMRouter` + real `AnthropicLLMAdapter` (optional `[anthropic]` extra; strict single-model by default) + offline `FakeLLMAdapter` |
+| Jev routing | `JevRouter` + `TypeSafeJevAdapter` for TypeSafe's Jev (optional `[jev]` extra; identity to be confirmed by the owner) + offline `FakeJevAdapter` |
+| Live verification | both real adapters are tested through their real SDKs with mocked HTTP; **no live model call has been made yet** (no credentials in the development environment) |
 | Real-domain science | none, deliberately |
 
 The simulated routers used by default in tests and benchmarks measure the
@@ -46,7 +53,8 @@ pytest                                   # unit, integration, architecture tests
 python examples/minimal_workflow.py      # one domain, printed trace
 python examples/cross_domain.py          # two unrelated domains, one core
 python examples/compare_routers.py       # same workflow: rule vs LLM vs Jev vs fallback
-python -m experiments.routing.benchmark  # routing benchmark (offline, simulated routers)
+python -m experiments.routing.benchmark  # generalization benchmark (offline infrastructure test)
+python -m experiments.routing.smoke      # Phase 1 smoke benchmark
 ```
 
 Everything above runs offline. For real Claude routing, install
@@ -72,6 +80,26 @@ result.state.provenance  # every observation / artifact traceable
 result.trace             # machine-readable, step-by-step trace
 ```
 
+## Routing evaluation
+
+JevPilot includes infrastructure for comparing routing policies under
+identical conditions: same benchmark, same state, same capabilities,
+different router. It covers decision-level and workflow-level metrics,
+unseen compositions, paraphrased goals, failure recovery, distractor
+scaling, and order and name perturbations. See
+[BENCHMARK_DESIGN.md](docs/BENCHMARK_DESIGN.md) and
+[EXPERIMENTS.md](docs/EXPERIMENTS.md).
+
+```bash
+python -m experiments.routing.benchmark --mode offline --split eval          # infrastructure test
+python -m experiments.routing.benchmark --mode live --routers rule,llm,jev \
+    --split eval --repetitions 5 --strict                                      # needs API keys
+```
+
+**Real-model evaluation is in progress.** No live results exist yet, and this
+README makes no claim about how Jev, LLM and rule routing compare. Offline
+numbers come from fake adapters and only test the infrastructure.
+
 ## Layout
 
 ```text
@@ -88,9 +116,11 @@ jevpilot/
 domains/          example domains (depend on jevpilot; jevpilot never imports them)
   demo/           arithmetic toy domain (extends WorkflowState, uses a reducer)
   stats_demo/     sampling toy domain (artifacts, uncertainty, provenance chains)
-integrations/     SDK-backed provider adapters (optional; jevpilot never imports them)
+integrations/     SDK-backed provider adapters: anthropic_llm, typesafe_jev (optional)
+benchmarks/
+  routing/        generalization benchmark data: catalog, dev / validation / eval splits
 experiments/
-  routing/        benchmark harness: fixtures, suites, metrics, CLI, results/
+  routing/        benchmark CLI, generalization harness (oracle, runner, metrics), smoke suite
 examples/  tests/{unit,integration,architecture,routing,benchmark}/  docs/
 ```
 
@@ -101,9 +131,12 @@ examples/  tests/{unit,integration,architecture,routing,benchmark}/  docs/
 - [DOMAIN_INTERFACE.md](docs/DOMAIN_INTERFACE.md): adding a new domain without touching the core
 - [STATE_MODEL.md](docs/STATE_MODEL.md): WorkflowState, Observation, Artifact, Provenance, EvaluationResult
 - [ROUTING.md](docs/ROUTING.md): routing contract, RoutingRequest, LLM/Jev/fallback routers, validation, adding a router
-- [BENCHMARKING.md](docs/BENCHMARKING.md): fixture format, metrics, reproducibility, running and reading benchmarks
+- [BENCHMARKING.md](docs/BENCHMARKING.md): the Phase 1 smoke benchmark (fixture format, metrics)
+- [REAL_ROUTING.md](docs/REAL_ROUTING.md): Claude and Jev integrations, strict mode, verification status, Jev findings
+- [BENCHMARK_DESIGN.md](docs/BENCHMARK_DESIGN.md): the generalization benchmark: levels, splits, oracle ground truth, metrics
+- [EXPERIMENTS.md](docs/EXPERIMENTS.md): offline vs live runs, manifests, reproducibility, reading results
 
 ## Requirements
 
 Python ≥ 3.11. The only runtime dependency is `pydantic>=2.7`. Provider SDKs
-are optional extras (`[anthropic]`).
+are optional extras (`[anthropic]`, `[jev]`).

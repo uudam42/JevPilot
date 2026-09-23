@@ -1,4 +1,9 @@
-# Routing Benchmarks
+# Phase 1 Smoke Benchmark
+
+> This page describes the Phase 1 **smoke** benchmark, now
+> `python -m experiments.routing.smoke`. The Phase 1.5 **generalization**
+> benchmark (`python -m experiments.routing.benchmark`) is described in
+> [BENCHMARK_DESIGN.md](BENCHMARK_DESIGN.md) and [EXPERIMENTS.md](EXPERIMENTS.md).
 
 `experiments/routing/` compares routing policies on **identical states and
 capabilities**: same workflow, same initial state, same registry, different
@@ -6,11 +11,11 @@ router. It uses artificial or demo domains only; no specialist domain
 knowledge is involved.
 
 ```bash
-python -m experiments.routing.benchmark                            # all simulated routers, both modes
-python -m experiments.routing.benchmark --router rule --router jev+rule
-python -m experiments.routing.benchmark --mode decision --repeats 5 --seed 7
-python -m experiments.routing.benchmark --no-faults                # fakes without fault injection
-python -m experiments.routing.benchmark --router llm-anthropic     # REAL API calls (credentials, cost)
+python -m experiments.routing.smoke                            # all simulated routers, both modes
+python -m experiments.routing.smoke --router rule --router jev+rule
+python -m experiments.routing.smoke --mode decision --repeats 5 --seed 7
+python -m experiments.routing.smoke --no-faults                # fakes without fault injection
+python -m experiments.routing.smoke --router llm-anthropic     # REAL API calls (credentials, cost)
 ```
 
 Results go to `experiments/routing/results/<run_id>/`, which is git-ignored.

@@ -226,8 +226,8 @@ sampling configuration and is recorded in run manifests. `ModelUsage`
 | Adapter | Where | Real or mocked |
 |---|---|---|
 | `FakeJevAdapter`, `FakeLLMAdapter` | `jevpilot/adapters/` | **Mocked.** Offline and deterministic. Driven by a script or a request-level policy |
-| `AnthropicLLMAdapter` | `integrations/anthropic_llm.py` | **Real** Claude Messages API. Optional (`pip install 'jevpilot[anthropic]'`), SDK imported lazily, credentials from the environment |
-| Jev | none yet | **No real Jev adapter exists.** Implement `RoutingModelAdapter` (see below) |
+| `AnthropicLLMAdapter` | `integrations/anthropic_llm.py` | **Real** Claude Messages API. Optional (`[anthropic]`), strict single-model by default. SDK-verified, not yet live-verified |
+| `TypeSafeJevAdapter` | `integrations/typesafe_jev.py` | **Real** TypeSafe Jev (`system_one`). Optional (`[jev]`). SDK-verified, not yet live-verified; identity to be confirmed. See [REAL_ROUTING.md](REAL_ROUTING.md) |
 
 Fake adapters accept script items built with `jevpilot.adapters.scripting`:
 `valid`, `finish`, `ask_human`, `invalid_capability`, `invalid_inputs`,

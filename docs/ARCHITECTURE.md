@@ -242,10 +242,23 @@ policy; routing diagnostics in the trace; a real Claude adapter in
 `integrations/`; and the benchmark harness in `experiments/routing/`. See
 [ROUTING.md](ROUTING.md) and [BENCHMARKING.md](BENCHMARKING.md).
 
+## Phase 1.5 (done)
+
+Real adapters for Claude (strict single-model mode by default) and TypeSafe
+Jev in `integrations/`, verified through their SDKs. The routing
+generalization benchmark: `benchmarks/routing/` data and the
+`experiments/routing/generalization/` oracle, runner and metrics, with
+offline and live modes. Git history and version 0.1.0 (experimental). See
+[REAL_ROUTING.md](REAL_ROUTING.md), [BENCHMARK_DESIGN.md](BENCHMARK_DESIGN.md)
+and [EXPERIMENTS.md](EXPERIMENTS.md). No core module changed except
+`ModelRouter`, which now keeps adapter metadata on every `RoutingAttempt`.
+
 ## Phase 2 backlog
 
-1. A real Jev adapter (`RoutingModelAdapter`) once Jev's interface is fixed,
-   plus real-model benchmark runs with repeats.
+1. Live runs: the smoke tests, then `--mode live` on validation and eval with
+   repetitions, once credentials (and confirmation of Jev's identity) exist.
+   Then a cache-friendly request layout (stable capability list before the
+   volatile state) to cut live cost; that needs a new prompt version.
 2. Human-in-the-loop resume (`Controller.resume(state, human_input)`) and a
    `HumanRouter`.
 3. `HybridRouter` (for example rules for known states, a model otherwise) and
