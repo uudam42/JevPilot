@@ -110,7 +110,7 @@ class RoutingAttempt(FrozenModel):
     decision: RoutingDecision | None = None  # also set when a parsed decision failed validation
     error: ErrorInfo | None = None
     latency_s: float = Field(default=0.0, ge=0.0)
-    model: str | None = None
+    model: str | None = None  # model the provider reports as having served the call
     usage: ModelUsage | None = None
     request: dict[str, Any] | None = None  # serialised routing request, when one was built
     metadata: dict[str, Any] = Field(default_factory=dict)

@@ -56,7 +56,7 @@ def response(text: str = DECISION, stop: str = "end_turn") -> Any:
 def test_request_shape_usage_and_decision() -> None:
     msgs = StubMessages(response())
     client = StubClient(msgs)
-    adapter = AnthropicLLMAdapter(client=client, price_per_mtok=(5.0, 25.0))
+    adapter = AnthropicLLMAdapter(client=client, price_per_mtok=(5.0, 25.0), refusal_fallbacks=True)
     outcome = LLMRouter(adapter, timeout_s=30).route(new_state(), SPECS)
     assert outcome.decision.capability_id == "t.write"
     (call,) = msgs.calls

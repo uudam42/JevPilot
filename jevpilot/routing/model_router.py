@@ -110,6 +110,7 @@ class ModelRouter(Router):
                     model=response.model if response else None,
                     usage=response.usage if response else None,
                     request=record,
+                    metadata=dict(response.metadata) if response else {},
                 ),
             )
 
@@ -151,5 +152,6 @@ class ModelRouter(Router):
             model=response.model,
             usage=response.usage,
             request=record,
+            metadata=dict(response.metadata),
         )
         return RoutingOutcome(decision=decision, attempts=(attempt,))

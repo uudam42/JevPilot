@@ -47,7 +47,11 @@ class LLMRouter(ModelRouter):
             output=completion.text,
             model=completion.model,
             usage=completion.usage,
-            metadata={"stop_reason": completion.stop_reason, "prompt_version": prompt.version},
+            metadata={
+                **completion.metadata,
+                "stop_reason": completion.stop_reason,
+                "prompt_version": prompt.version,
+            },
         )
 
     def adapter_config(self) -> dict[str, Any]:

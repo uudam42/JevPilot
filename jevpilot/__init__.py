@@ -22,7 +22,7 @@ from jevpilot.routing import (
     ScriptedRouter,
 )
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"  # experimental pre-release: no API stability guarantees
 
 __all__ = [
     *_core_all,
