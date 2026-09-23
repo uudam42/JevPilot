@@ -1,0 +1,59 @@
+{
+  "id": "NASA-MICROMECHANICS",
+  "title": "NASA composite micromechanics equations and constituent data bank (Chamis; ICAN)",
+  "documents": {
+    "NASA-TM-83320": {
+      "citation": "Chamis, C. C.: Simplified Composite Micromechanics Equations for Hygral, Thermal and Mechanical Properties. NASA TM-83320, NASA Lewis Research Center, 1983.",
+      "ntrs": "19830011546",
+      "url": "https://ntrs.nasa.gov/citations/19830011546"
+    },
+    "NASA-TP-2515": {
+      "citation": "Murthy, P. L. N.; Chamis, C. C.: Integrated Composite Analyzer (ICAN) Users and Programmers Manual. NASA TP-2515, 1986.",
+      "ntrs": "19860012143",
+      "url": "https://ntrs.nasa.gov/citations/19860012143"
+    },
+    "NASA-TP-3290": {
+      "citation": "Murthy, P. L. N.; Ginty, C. A.; Sanfeliz, J. G.: Second Generation Integrated Composite Analyzer (ICAN) Computer Code. NASA TP-3290, 1993.",
+      "ntrs": "19930008950",
+      "url": "https://ntrs.nasa.gov/citations/19930008950"
+    }
+  },
+  "retrieved": "2026-09-23",
+  "reuse": {
+    "basis": "NTRS record metadata for all three: distribution PUBLIC; copyright determination GOV_PUBLIC_USE_PERMITTED (U.S. Government works, NASA Lewis Research Center). TP-3290 report documentation page: 'Unclassified - Unlimited'.",
+    "redistribution_of_extracts": "permitted"
+  },
+  "files": [
+    {
+      "path": "raw/nasa_micromechanics/19830011546.pdf",
+      "bytes": 855011,
+      "sha256": "42e31c54d9d470daedb228462d4568ee8ed533a767006a8e9613fbe6c5ef22c5",
+      "committed": false,
+      "note": "https://ntrs.nasa.gov/api/citations/19830011546/downloads/19830011546.pdf"
+    },
+    {
+      "path": "raw/nasa_micromechanics/19860012143.pdf",
+      "bytes": 2799460,
+      "sha256": "8cc6351a47c1fa8dc33cf81222a1424c8621600d8a2599f3568f73ca15367b33",
+      "committed": false,
+      "note": "https://ntrs.nasa.gov/api/citations/19860012143/downloads/19860012143.pdf"
+    },
+    {
+      "path": "raw/nasa_micromechanics/19930008950.pdf",
+      "bytes": 2424119,
+      "sha256": "54ae740c98300a56d1222f0ab279e187a209a0259a619af8f1adaf2d195e1fd8",
+      "committed": false,
+      "note": "https://ntrs.nasa.gov/api/citations/19930008950/downloads/19930008950.pdf"
+    },
+    {
+      "path": "raw/nasa_micromechanics/pages.jsonl",
+      "bytes": 45604,
+      "sha256": "022736cc65d9be325cfc6fa6f60dbad6be69e34cb3fda4b0eaaf0dfc3793066f",
+      "committed": true,
+      "note": "cited pages only: the PDFs' embedded OCR text layer, extracted with pypdf 6.19.0 (PdfReader.extract_text), unmodified"
+    }
+  ],
+  "used": "Micromechanics equations (TM-83320 figs. 5-6; TP-3290 appendix D) implemented in domains/uav_materials/micromechanics.py. Constituent values for AS graphite fibre and IMLS epoxy matrix, each accepted only when OCR renderings in at least two of the three documents agree (domains/uav_materials/constituents.py).",
+  "not_used": "TM-83320 Table 1 (fibre properties): its page has no text layer, and values are not transcribed by hand. The TM-83320 Table 2 matrix-modulus row (ambiguous columns). Hygral, thermal and hygrothermal equations. All other fibres and matrices.",
+  "caveats": "TM-83320: constituent tables 'were compiled from many sources and many values are estimates which were inferred from predicted results and curve fits'; and 'No comparisons were provided between predicted values and available measured data'. Values are indicative, not lot-specific design data."
+}

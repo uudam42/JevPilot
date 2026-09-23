@@ -143,8 +143,14 @@ class ModelIdentity(FrozenModel):
     version: str
     kind: str  # analytical / empirical / surrogate / simulator / synthetic
     assumptions: tuple[str, ...] = ()
+    # True: a real engineering model (not a test stub). This is NOT a validation claim;
+    # what has been checked, and where, is in `validation` and per prediction.
     engineering_valid: bool  # False for test models: outputs must not inform decisions
     validation: ModelValidation = Field(default_factory=ModelValidation)
+    equations: dict[str, str] = Field(default_factory=dict)  # property → equation
+    sources: tuple[str, ...] = ()  # citations for the equations
+    applicable_domain: str = ""
+    unsupported: tuple[str, ...] = ()  # target properties the model does not predict
 
     @property
     def label(self) -> str:
@@ -286,6 +292,7 @@ def candidate_from_prediction(
     predicted: PredictedPropertyProfile,
     family: MaterialFamily,
     origin: CandidateOrigin = CandidateOrigin.VIRTUAL,
+    parents: tuple[str, ...] = (),
 ) -> MaterialCandidate:
     """Wrap x̂ in the same MaterialRecord/MaterialCandidate every evaluator consumes."""
     if predicted.design_id != design.design_id:
@@ -315,6 +322,7 @@ def candidate_from_prediction(
         candidate_id=design.design_id,
         origin=origin,
         material=record,
+        parents=parents,
         design=design.model_dump(mode="json"),
         metadata={
             "model": predicted.model.model_dump(mode="json"),

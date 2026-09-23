@@ -20,7 +20,14 @@ CANONICAL_BY_DIMENSION: dict[Dimension, str] = {
     Dimension.RATE: "mm/year",
     Dimension.TIME: "h",
 }
-CANONICAL_BY_PROPERTY: dict[str, str] = {"youngs_modulus": "GPa", "shear_modulus": "GPa"}
+CANONICAL_BY_PROPERTY: dict[str, str] = {
+    "youngs_modulus": "GPa",
+    "shear_modulus": "GPa",
+    "ply_longitudinal_modulus": "GPa",
+    "ply_transverse_modulus": "GPa",
+    "ply_inplane_shear_modulus": "GPa",
+    "ply_major_poisson_ratio": "1",
+}
 
 
 def canonical_unit(prop: str) -> str:

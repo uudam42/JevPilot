@@ -86,6 +86,13 @@ for _p in (
     ),
     PropertyDef("shear_strength", S, Dimension.STRESS, "ultimate shear strength", Direction.HIGHER),
     PropertyDef(
+        "ply_longitudinal_tensile_strength",
+        S,
+        Dimension.STRESS,
+        "ply tensile strength S11T along fibre axis 1",
+        Direction.HIGHER,
+    ),
+    PropertyDef(
         "compressive_yield_strength",
         S,
         Dimension.STRESS,
@@ -97,6 +104,25 @@ for _p in (
     PropertyDef("shear_modulus", D, Dimension.STRESS, "elastic shear modulus"),
     PropertyDef("elongation_at_break", D, Dimension.FRACTION, "strain at fracture in tension"),
     PropertyDef("strain_at_yield", D, Dimension.FRACTION, "strain at onset of yield"),
+    # Unidirectional ply (lamina) properties, in the ply material axes: 1 = fibre direction,
+    # 2 = transverse in-plane. They are directional and never stand in for the isotropic
+    # properties above (youngs_modulus, tensile_strength, elongation_at_break).
+    PropertyDef("ply_longitudinal_modulus", D, Dimension.STRESS, "ply modulus E11, fibre axis 1"),
+    PropertyDef(
+        "ply_transverse_modulus", D, Dimension.STRESS, "ply modulus E22, in-plane transverse 2"
+    ),
+    PropertyDef("ply_inplane_shear_modulus", D, Dimension.STRESS, "ply shear modulus G12"),
+    PropertyDef(
+        "ply_major_poisson_ratio", D, Dimension.FRACTION, "ply Poisson ratio nu12 (-e2/e1)"
+    ),
+    PropertyDef(
+        "ply_longitudinal_tensile_failure_strain",
+        D,
+        Dimension.FRACTION,
+        "ply tensile strain at fracture along axis 1 (brittle fibre failure; not metallic "
+        "elongation, which includes plastic flow)",
+        Direction.HIGHER,
+    ),
     # corrosion: always tied to an environment
     PropertyDef(
         "corrosion_rate",
