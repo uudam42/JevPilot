@@ -139,6 +139,21 @@ for _p in (
         "glass transition (polymers, polymer matrices)",
     ),
     PropertyDef("melting_temperature", T, Dimension.TEMPERATURE, "melting point or range onset"),
+    # Narrative handbook limits. They are NOT max_service_temperature: each is tied to
+    # a stated use or degradation mode (conditions.other["stated_use"]/["criterion"]).
+    PropertyDef(
+        "application_temperature_limit",
+        T,
+        Dimension.TEMPERATURE,
+        "upper temperature of a use stated in handbook prose, e.g. 'parts requiring high "
+        "strength up to 1000 F'; valid only for that use",
+    ),
+    PropertyDef(
+        "exposure_stability_temperature",
+        T,
+        Dimension.TEMPERATURE,
+        "temperature up to which prolonged exposure is stated not to degrade a named property",
+    ),
     PropertyDef(
         "tensile_strength_retention",
         T,

@@ -78,7 +78,10 @@ def test_every_real_measurement_traces_to_a_table_cell_or_a_quote() -> None:
         for m in record.all_measurements():
             assert m.provenance_status == "sourced" and m.provenance and m.provenance.sources
             src = m.provenance.sources[0]
-            if src.identifier == mil.SOURCE_ID:
+            if "statement" in src.metadata:  # prose temperature statement (MIL or NASA)
+                assert m.category == "temperature_effects" and src.metadata["quote"]
+                assert m.provenance.metadata["identity_match"] in ("exact", "alloy")
+            elif src.identifier == mil.SOURCE_ID:
                 assert src.metadata["page"] in PAGES
                 assert number(src.metadata["raw_token"]) == m.value  # original value preserved
                 assert m.conditions.temperature_regime == "room"
@@ -143,5 +146,9 @@ def test_coverage_is_reported_honestly() -> None:
     _, report = build_mod.build()
     cov = report["coverage"]["materials_with_category"]
     assert cov["strength"] >= 40 and cov["density"] >= 40
-    assert cov["water_absorption"] == 0 and cov["temperature_effects"] == 0
+    assert cov["water_absorption"] == 0
+    # prose temperature statements only: 11 C17200/Ti/Ni records + 4 bare 7075 (melting)
+    assert cov["temperature_effects"] == 15
+    by_property = report["coverage"]["materials_with_property"]
+    assert by_property["max_service_temperature"] == 4  # C17200 only (time-limited)
     assert 0 < cov["corrosion"] < 10

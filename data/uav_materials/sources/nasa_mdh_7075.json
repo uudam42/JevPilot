@@ -1,0 +1,45 @@
+{
+  "id": "NASA-MDH-7075",
+  "title": "Materials Data Handbook: Aluminum Alloy 7075 (1966 edition, NASA CR-80764; 2nd edition 1972, NASA CR-123773)",
+  "publisher": "NASA George C. Marshall Space Flight Center (1966: Syracuse University, eds. J. Sessler, V. Weiss; 1972: Western Applied Research & Development, rev. R. F. Muraca, J. S. Whittick)",
+  "retrieved": "2026-09-23",
+  "retrieved_from": [
+    "https://ntrs.nasa.gov/citations/19670004550",
+    "https://ntrs.nasa.gov/citations/19720022809"
+  ],
+  "identifiers": {
+    "NASA-CR-80764": "NTRS 19670004550",
+    "NASA-CR-123773": "NTRS 19720022809"
+  },
+  "reuse": {
+    "statement_in_document": "none on the pages used",
+    "basis": "NTRS record metadata: distribution PUBLIC; copyright determination GOV_PUBLIC_USE_PERMITTED (U.S. Government work under NASA contracts NAS8-11345 and NAS8-26644).",
+    "redistribution_of_extracts": "permitted"
+  },
+  "files": [
+    {
+      "path": "raw/nasa_mdh_7075/19670004550.pdf",
+      "bytes": 7202405,
+      "sha256": "84063891461ea75be9871c0156d7ce236b1f179edbf9749b093a618197579d25",
+      "committed": false,
+      "note": "https://ntrs.nasa.gov/api/citations/19670004550/downloads/19670004550.pdf"
+    },
+    {
+      "path": "raw/nasa_mdh_7075/19720022809.pdf",
+      "bytes": 7631601,
+      "sha256": "ad60f5450b30a7935f7f9635f87166d7dd54ee9f042f3c953b2cc5d7635b58b1",
+      "committed": false,
+      "note": "https://ntrs.nasa.gov/api/citations/19720022809/downloads/19720022809.pdf"
+    },
+    {
+      "path": "raw/nasa_mdh_7075/pages.jsonl",
+      "bytes": 8632,
+      "sha256": "561ec8a39a53879189bf76c15b9fddc17a0e6d0686d2ee54c6c0fddd7c9c11b4",
+      "committed": true,
+      "note": "title pages and the cited page of each edition: the PDFs' embedded OCR text layer, extracted with pypdf 6.19.0 (PdfReader.extract_text), unmodified"
+    }
+  ],
+  "used": "One sentence, 'Melting range is approximately 477 to 638 C' (1966 p.19; 1972 p.18, section 3.3). Accepted because both independently scanned editions read the same numbers and unit; recorded as melting_temperature 477 degC (range onset), alloy-level link to non-clad 7075 records.",
+  "not_used": "All elevated-temperature strength and modulus data (figures and scanned tables: OCR not reliable enough and values would have to be read off curves). The handbooks state no maximum service temperature for 7075.",
+  "caveats": "Melting range is a physical transition, not a service temperature; it never satisfies a max-service-temperature requirement."
+}

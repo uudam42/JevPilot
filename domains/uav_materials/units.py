@@ -54,6 +54,7 @@ _DEFS = [
     UnitDef("%", Dimension.FRACTION, 0.01),
     UnitDef("K", Dimension.TEMPERATURE, 1.0),
     UnitDef("degC", Dimension.TEMPERATURE, 1.0, 273.15),
+    UnitDef("degF", Dimension.TEMPERATURE, 5 / 9, 273.15 - 32 * 5 / 9),  # MIL-HDBK-5 prose
     UnitDef("m/s", Dimension.RATE, 1.0),
     UnitDef("mm/year", Dimension.RATE, 1e-3 / 31_557_600),  # Julian year
     UnitDef("um/year", Dimension.RATE, 1e-6 / 31_557_600),

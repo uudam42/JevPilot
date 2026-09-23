@@ -22,6 +22,11 @@ Equivalence rules (documented, deliberately narrow):
 A condition the requirement states but the measurement does not report can
 never be established, so the measurement is ``INCOMPATIBLE`` for that
 requirement (never silently assumed).
+
+A measurement limited to a stated exposure duration (e.g. "500 °F for up to
+100 hours") does not answer a requirement that states no duration: an
+unconditioned requirement means the continuous case, so such a value is
+``INCOMPATIBLE`` for it.
 """
 
 from __future__ import annotations
@@ -127,6 +132,11 @@ def compatibility(required: TestConditions, observed: TestConditions) -> tuple[C
             return level, "different relative humidity"
         levels.append(level)
     if not stated:
+        if observed.exposure_duration is not None:
+            return (
+                Compat.INCOMPATIBLE,
+                "value limited to a stated exposure duration; the requirement states none",
+            )
         if _is_room(observed) is False:
             return (
                 Compat.INCOMPATIBLE,

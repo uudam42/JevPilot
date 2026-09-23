@@ -127,8 +127,20 @@ class IdentityIndex:
         self.identities = identities
 
     def resolve(self, name: str) -> list[tuple[MaterialIdentity, MatchLevel]]:
+        """Identities the name refers to, with the match level.
+
+        Names the designation parser does not know (nickel, copper, cobalt
+        alloys) match only when the whole name equals a record's designation,
+        ignoring case and spacing, and then only at alloy level: no temper or
+        condition is read from such a name.
+        """
         query = parse_designation(name)
         if query is None:
-            return []
+            wanted = " ".join(name.split()).casefold()
+            return [
+                (i, MatchLevel.ALLOY)
+                for i in self.identities
+                if " ".join(i.designation.split()).casefold() == wanted
+            ]
         hits = [(i, i.match(query)) for i in self.identities]
         return [(i, level) for i, level in hits if level is not MatchLevel.NONE]

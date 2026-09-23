@@ -1,0 +1,17 @@
+{
+  "id": "MIL-HDBK-694A",
+  "title": "Military Standardization Handbook: Aluminum and Aluminum Alloys (MIL-HDBK-694A, 1966; cancelled)",
+  "publisher": "U.S. Department of Defense",
+  "retrieved": "2026-09-23",
+  "retrieved_from": "https://everyspec.com/MIL-HDBK/MIL-HDBK-0600-0699/MIL_HDBK_694A_2073/",
+  "status": "evaluated and rejected; contributes no data",
+  "files": [
+    {
+      "path": "raw/mil_hdbk_694a/MIL_HDBK_694A.pdf",
+      "bytes": 4752873,
+      "sha256": "855bb3b7eb93272acbb0d206963f2137c7c8de14123fe4f8f7d1d6fdc425c09d",
+      "committed": false
+    }
+  ],
+  "reason": "The elevated-temperature tables (VIII-X) exist only as OCR of a scan whose rows and columns come out scrambled; values cannot be assigned to alloy, temper and temperature without manual transcription, which this pipeline does not do. The only prose service-temperature statement found concerns a casting alloy that is not in the dataset."
+}
