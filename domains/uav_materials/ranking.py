@@ -41,7 +41,7 @@ better than it could be. D and coverage are reported alongside.
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -57,6 +57,14 @@ from domains.uav_materials.selection import select
 from jevpilot import Provenance
 
 NAME = "target_relative/1"
+
+# Optional requirement resolution (see requirements.py): maps a target requirement to the
+# property requirement that answers it for this material, or None (+ why) if none does.
+Resolve = Callable[[MaterialRecord, PropertyRequirement], tuple[PropertyRequirement | None, str]]
+
+
+def _identity(_: MaterialRecord, r: PropertyRequirement) -> tuple[PropertyRequirement | None, str]:
+    return r, ""
 
 
 def _key(r: PropertyRequirement) -> str:
@@ -83,7 +91,9 @@ class TargetRelativeExtractor:
         profile: TargetMaterialProfile,
         ranges: dict[str, tuple[float, float]],
         worst: dict[str, float],
+        resolve: Resolve | None = None,
     ) -> None:
+        self.resolve = resolve or _identity
         self.profile = profile
         self.scored = [r for r in profile.soft_preferences if r.weight is not None]
         self.unscored = tuple(_key(r) for r in profile.soft_preferences if r.weight is None)
@@ -95,23 +105,26 @@ class TargetRelativeExtractor:
 
     @classmethod
     def fit(
-        cls, profile: TargetMaterialProfile, materials: Sequence[MaterialRecord]
+        cls,
+        profile: TargetMaterialProfile,
+        materials: Sequence[MaterialRecord],
+        resolve: Resolve | None = None,
     ) -> TargetRelativeExtractor:
         ranges: dict[str, tuple[float, float]] = {}
         values: dict[str, list[float]] = {}
         for r in profile.soft_preferences:
             if r.weight is None:
                 continue
-            vals = [v for m in materials if (v := _value(m, r)) is not None]
+            vals = [v for m in materials if (v := _value(m, r, resolve)) is not None]
             values[_key(r)] = vals
             if vals:
                 ranges[_key(r)] = (min(vals), max(vals))
-        draft = cls(profile, ranges, {})
+        draft = cls(profile, ranges, {}, resolve)
         worst = {
             _key(r): max([draft.penalty(r, v) for v in values[_key(r)]] + [1.0])
             for r in draft.scored
         }
-        return cls(profile, ranges, worst)
+        return cls(profile, ranges, worst, resolve)
 
     # -- penalties -------------------------------------------------------------------
 
@@ -148,14 +161,30 @@ class TargetRelativeExtractor:
         provenance: list[Provenance] = []
         for r in self.scored:
             w = r.weight or 0.0
-            sel = select(material, r)
-            unit = canonical_unit(r.property)
+            answer, why = self.resolve(material, r)
+            if answer is None:
+                pess += w * self.worst.get(_key(r), 1.0) ** 2
+                contribs.append(
+                    Contribution(
+                        property=r.property,
+                        operator=str(r.operator),
+                        weight=w,
+                        value=None,
+                        unit=canonical_unit(r.property),
+                        penalty=None,
+                        share=None,
+                        note=why,
+                    )
+                )
+                continue
+            sel = select(material, answer)
+            unit = canonical_unit(r.property)  # the carrier's scale (same dimension)
             if sel.chosen is None:
                 worst = self.worst.get(_key(r), 1.0)
                 pess += w * worst**2
                 contribs.append(
                     Contribution(
-                        property=r.property,
+                        property=answer.property,
                         operator=str(r.operator),
                         weight=w,
                         value=None,
@@ -177,7 +206,7 @@ class TargetRelativeExtractor:
                 provenance.append(sel.chosen.provenance)
             contribs.append(
                 Contribution(
-                    property=r.property,
+                    property=answer.property,
                     operator=str(r.operator),
                     weight=w,
                     value=v,
@@ -210,7 +239,7 @@ class TargetRelativeExtractor:
     def material_vector(self, material: Any, profile: TargetMaterialProfile) -> SearchFeatureVector:
         features: dict[str, float | None] = {}
         for r in self.scored:
-            v = _value(material, r)
+            v = _value(material, r, self.resolve)
             features[_key(r)] = None if v is None else self.penalty(r, v)
         return SearchFeatureVector(
             features=features, derivation=self.parameters()["preferences"], extractor=NAME
@@ -249,6 +278,11 @@ class TargetRelativeExtractor:
         }
 
 
-def _value(material: MaterialRecord, r: PropertyRequirement) -> float | None:
-    sel = select(material, r)
+def _value(
+    material: MaterialRecord, r: PropertyRequirement, resolve: Resolve | None = None
+) -> float | None:
+    answer, _ = (resolve or _identity)(material, r)
+    if answer is None:
+        return None
+    sel = select(material, answer)
     return None if sel.chosen is None else sel.chosen.value_in(canonical_unit(r.property))

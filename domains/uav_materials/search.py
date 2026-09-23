@@ -272,7 +272,9 @@ class SimilarityRanker:
 
 
 def fit_normalization(
-    profile: TargetMaterialProfile, screened: Sequence[tuple[MaterialCandidate, RankedCandidate]]
+    profile: TargetMaterialProfile,
+    screened: Sequence[tuple[MaterialCandidate, RankedCandidate]],
+    resolve: Any = None,
 ) -> tuple[Any, str]:
     """Fit the ranking scale on the normalisation pool; returns (extractor, pool label).
 
@@ -288,7 +290,7 @@ def fit_normalization(
         if pool is viable
         else f"all candidates ({len(pool)}); fewer than 2 were non-infeasible"
     )
-    return TargetRelativeExtractor.fit(profile, pool), label
+    return TargetRelativeExtractor.fit(profile, pool, resolve), label
 
 
 def _counts(assessed: Sequence[RankedCandidate]) -> dict[str, int]:

@@ -87,6 +87,7 @@ from pydantic import Field
 from domains.uav_materials.harmonize import canonical_unit
 from domains.uav_materials.identity import MatchLevel
 from domains.uav_materials.profile import Priority, PropertyRequirement, TargetMaterialProfile
+from domains.uav_materials.requirements import ResolutionStatus, TargetBinding
 from domains.uav_materials.schema import (
     EvidenceType,
     MaterialCandidate,
@@ -116,6 +117,9 @@ class GapReason(StrEnum):
     INSUFFICIENT_PROVENANCE = "insufficient_provenance"
     UNCERTAINTY_TOO_HIGH = "uncertainty_too_high"
     INCONCLUSIVE_BOUND = "inconclusive_bound"
+    # requirement semantics (requirements.py), not data: no evidence can fix these alone
+    AMBIGUOUS_REQUIREMENT = "ambiguous_requirement"  # underspecified for this material system
+    UNSUPPORTED_OBSERVABLE = "unsupported_observable"  # no observable answers it
 
 
 IDENTITY_ORDER = {"none": 0, MatchLevel.ALLOY.value: 1, MatchLevel.EXACT.value: 2, "native": 3}
@@ -158,6 +162,7 @@ class RequirementEvidence(FrozenModel):
     sufficient: bool
     reasons: tuple[GapReason, ...] = ()
     detail: str = ""
+    resolution: str = "resolved"  # resolved / ambiguous / unsupported (requirements.py)
 
     @builtins.property  # the field named 'property' shadows the builtin here
     def label(self) -> str:
@@ -346,6 +351,39 @@ def _assess_requirement(
     )
 
 
+def _assess_resolved(
+    c: MaterialCandidate,
+    r: PropertyRequirement,
+    policy: EvidencePolicy,
+    binding: TargetBinding | None,
+) -> RequirementEvidence:
+    if binding is None:
+        return _assess_requirement(c, r, policy)
+    res = binding.resolve(c.material, r)
+    if res.property_requirement is not None:
+        return _assess_requirement(c, res.property_requirement, policy)
+    hard = r.priority is Priority.HARD
+    reason = (
+        GapReason.AMBIGUOUS_REQUIREMENT
+        if res.status is ResolutionStatus.AMBIGUOUS
+        else GapReason.UNSUPPORTED_OBSERVABLE
+    )
+    return RequirementEvidence(
+        property=r.property,
+        operator=str(r.operator),
+        hard=hard,
+        conditions=_conditions(r),
+        weight=r.weight,
+        measurement_available=False,
+        condition_compatible=False,
+        check=CheckStatus.UNDETERMINED.value if hard else None,
+        sufficient=False,
+        reasons=(reason,),
+        detail=f"{res.requirement.label}: {res.reason}",
+        resolution=res.status.value,
+    )
+
+
 # -- classification ----------------------------------------------------------------------
 
 
@@ -400,9 +438,12 @@ def assess(
     candidate: MaterialCandidate,
     policy: EvidencePolicy | None = None,
     acceptable_region: Sequence[PropertyRequirement] | None = None,
+    binding: TargetBinding | None = None,
 ) -> EvidenceAssessment:
+    """With a ``binding``, each requirement is first resolved for the candidate's material
+    system; unresolved ones become ``ambiguous_requirement`` / ``unsupported_observable``."""
     policy = policy or EvidencePolicy()
-    reqs = tuple(_assess_requirement(candidate, r, policy) for r in profile.requirements)
+    reqs = tuple(_assess_resolved(candidate, r, policy, binding) for r in profile.requirements)
     region = (
         None
         if acceptable_region is None

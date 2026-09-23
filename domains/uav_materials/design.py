@@ -315,7 +315,11 @@ def candidate_from_prediction(
             metadata={"generation_method": design.generation_method},
         ),
         provenance_status=ProvenanceStatus.SYNTHETIC if synthetic else ProvenanceStatus.SOURCED,
-        metadata={"predicted_by": predicted.model.label, "not_predicted": predicted.not_predicted},
+        metadata={
+            "predicted_by": predicted.model.label,
+            "not_predicted": predicted.not_predicted,
+            "material_system": design.design_space,  # selects requirement semantics
+        },
         **{k: tuple(v) for k, v in groups.items()},
     )
     return MaterialCandidate(
