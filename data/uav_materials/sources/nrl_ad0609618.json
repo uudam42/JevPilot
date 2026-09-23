@@ -1,0 +1,23 @@
+{
+  "id": "NRL-AD0609618",
+  "title": "Corrosion of Metals in Tropical Environments, Part 6: Aluminum and Magnesium",
+  "publisher": "U.S. Naval Research Laboratory (DTIC accession AD0609618)",
+  "retrieved": "2026-09-23",
+  "retrieved_from": "https://archive.org/details/DTIC_AD0609618",
+  "reuse": {
+    "statement_in_document": "Unlimited availability - Copies available from OTS",
+    "basis": "U.S. Government work (17 U.S.C. 105); unlimited availability stated on the report documentation page.",
+    "redistribution_of_extracts": "permitted"
+  },
+  "files": [
+    {"path": "raw/nrl_ad0609618/DTIC_AD0609618.pdf", "bytes": 1415447,
+     "sha256": "00fd4ead61ddb0c8d22e3e4b3f478ed5f5f0b90c98ceb9d0d60282a71e498625",
+     "committed": false},
+    {"path": "raw/nrl_ad0609618/DTIC_AD0609618_djvu.txt", "bytes": 41006,
+     "sha256": "768b932e07dc10fb42a1048aed2e06c5fe1203441b8a09ecf9449bcffc9c152e",
+     "committed": true, "note": "Internet Archive OCR text layer, unmodified"}
+  ],
+  "used": "Five quantitative statements from the machine-readable report text (quoted verbatim in domains/uav_materials/ingest/nrl_tropical.py and verified against this file at build time).",
+  "not_used": "Table 3 and all figures: scanned images without a text layer. Values are not transcribed by hand.",
+  "caveats": "Natural tropical exposure in the Panama Canal Zone, 1-16 years. 6061-T and Alclad 2024-T are reported without the full temper designation; 6061 values are linked to MIL-HDBK-5J 6061 records at alloy level only."
+}

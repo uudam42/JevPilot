@@ -127,8 +127,8 @@ def test_environment_dependent_measurements_keep_their_conditions() -> None:
     media = {m.conditions.medium: m.value for m in corrosion}
     assert len(media) == 2 and all(m.comparable_conditions for m in corrosion)
     assert all(m.conditions.exposure_duration is not None for m in corrosion)
-    no_medium = meas("corrosion_rate", 0.1, "mm/year")
-    assert not no_medium.comparable_conditions  # stored, but not comparable
+    no_env = meas("corrosion_rate", 0.1, "mm/year", conditions={"medium": "somewhere"})
+    assert not no_env.comparable_conditions  # stored, but not comparable without a class
     wa = MATS["SyntheticPolymerD"].measurements("water_absorption")[0]
     assert wa.conditions.exposure_duration and wa.conditions.exposure_duration.to("h") == 24
 

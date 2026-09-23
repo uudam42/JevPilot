@@ -9,7 +9,7 @@ from domains.uav_materials import Operator, Priority, TargetMaterialProfile, sea
 from domains.uav_materials.buoyancy import density_ratio, net_buoyant_force_per_volume
 from domains.uav_materials.fixtures import synthetic_candidates
 from domains.uav_materials.schema import Quantity
-from domains.uav_materials.search import CheckStatus, Feasibility
+from domains.uav_materials.search import CheckStatus, Feasibility, HardConstraintScreen
 from domains.uav_materials.units import UnitError
 from tests.domains.uav_materials.helpers import WA24, req, spar_profile
 
@@ -48,7 +48,7 @@ def test_profile_separates_hard_soft_ranges_and_weights() -> None:
         lambda: req("youngs_modulus", "between", 70, "GPa", upper=40),  # inverted range
         lambda: req("youngs_modulus", "target", 55, "GPa", priority="hard"),  # exact hard target
         lambda: req("water_absorption", "<=", 1, "%"),  # condition-dependent without conditions
-        lambda: req("corrosion_rate", "<=", 0.1, "mm/year"),  # no medium
+        lambda: req("corrosion_rate", "<=", 0.1, "mm/year"),  # no environment
     ],
 )
 def test_malformed_requirements_rejected(bad: object) -> None:
@@ -81,7 +81,7 @@ def _by_name(result: object) -> dict[str, object]:
 
 
 def test_hard_constraint_screen_distinguishes_bad_from_unknown() -> None:
-    result = search_materials(spar_profile(), synthetic_candidates())
+    result = search_materials(spar_profile(), synthetic_candidates(), HardConstraintScreen())
     a = _by_name(result)
     assert a["syn-composite-c"].feasibility is Feasibility.FEASIBLE  # type: ignore[attr-defined]
     sparse = a["syn-composite-f"]
@@ -110,8 +110,8 @@ def test_units_are_converted_before_comparing() -> None:
 
 
 def test_measurements_from_other_conditions_are_not_compared() -> None:
-    salt = {"medium": "salt water (3.5% NaCl, synthetic spec)"}
-    fresh = {"medium": "fresh water"}
+    salt = {"environment": "lab_salt_solution"}
+    fresh = {"environment": "freshwater_immersion"}
     cands = synthetic_candidates()
 
     def status(conditions: dict[str, object], material: str) -> CheckStatus:

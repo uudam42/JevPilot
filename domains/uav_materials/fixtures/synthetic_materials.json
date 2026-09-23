@@ -230,7 +230,8 @@
             "temperature": {
               "value": 25,
               "unit": "degC"
-            }
+            },
+            "environment": "lab_salt_solution"
           },
           "provenance": {
             "sources": [
@@ -520,7 +521,8 @@
             "temperature": {
               "value": 25,
               "unit": "degC"
-            }
+            },
+            "environment": "lab_salt_solution"
           },
           "provenance": {
             "sources": [
@@ -547,7 +549,8 @@
             "temperature": {
               "value": 25,
               "unit": "degC"
-            }
+            },
+            "environment": "freshwater_immersion"
           },
           "provenance": {
             "sources": [
@@ -822,7 +825,8 @@
             "temperature": {
               "value": 23,
               "unit": "degC"
-            }
+            },
+            "environment": "lab_water_immersion"
           },
           "provenance": {
             "sources": [
@@ -1057,7 +1061,8 @@
             "temperature": {
               "value": 23,
               "unit": "degC"
-            }
+            },
+            "environment": "lab_water_immersion"
           },
           "provenance": {
             "sources": [
@@ -1249,7 +1254,8 @@
             "temperature": {
               "value": 23,
               "unit": "degC"
-            }
+            },
+            "environment": "lab_salt_solution"
           },
           "provenance": {
             "sources": [
@@ -1467,7 +1473,8 @@
             "temperature": {
               "value": 25,
               "unit": "degC"
-            }
+            },
+            "environment": "lab_salt_solution"
           },
           "provenance": {
             "sources": [
@@ -1496,7 +1503,8 @@
             "temperature": {
               "value": 23,
               "unit": "degC"
-            }
+            },
+            "environment": "lab_water_immersion"
           },
           "provenance": {
             "sources": [

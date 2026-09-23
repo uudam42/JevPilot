@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import sys
 from pathlib import Path
 
 from domains.uav_materials import UAVMaterialsDomain, UAVMaterialsState
@@ -89,7 +90,7 @@ def test_dependency_direction_uav_to_core_only() -> None:
         assert "uav_materials" not in text, path
         assert not any(n.startswith("domains") for n in _imports(path)), path
     allowed = ("jevpilot", "domains.uav_materials", "pydantic", "__future__")
-    stdlib = {"builtins", "collections", "dataclasses", "enum", "json", "math", "pathlib", "typing"}
+    stdlib = set(sys.stdlib_module_names)
     for path in (ROOT / "domains" / "uav_materials").rglob("*.py"):
         for name in _imports(path):
             root = name.split(".")[0]

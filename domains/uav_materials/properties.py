@@ -85,6 +85,13 @@ for _p in (
         Direction.HIGHER,
     ),
     PropertyDef("shear_strength", S, Dimension.STRESS, "ultimate shear strength", Direction.HIGHER),
+    PropertyDef(
+        "compressive_yield_strength",
+        S,
+        Dimension.STRESS,
+        "compressive yield strength (MIL-HDBK-5 Fcy); not ultimate compressive strength",
+        Direction.HIGHER,
+    ),
     # deformation: stiffness and strain behaviour, never strength
     PropertyDef("youngs_modulus", D, Dimension.STRESS, "elastic (Young's) modulus"),
     PropertyDef("shear_modulus", D, Dimension.STRESS, "elastic shear modulus"),
@@ -97,7 +104,7 @@ for _p in (
         Dimension.RATE,
         "uniform corrosion penetration rate",
         Direction.LOWER,
-        required_conditions=("medium",),
+        required_conditions=("environment",),
     ),
     # density: the material input to buoyancy (fluid density belongs to the target environment)
     PropertyDef("density", R, Dimension.DENSITY, "bulk material density", Direction.LOWER),
@@ -108,7 +115,7 @@ for _p in (
         Dimension.FRACTION,
         "mass gain from water uptake",
         Direction.LOWER,
-        required_conditions=("medium", "exposure_duration"),
+        required_conditions=("environment", "exposure_duration"),
     ),
     # temperature effects: limits, transitions, and retention under temperature
     PropertyDef(

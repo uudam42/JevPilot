@@ -23,6 +23,7 @@ from typing import Any, Self
 
 from pydantic import Field, model_validator
 
+from domains.uav_materials.identity import MaterialIdentity
 from domains.uav_materials.properties import Category, property_def
 from domains.uav_materials.units import UnitError, convert, dimension_of
 from jevpilot import FrozenModel, Provenance, Uncertainty
@@ -47,6 +48,42 @@ class ProvenanceStatus(StrEnum):
     SYNTHETIC = "synthetic"  # invented test fixture data
 
 
+class Qualifier(StrEnum):
+    """How ``value`` relates to the true property value."""
+
+    EQUAL = "="  # a point value
+    AT_MOST = "<="  # an upper bound (e.g. "no more than 0.15 mil after 16 years")
+    AT_LEAST = ">="  # a lower bound
+
+
+class StatisticalBasis(StrEnum):
+    """Design-allowable basis as defined by MIL-HDBK-5 / MMPDS."""
+
+    A = "A"  # 99% of the population exceeds the value with 95% confidence
+    B = "B"  # 90% of the population exceeds the value with 95% confidence
+    S = "S"  # specification minimum
+    TYPICAL = "typical"  # typical / average value, no statistical guarantee
+
+
+class TemperatureRegime(StrEnum):
+    """A qualitative test-temperature statement, when no number was reported."""
+
+    ROOM = "room"
+
+
+class EnvironmentClass(StrEnum):
+    """Controlled vocabulary for exposure environments; ``medium`` keeps the source's detail."""
+
+    MARINE_ATMOSPHERE = "marine_atmosphere"
+    INLAND_ATMOSPHERE = "inland_atmosphere"
+    SEAWATER_IMMERSION = "seawater_immersion"
+    SEAWATER_TIDAL = "seawater_tidal"
+    FRESHWATER_IMMERSION = "freshwater_immersion"
+    LAB_SALT_SOLUTION = "lab_salt_solution"
+    LAB_WATER_IMMERSION = "lab_water_immersion"
+    OTHER = "other"
+
+
 class Quantity(FrozenModel):
     value: float
     unit: str
@@ -69,8 +106,10 @@ class TestConditions(FrozenModel):
     __test__ = False  # not a pytest test class
 
     temperature: Quantity | None = None
+    temperature_regime: TemperatureRegime | None = None  # stated regime, no number reported
     relative_humidity: Quantity | None = None
-    medium: str | None = None  # e.g. "salt water (3.5% NaCl)", "air", "fresh water"
+    environment: EnvironmentClass | None = None
+    medium: str | None = None  # source detail, e.g. "salt water (3.5% NaCl)", "Gatun Lake"
     exposure_duration: Quantity | None = None
     specimen: str | None = None  # orientation, layup, thickness, ...
     other: dict[str, Any] = Field(default_factory=dict)
@@ -90,7 +129,15 @@ class TestConditions(FrozenModel):
     def reported(self) -> set[str]:
         return {
             k
-            for k in ("temperature", "relative_humidity", "medium", "exposure_duration", "specimen")
+            for k in (
+                "temperature",
+                "temperature_regime",
+                "relative_humidity",
+                "environment",
+                "medium",
+                "exposure_duration",
+                "specimen",
+            )
             if getattr(self, k) is not None
         }
 
@@ -99,8 +146,10 @@ class Measurement(FrozenModel):
     property: str
     value: float | None = None
     unit: str | None = None
+    qualifier: Qualifier = Qualifier.EQUAL
     missing: MissingReason | None = None
     basis: MeasurementBasis = MeasurementBasis.MEASURED
+    statistical_basis: StatisticalBasis | None = None
     conditions: TestConditions = Field(default_factory=TestConditions)
     test_method: str | None = None  # e.g. a standard designation; None = not reported
     provenance: Provenance | None = None
@@ -177,6 +226,7 @@ class MaterialRecord(FrozenModel):
     temperature_effects: tuple[Measurement, ...] = ()
     provenance: Provenance | None = None
     provenance_status: ProvenanceStatus
+    identity: MaterialIdentity | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")

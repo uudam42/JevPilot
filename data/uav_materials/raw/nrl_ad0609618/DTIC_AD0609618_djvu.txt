@@ -1,0 +1,1668 @@
+NRL  Report  6105 
+
+"'Si 
+
+
+o 
+
+VO 
+
+
+C  -iorrosion  of  Metals  in  Tropical  Environments 
+Part  6  -  Aluminum  and  Magnesium 
+
+i.  H  ‘nnj  i  h>tJ  { ,  C.  W,  Hs-MMt*.  }».,  AND  A.  I,,  Ai  t.XAr-.tifc»E 
+
+and  BioingutU  Chemistry  Hrnnrh 
+ChemiUry  thvLiwn 
+
+
+December  !,  1964 
+
+
+DDC 
+
+
+U.S.  NAVAL  RESEARCH  LABORATORY 
+Wu^ingtOR,  D.C. 
+
+
+PREVIOUS  REPORTS  IN  THIS  SERIES 
+
+
+“Cofrosiosi  c-f  m  Tropic*!  Env»ronmi*nt«,  P»Tt  2  -  Ter' 
+
+Methrwls  U#e4  and  Result!  Obtained  for  Pare  Metals  and  a  Sirac- 
+tural  Steel, "  A.L.  Alexander,  B.W.  Forgeeon,  H.W.  Mundt.  C.R. 
+Southwell,  and  L.J.  Thompson.  NRL  Report  49£S,  June  i"'?!' 
+
+“Corrosion  of  Metals  in  Tropical  Enviror.n..enifc,  Part  Z  -  At.-no- 
+spheric  Corrosion  of  Ten  Structtiral  Steel®,*  C.R.  Southwell ,  B.W , 
+Fergocon,  and  A.L.  Alexa|nde:,  NRL  Report  ^002,  Dec.  19'>7 
+
+“Corrosion  of  Metals  In  Tropical  Environments,  Part  3  -  Under* 
+water  Corrosion  of  Ten  Structural  Steels,"  B.W.  Forgeson,  C.R 
+Southwell,  and  A.L.  Alexander,  NRL  Repoit  5153,  Aug.  1958 
+
+’‘Corrosion  of  Metals  la  Tropical  Enviroi.ments,  Part  4  -  Wrought 
+Iron,"  C.R.  Southwell,  B.W.  Forgeson,  aroi  A.L,  Alexander,  NRL 
+Report  5370,  Oct,  1959 
+
+“Ccrrosicn  cf  Metals  In  Tropical  Environments,  Par:  5  -  SjairJess 
+St*el,"  A.L.  Alexander,  C,R.  Soithwcli,  and  B.W.  Forgeson,  NFtL 
+Report  5517,  Sept,  i960 
+
+
+Orparttwfs,  i  f  fVieitnw  ■ ,  r  t 
+
+
+CONTENTS 
+
+
+Abstract 
+Problem  Status 
+Authorization 
+
+INTRODUCTION 
+
+MATERIALS  AND  METHODS 
+
+RESULTS 
+
+Aluminum 
+
+Magnesium 
+
+CONCLUSIONS 
+
+ACKNOWLEDGMENTS 
+
+
+REFERENCES 
+
+
+ABSTRACT 
+
+
+The  corrosion  resistance  of  three  alloys  of  aluminum 
+and  two  alloys  of  magnesium  has  been  studied  following  ex¬ 
+posure  up  to  16  years  in  five  natural  tropical  environments. 
+These  include  sea-water  immersion,  fresh-water  immer¬ 
+sion,  and  exposure  to  tidal  sea  water,  a  tropical  marine 
+atmosphere,  and  a  tropical  inUnd  atmosphere.  Aluminum 
+1100,  aluminum  alloy  6061-T,  and  magnesium  alloy  AZ31X 
+were  exposed  to  each  of  the  environments  listed.  In  addition, 
+Alclad  aluminum  2024-T  and  magnesium  alloy  AZ61X  were 
+exposed  to  the  two  tropical  atmospheres.  Weight  loss,  pit¬ 
+ting,  and  change  in  tensile  properties  were  measured  to 
+show  the  extent  of  corrosion  for  each  of  these  materials. 
+Aluminum  alloys  demonstrate  extremely  high  resistance  to 
+each  environment,  with  the  exception  of  tropical  fresh  water, 
+in  which  case  serious  pitting  occurred.  Alloy  6061-T  dem¬ 
+onstrated  some  superiority  in  all  environments  to 
+aluminum  1100. 
+
+
+PROBLEM  STATUS 
+
+This  is  an  interim  report;  work  on  this  problem  is 
+continuing. 
+
+
+AUTHORIZATION 
+
+NRL  Problem  COS- 11 
+Project  RR  007-08-44-5506 
+Army  MIPR-64-33-02-01 
+
+
+Manuscript  submitted  April  3,  1964. 
+
+
+CORROSION  OF  METALS  IN  TROPICAL  ENVIRONMENTS 
+PART  6  -  ALUMINUM  AND  MAGNESIUM 
+
+
+INTRODUCTION 
+
+This  report  is  the  sixth  in  a  series  describing  the  results  from  a  long-term  study  of 
+the  corrosion  rates  of  50  metals  and  alloys  exposed  to  five  local  environments  in  tropical 
+latitudes.  Most  metals  were  expo^'ed  for  a  total  of  16  years.  Sufficient  replicates  were 
+included  to  allow  pairs  of  each  to  be  removed,  studied,  and  evaluated  at  intervals  of  1,  2, 
+
+4,  8,  and  16  years.  Other  reports  in  this  series  (1-6)  are  based  on  eight-year  data.  This 
+report  is  the  first  to  include  results  for  the  full  16  years.  Earlier  reports  will  be  updated 
+to  include  all  16-year  data. 
+
+In  the  present  report,  corrosion  data  are  included  for  aluminum  6P61-T  and  1100, 
+Alclad  2024-T,  and  magnesium  AZ31X  and  AZ61X.  Exposure  of  the  magnesium  samples 
+was  discontinued  after  eight  years,  since  the  specimens  were  sufficiently  corroded  that 
+further  measurements  of  damage  would  have  been  of  little  or  no  significaiice. 
+
+With  the  increasing  use  of  the  light-metal  alloys,  more  attention  is  being  focused  on 
+the  natural  corrosion  characteristics  of  these  metals.  Early  exposure  studies  with  light 
+metals  (7,8)  indicated  rather  poor  resistance  to  marine  environments,  Subsequent  inves¬ 
+tigations,  including  the  newer  alloys,  along  with  some  results  from  field  use,  have  shown 
+very  high  corrosion  resistance  in  some  instances.  The  present  study  of  three  aluminum 
+and  two  magnesium  alloys  in  five  generally  corrosive  but  hitherto  uninvestigated  natural 
+environments  should  make  a  significant  addition  to  the  literature  on  the  corrosion  of  light 
+metals. 
+
+MATERIALS  AND  METHODS 
+
+Locations  of  the  test  sites  are  shown  in  Fig.  1.  Saniples  exposed  at  mean  tide  and 
+immersed  were  supported  in  their  racks  by  ceramic  insulators  and  suspended  from  special 
+piers  erected  over  selected  areas  of  the  test  environments.  Atmospheric  exposure  was 
+made  in  two  distinctly  different  tropical  atmospheres;  one  is  an  unshaded  seashore  marine 
+site,  and  the  other  is  an  unshaded  ground-level  inland  site.  The  marine  site  is  located  on 
+the  roof  of  the  Washington  Hotel,  Cristobal,  Canal  Zone,  at  55  ft  elevation  and  300  ft  from 
+the  Caribbean  shore  (Fig.  la).  The  prevailing  wind  at  this  location  is  from  the  sea.  The 
+inland  site  is  located  near  the  Miraflores  Locks  on  the  Pacific  side  of  the  Canal  Zone 
+(Fig,  lb),  where  the  prevailing  wind  is  from  the  land.  Two  immersion  locations  were 
+included,  one  in  tropical  fresh  water  in  Gatu..  .lAke,  Canal  Zone  (Fig.  Ic),  and  the  other  in 
+tropical  Pacific  Ocean  water  at  Fort  Amador,  Canal  Zone  (Fig.  Id).  In  addition,  specimens 
+were  exposed  to  mean  tide  at  Fort  Amador,  where  the  average  tidal  range  is  13  ft. 
+
+Chemical  analyses  and  physical  properties  of  the  metals  are  presented  in  Tables  1 
+and  2.  The  immersed  specimens,  exposed  as  l/4-in.-thick  plates,  were  similar  in  com¬ 
+position  and  properties  to  the  atmospheric  samples  of  the  same  metal,  which  were  exposed 
+as  l/16-in.-thick  sheets;  however,  some  difference  between  the  two  exists,  so  the  separate 
+listings  shown  in  the  tables  of  chemical  and  mechanical  properties  are  warranted. 
+
+Weight  loss  and  dimensional  changes  were  determined  by  standard  procedures.  Pit 
+depths  were  measured  from  the  original  surface  of  the  metal,  where  there  was  sufficient 
+
+
+I 
+
+
+2 
+
+
+NAVAL  RESEARCH  LAtORATORY 
+
+
+Fig,  1  -  Location  of  test  sites 
+
+
+original  surface  remaining;  when  all  original  metal  surface  was  removed  by  general 
+corrosion  attack,  the  pit  depth  was  measured  from  the  corroded  surface  and  then  added 
+to  the  measured  loss  to  obtain  the  true  depth  of  penetration.  Loss  in  tensile  strength  was 
+determined  by  comparing  the  average  values  from  nine  to  15  tensile  tests  of  uncorroded 
+metal  with  values  derived  from  samples  cut  from  the  corroded  plates.  Tensile  strengths 
+were  determined  as  prescribed  by  ASTM  standard  E8-52T.  Complete  descriptions  of  the 
+test  procedures  and  more  information  on  the  program  background  can  be  found  in  the  first 
+report  of  this  series  (1). 
+
+
+RESULTS 
+
+
+Table  3  lists  the  results  obtained  from  the  five  light  alloys  under  consideration.  For 
+the  most  part,  the  data  are  for  16  years’  exposure  in  iive  tropical  environments.  The 
+values  are  averages  obtained  from  duplicate  panels  exposed  to  the  indicated  environments 
+for  periods  of  1,  2,  4,  8,  and  16  years.  Weight  loss  is  shown  in  grams/dm^.  Average 
+penetration  is  presented  in  mils  and  for  unit  area  is  expressed  as  volume  loss  calculated 
+from  weight  loss  and  specific  gravity.  Comparisons  made  between  metals  of  differing 
+densities  are  more  realistic  when  expressed  as  loss  in  volume  rather  than  weight.  Pitting 
+is  tabulated  along  with  eight-year  data  on  loss  in  tensile  strength  and  type  of  visible  cor¬ 
+rosion  attack.  While  volume  loss  is  perhaps  the  single  most  important  factor  in  following 
+the  progression  of  corrosion  and  in  evaluating  the  merits  of  a  particular  metal,  other 
+factors  are  important  in  broadening  the  evaluation  and  giving  a  more  complete  picture 
+
+
+Value  (a)  obtained 
+
+
+Anoivaoavi  HDayjsia  ivavn 
+
+
+Table  1 
+
+Chemical  Composition  of  Test  Metals 
+
+
+A)i0iV]i08V1  HDVVlSDi  1VAVN 
+
+
+s 
+
+
+Table  3 
+
+Comprehensive  Evaluation  o(  Corrosion  Damage  of  Light  Metals  Exposed 
+
+
+6 
+
+
+NAVAL  tCSEAtCH  LABORATOtY 
+
+
+Aluminum 
+
+The  relative  severity  of  the  five  test  environments  is  shown  in  Fig.  2.  Average  pene¬ 
+tration,  as  a  function  of  time,  is  presented  for  commercially  pure  aluminum  1100.  Fresh 
+water  was  clearly  the  most  destructive  environment,  causing  five  times  the  volume  loss 
+as  that  of  sea  water  over  the  16-year  period.  The  damage  experienced  in  this  soft  neutral 
+lake  water  was  due  wholly  to.  intense  pitting  attack  distributed  randomly  throughout  the 
+exposed  surface.  All  other  environments  were  relatively  innocuous,  none  causing  average 
+penetration  greater  than  one  mil  during  16  years.  In  the  sea,  mean-tide  elevation  was  the 
+least  severe,  being  only  half  as  corrosive  as  continuous  immersion.  In  short,  commer¬ 
+cially  pure  aluminum  1100  showed  a  rather  high  resistance  to  marine  corrosion.  The 
+rate  of  corrosion  at  the  mean-tide  location  was  only  three  times  as  severe  as  the  seashore 
+atmospheric  site,  and  the  corrosion  accruing  in  the  atmosphere,  at  both  marine  and  inland 
+locations,  was  less  than  0.1  mil  at  the  end  of  16  years. 
+
+
+H  — SEAWATER  CONTINUOUS  IMMERSION 
+J  — A—  SEAWATER  MEAN  TIDE  ELEVATION 
+G  — O —  FRESH  WATER  CONTINUOUS  IMMERSION 
+K  — N--  MARINE  ATMOSPHERIC 
+M  "□ —  INLAND  ATMOSPHERIC 
+
+
+Fig.  2  -  Sixteen-year  corrosion  curves  of  aluminum  1100 
+
+
+NAVAL  lESEAKCH  lAtOIATORY 
+
+
+7 
+
+
+Three  aluminum  alloys  were  exposed  in  the  two  atmospheric  environments  (Fig.  3). 
+There  is  no  practical  difference  between  the  three  aluminums,  and  all  were  highly  resis¬ 
+tant  to  these  conditions.  Because  of  the  similar  patterns  and  low  corrosion  rates,  the 
+resulting  curves  appear  as  bands  rather  than  as  clearly  defined  lines.  Although  the  marine 
+environment  was  slightly  more  severe  than  the  inland  atmosphere,  it  still  caused  only  a 
+maximum  0. 15-mil  average  penetration  after  16  wears,  while  the  greatest  average  pene¬ 
+tration  of  any  of  the  alloys  at  the  inland  site  was  only  0.09  mil.  All  aluminum  panels 
+retained  much  of  their  original  finish  and  at  most  showed  a  slight  surface  etcning.  The 
+high  resistance  of  aluminum  to  both  marine  and  inland  atmospheric  corrosion  in  temper¬ 
+ate  climates  lias  been  cited  many  times  (9,10)  and  specifically  for  these  three  alloys. 
+
+These  results  indicate  that  high  resistance  in  tropical  atmospheres  can  be  expected  also. 
+
+
+Vi 
+
+tnvi 
+
+-JO 
+
+
+- o—  ALUMINUM  1100 
+
+- A—  ALUMINUM  6061 -T 
+
+—  >.■—  ALCLAD  2024-T 
+
+
+MARINE  ATMOSPHERIC 
+
+
+INLAND  ATMOSPHERIC 
+
+
+Fig.  3  -  Corrosion  of  aluminum  1100,  6061-T,  and 
+Alclad  2024-T  during  16  years  of  exposure  in  two 
+tropical  atmospheres 
+
+
+The  corrosion  rates  of  the  widely  used  aluminum  606i-T  alloy  are  shown  in  three 
+tropical  underwater  environments  in  Fig.  4  and  are  compared  with  aluminum  1100.  Con¬ 
+tinuous  sea- water  immersion  proved  to  be  almost  equally  corrosive  to  the  two  alloys, 
+
+1100  being  only  minutely  higher.  The  data  show  that  pitting  of  6061-T  was  generally  mild 
+under  tropical  sea  water;  while  it  developed  the  deepest  single  pit  (79  mils),  it  was  slightly 
+superior  to  1100  when  the  20  deepest  pits  were  averaged. 
+
+The  mean-tide  location  was  the  least  corrosive  to  aluminum  of  all  underwater  envi¬ 
+ronments  studied.  Again  the  6061-T  alloy  was  slightly  superior,  showing  an  average 
+penetration  considerably  less  than  aluminum  1100  over  the  16-year  period.  Both  were 
+quite  resistant  at  this  location,  as  the  loss  of  1100  amounted  to  only  0.5  mil  after  16  years’ 
+exposure.  Pitting,  too,  was  slight  on  both  aluminums  at  mean  tide,  with  an  average  pit 
+depth  of  only  17  mils  at  16  years  for  type  6061-T  and  approximately  double  this  depth  for 
+type  1100. 
+
+As  shown  earlier,  the  fresh  water  of  Gatun  Lalie  proved  to  be  the  most  corrosive 
+environment  for  aluminum.  The  difference  in  corrosion  rates  between  1100  and  6061-T 
+was  appreciable,  with  6061-T  corroding  at  approximately  one-third  the  rate  of  1100. 
+
+Both  metals  sustained  almost  equivalent  pitting  attack  in  this  location,  as  measured  by 
+pit  depths.  However,  the  number  of  pits  was  considerably  higher  on  the  type  1100  than 
+on  the  6061-T  alloy.  This  difference  in  pitting  density  can  be  seen  in  Fig.  5,  which  com¬ 
+pares  the  two  aluminums  after  16  years’  exposure  to  fresh  water. 
+
+A  comparison  of  6061-T  in  the  three  underwater  locations  shows  this  alloy  to  be  most 
+resistant  to  mean  tide  and  least  resistant  to  fresh  water.  The  resistance  to  the  two  marine 
+
+
+8 
+
+
+NAVAL  tESiARCH  LABORATORY 
+
+
+— « —  ALUMINUM  6061- T 
+
+SEA  WATER 
+CONTINUOUS  IMMERSION 
+
+
+— «...  ALUMINUM  1100 
+SEA  WATER 
+MEANTIOE 
+
+
+FRESH  VHATCK 
+CONViN'JOUS  IMMERSION 
+
+
+— - 
+
+PITS 
+
+MEASURED 
+
+16 -YEAR  j 
+PITTMGCMILS) 
+
+1100 
+
+6061-T 
+
+AVG  20 
+DEEPEST 
+
+IT 
+
+14 
+
+DEEPEST 
+
+33 
+
+79 
+
+Pits 
+
+MEASURED 
+
+,16-^ 
+
+PITTIM 
+
+1100 
+
+EAR 
+
+HAULS 
+
+G06I-T 
+
+AVG  20 
+DEEPEST 
+
+39 
+
+17 
+
+DEEPEST 
+
+67 
+
+41 
+
+2  4  8 
+
+YEARS  EXPOSED 
+
+
+YEARS  EXPOSED 
+
+
+3.0h 
+
+
+PITS 
+
+ACASURED 
+
+16-YEAR 
+PITTING  (MILS) 
+
+1100 
+
+6061-T 
+
+AVG  20 
+DEEPEST 
+
+98 
+
+96 
+
+DEEPEST 
+
+109 
+
+107 
+
+Jl  2  4  8 
+
+years  EXPOSED 
+
+
+Fig.  4  -  Comparison  of  aluminum  alloy  6061-T  with 
+commercially  pure  aluminum  1100  for  ISyears*  expo¬ 
+sure  in  three  underwater  environments 
+
+
+Aluminum  1100  Aluminum  6061T 
+
+Fig.  5  -  Comparison  of  the  severity  of  pitting  of 
+two  aluminum  alloys  after  16years’  exposure  in 
+tropical  fresh  water  (1/4X) 
+
+
+locations  was  very  good;  the  average  penetration  in  sea  water  was  only  I  mil  after  16  years. 
+It  should  be  noted  that  in  both  the  sea-water  exposures  the  corrosion  that  did  occur  appeared 
+to  be  initiated  by  fouling.  Figure  6  shows  the  surface  etching  on  an  aluminum  plate  by 
+fouling  attachment.  This  etching  practically  covered  the  entire  plate  surfaces.  The  severe 
+pitting  observed  in  fresh  water  and  shown  in  Fig.  5  can  perhaps  be  attributed  to  the  pres¬ 
+ence  of  trace  amounts  of  heavy  metal  compounds,  which  are  cited  as  promoting  such  local¬ 
+ized  attack  (9). 
+
+Loss  of  tensile  strength  is  a  long-recognized  criterion  for  evaluating  the  corrosion  of 
+aluminum.  Tensile-strength  data  are  presented  as  bar  graphs  in  Fig.  7  for  the  three  alu¬ 
+minum  alloys  after  an  eight-year  exposure.  Aluminum  1100  showed  no  loss  in  strength 
+in  the  atmosphere  after  eight  years,  which  is  surprising  in  view  of  previously  reported 
+data  for  temperate  climate  exposures  by  Dix  and  Mears  (10).  The  loss  of  one  percent  sus¬ 
+tained  by  6061-T  is  also  lower  than  reported  by  Dix  and  Mears;  on  the  other  hand,  the  two- 
+percent  loss  shown  by  Alclad  2024-T  in  the  inland  atmosphere  is  somewhat  higher  than 
+
+
+NAVAl  liSiAKCH  LAIOKATOtY 
+
+
+9 
+
+
+Fig.  6  -  Clo«e>up  of  the  etching  of  aluminum 
+6061-T  due  to  marine  fouling  after  continuous 
+immersion  in  tropical  sea  water  for  16  years 
+(3/2X) 
+
+
+K  -  marine  atmospheric 
+
+M  •  INLAND  ATMOSPHERIC 
+H  -  SEA  WATER  CONTINUOUS  IMMERSION 
+J  •  SEA  WATER  MEAN  TIDE  ELEVUION 
+G  -  FRESH  WATER  CONTINUOUS  IM  MERSION 
+
+
+Fig.  7  -  Loss  in  tensile  strength  of  aluminum 
+1100,  6061-T,  and  Ale  lad  2024-T  after  eight 
+years  exposure  in  tropical  environments 
+
+
+NOTE: 
+
+(a)  NO  SAMPLES  EXPOSED  TO  WATER 
+
+
+X 
+
+
+reported  by  these  authors  for  this  alloy  in  temperate  climates.  Underwater  tensile  data 
+have  not  been  so  widely  reported,  and  no  comparable  data  from  temperate  latitudes  were 
+found.  It  is  interesting  to  note,  however,  that  the  condition  of  the  two  alloys  1100  and 
+6061-T  in  the  three  underwater  locations  leads  to  the  same  conclusion,  whether  by  weight- 
+loss  data  or  by  loss  in  tensile  strength,  that  6061-T  is  somewhat  the  superior  alloy  in 
+these  environments. 
+
+
+Magnesium 
+
+Controlled-purity  magnesium  AZ31X  containing  3-percent  aluminum,  formerly  desig¬ 
+nated  by  ASTM  as  lOX,  was  exposed  in  all  five  environments  for  eight  years.  The  marine 
+and  inland  atmsopheric  studies  of  this  metal  were  continued  for  the  full  16-year  period, 
+
+
+10 
+
+
+NAVAL  RfSEARCH  LARORATORY 
+
+
+but  because  of  the  expected  rapid  corrosion  of  this  alloy  in  sea  water  the  immersion  tests 
+were  planned  for  only  eight  years.  Figure  8  presents  penetration  with  time  for  AZ31X 
+in  the  five  environments  over  an  ei^t-year  period.  In  contrast  to  the  aluminums  the 
+mean-tide  environment,  as  might  be  ejqpected,  was  the  most  aggressive  for  magnesium 
+in  several  respects.  The  filial  average  penetration  at  mean  tide  was  45  mils,  or  a  36- 
+percent  reduction  of  the  original  volume  of  the  9'x  9  x  1/4  in.  plates.  This  amounted  to 
+1.5  times  the  volume  iof;&  found  for  panels  continuously  immersed  in  sea  water  and  3.7 
+times  the  volume  loss  in  fresh  water.  Ah  interesting  note  on  the  attack  at  mean  tide  was 
+the  heavy  infestation  of  the  pwels  by  a  stone-boring  mollusk.  These  have  been  identified 
+as  belonging  to  the  genus  Lithophaga.  There  is  some  question  concerning  the  mechanics 
+of  such  an  infestation  as  to  whether  the  mollusk  merely  housed  itself  in  an  existing  pit  or 
+actually  mechanically  or  chemically  created  such  a  pit.  Figure  9  shows  duplicate  AZ31X 
+panels,  one  with  the  mollusks  imbeddeddn  the  panel,  and  the  other  cleaned,  showing  the 
+damage.  The  marine  atmosphere  proved  some  1.7  times  as  corrosive  as  the  inland  site 
+and  two-thirds  as  corrosive  as  the  fresh-water-immersion  environment. 
+
+
+H  — • —  SEA  WATER  CONTINUOUS  IMMERSION 
+J  — SEA  WATER  MEAN  TIDE 
+G  — O —  FRESH  WATER  CONTINUOUS  IMMERSION 
+K  —X —  MARINE  ATMOSPHERIC 
+M  —  INLAND  ATMOSPHERIC 
+
+
+Fig.  8  -  Corrosion  of  magnesium  AZ31X  for  eight  years’ 
+exposure  in  five  tropical  environments 
+
+
+Fig.  9  -  Attack  of  magnesium  by  Lithophaga  during  eight-year  exposure 
+(a)  Cleaned,  (b)  Uncleaned,  organisms  still  in  perforations 
+
+
+■0 — MAGNESIUM  AZ3IX 
+-X— MAGNESIUM  AZ6IX 
+
+
+Fig,  10  -  Atmospheric  corrosion  of  magnesium  AZ31X  and 
+A261X  for  l6-yr  exposure  in  two  tropical  environments 
+
+
+In  addition  to  the  AZ31X,  a  6-percent  aluminum  controlled-purity  magnesium  alloy, 
+AZ61X,  was  exposed  for  the  full  16  years  in  the  two  tropical  atmospheres.  A  comparison 
+of  the  effects  on  the  two  alloys  is  seen  in  Fig.  10.  The  marine  atmosphere,  as  shown 
+earlier  for  AZ31X,  also  is  more  severe  for  AZ61X.  The  AZ61X  alloy,  with  higher  alu¬ 
+minum  content,  was  somewhat  superior  to  AZ31X  in  both  tropical  atmospheres,  on  the 
+basis  of  metal  lost  and  depth  of  pitting. 
+
+The  straight-line  relation  found  for  magnesium  in  tropicaj  atmospheres  gives  constant 
+corrosion  rates  that  permit  convenient  comparison  with  corrosion  rates  found  in  temperate 
+climates.  The  rate  for  AZ31X  at  the  Cristobal  Marine  Site  amounted  to  0.94  mil  per  year. 
+One-  and  three-year  rates  for  this  alloy  reported  from  a  marine  atmosphere  at  Norfolk, 
+
+
+12 
+
+
+NAVAL  tESfAICH  LABOtATORY 
+
+
+Virginia  (11)  were  both  0.74  mil  per  year,  while  exposures  made  at  Kure  Beach,  ^rth 
+Carolina  (12)  reported  0.40  mil  per  year  for  two  years  of  ejqmsure.  Thus,  as  mig^t  be 
+e;q[>ected,  the  data  indicate  that  the  tropical  environments  cause  an  appreciably  higher 
+corrosion  rate  for  magnesitun  thsm  is  found  in  temperate  climates. 
+
+The  perforated  and  extremely  corroded  condition  of  the  magnesium  panels  for  both 
+sea-water  environments  was  such  that  tensile  tests  would  mean  little  or  nothing.  There¬ 
+fore,  only  those  specimens  exposed  to  fresh  water  were  evaluated  as  to  tensile  loss.  A 
+loss  of  12  percent  of  the  original  tensile  strength  was  observed,  which  agrees  rather 
+closely  with  the  10-percent  reduction  in  thickness  calculated  from  weight  loss. 
+
+Tensile  losses  were  measured  for  both  magnesium  alloys  exposed  in  the  two  tropical 
+atmospheres.  The  results  of  these  tests  following  eight  years  exposure  are  shown  in  Fig. 
+11.  Magnesium  AZ31X  proved  very  slightly  superior  to  AZ61X  in  both  atmospheres,  based 
+on  these  results,  showing  0.9  the  tensile- strength  loss  of  the  high  aluminum  alloy.  The 
+marine  atmsophere  was  1.4  times  as  corrosive  as  the  inland  site,  as  determined  by 
+tensile-strength  measurements. 
+
+A  comparison  of  the  percent  reduction  in  thickness  with  percent  loss  in  tensile  strength 
+shows  that  AZ31X  lost  25  percent  in  both  thickness  and  tensile  strength  in  the  marine  atmo¬ 
+sphere,  while  losing  16  percent  of  its  strength,  as  opposed  to  a  14-percent  reduction  in 
+
+
+K  -  MARINE  ATMOSPHERIC 
+M  -  INLAND  ATMOSPHERIC 
+H  -  SEA  WATER  CONTINUOUS  IMMERSION 
+J  -  SEAWATER  MEAN  TIDE  ELEVATION 
+G  -  FRESH  WATER  CONTINUOUS  IMMERSION 
+
+
+NOTE: 
+
+
+I 
+
+H- 
+
+o 
+
+z 
+
+tu 
+
+a: 
+
+K 
+
+
+<n 
+
+UJ 
+
+CO 
+
+z 
+
+UJ 
+
+
+H 
+
+Z 
+
+UJ 
+
+o 
+
+(T 
+
+UJ 
+
+a. 
+
+
+z 
+
+
+CO 
+
+CO 
+
+O 
+
+
+(a)  NO  SAMPLES  EXPOSED  TO  WATER 
+
+(b)  PANELS  TOO  BADLY  CORRODED  TO 
+TEST 
+
+
+Fig.  11  -  Loss  in  tensile  strength  of  mag- 
+nesium  AZ31Xanci  AZ6 IX  after  eight  years' 
+exposure  jn  five  tropical  environments 
+
+
+NAVAL  ilSiAiCH  LABORATORY 
+
+
+13 
+
+
+thickness  in  the  inland  site.  On  the  other  hand,  AZ61X,  while  losing  28  percent  of  its  ten- 
+sile  strength,  lost  only  19  percent  in  thickness  in  the  marine  site,  and  in  the  inland  loca> 
+tion  18  percent  in  strength  against  10  percent  in  thickness.  The  agreement  in  the  case  of 
+AZ31X  leads  to  the  conclusion  that  effects  other  than  weight  loss  are  reflected  in  tensile 
+losses  for  the  higher  aluminum  AZ61X  alloy. 
+
+With  the  exception  of  fresh>Water  exposure,  magnesium  did  not  show  very  high  resis¬ 
+tance  to  any  tropical  environment.  In  sea  water  it  was  rapidly  perforated,  and  in  the 
+tropical  atmospheres  it  showed  a  steady  corrosion  loss  that  after  eight  years  approximated 
+the  losses  found  for  structural  steel. 
+
+
+CONCLUSIONS 
+
+1.  Commercially  pure  aluminum  1100  and  aluminum  alloy  6061-T  both  proved  quite 
+resistant  to  corrosion  in  tropical  sea  water  and  in  tropical  atmospheres.  Continuous 
+immersion  in  sea  water  and  alternate  immersion  at  mean  tide  for  16  years  caused  only 
+superficial  etching  around  marine  fouling,  slight  pitting,  very  little  weight  loss,  and  neg¬ 
+ligible  change  in  tensile  strength.  In  marine  and  inland  atmospheres  16  years’  exposure 
+did  little  more  than  etch  the  surface  of  the  panels. 
+
+2.  Both  aluminum  1100  and  alloy  6061-T  were  deeply  pitted  in  fresh  water,  which 
+proved  to  be  the  most  aggressive  of  the  environments  in  which  aluminum  was  studied. 
+
+3.  Based  on  weight  loss  and  depth  of  pitting,  alloy  6061-T  was  equal  to  or  slightly 
+superior  to  commercially  pure  aluminum  in  all  five  environments.  Tensile  losses  in  the 
+atmosphere  were  slightly  greater  for  alloy  6061-T. 
+
+4.  Alclad  2024-T  proved  to  be  equally  as  resistant  as  6061-T  and  1100  for  16  years 
+in  the  two  tropical  atmospheres. 
+
+5.  Controlled-purity  magnesium  alloys  AZ31X  and  A261X  showed  rather  poor  resis¬ 
+tance  to  tropical  atmospheres,  compared  with  their  resistance  to  temperate  climates.  A 
+steady  corrosion  rate  of  0.94  mil  per  year  was  found  for  the  former  at  the  Caribbean 
+coastal  site,  while  0.41  mil  per  year  was  reported  from  Kure  Beach,  North  Carolina,  and 
+0.71  mil  per  year  for  over-water  tests  at  Norfolk,  Virginia. 
+
+6.  On  the  basis  of  weight  loss  and  depth  of  pitting,  magnesium  alloy  AZ61X  containing 
+6-percent  aluminum  showed  itself  to  be  slightly  superior  in  the  tropical  atmospheres  to 
+the  3-percent  aluminum  AZ31X.  However,  tensile  loss  slightly  favored  the  3-percent 
+alloy. 
+
+7.  Magnesium  AZ31X  was  rapidly  attacked  in  sea  water,  with  deep  pitting  and  per¬ 
+foration  occurring  within  the  first  year  of  exposure.  At  mean  tide  perforation  did  not 
+occur  until  the  second  year,  but  total  metal  lost  was  higher  at  all  periods.  Perhaps  the 
+most  surprising  fact  a^ut  magnesium  in  sea  water  was  that  approximately  two-thirds 
+of  the  metal  volume  still  remained  after  eight  years  of  exposure. 
+
+
+ACKNOWLEDGMENTS 
+
+The  support  and  interest  of  the  Engineering  and  Construction  Bureau  of  the  Panama 
+Canal  Company  and  the  support  of  the  Army,  including  the  Engineering  Research  and 
+Development  Laboratories,  and  the  Army  Research  Office  have  made  this  project  possible. 
+
+
+REFERENCES 
+
+
+1.  Alexander,  A.L.,  Forgeson,  B.W.,  Mundt,  H.W.,  Southwell,  C.R.,  and  Thompson,  L.J., 
+“Corrosidn  o£  Metals  in  Tropical  Environments,  Part  1  -  Test  Methods  Used  and 
+Results  Obtained  for  Pure  Metals  anc  Structural  Steel,”  NRL  Report  4929,  June 
+1957;  Corrosion  14:73t  (1958) 
+
+2.  Southwell,  C.R.,  Forgeson,  B.W.,  and  Alexander,  A.L.,  “Corrosion  of  Metals  in 
+Trc^ical  Environments,  Part  2  -  Atmospheric  Corrosion  of  Ten  Structural  Steels,” 
+NRL  Report  5002,  Dec.  1957;  Corrosion  14:435t  (1958) 
+
+3.  Forgeson,  B.W.,  Southwell,  C.R.,  and  Alexander,  A.L.,  “Corrosion  of  Metals  in 
+Tropical  Environments,  Part  3  -  Underwater  Corrosion  of  Ten  Structural  Steels,” 
+
+NRL  Report  5153,  Aug.  1958;  Corrosion  16:10''t  (1960) 
+
+4.  Southwell,  C.R.,  Forgeson,  B.W.,  and  Alexander,  A.L.,  “Corrosion  of  Metals  in 
+Tropical  Environments,  Part  4  -  Wrought  Iron,”  NRL  Report  5370,  Oct.  1959; 
+Corrosion  16:512t  (1960) 
+
+5.  Alexander,  A.L.,  Southwell,  C.R.,  and  Forgeson,  B.W.,  “Corrosion  of  Metals  in 
+Tropical  Environments,  Part  5  -  Stainless  Steel,”  NRL  Report  5517,  Sept.  1960; 
+Corrosion  17:345t  (1961) 
+
+6.  Southwell,  C.R.,  Hummer,  C.W.,  Jr.,  Alexander,  A.L.,  and  Forgeson,  B.W.,  “Corrosion 
+of  Metals  in  Tropical  Environments,  Part  7  -  Galvanic  Couples,”  NRL  Report  in 
+preparation 
+
+7.  Friends,  J.N.,  “The  Relative  Corrodibilities  of  Ferrous  and  Non-Ferrous  Metals  and 
+Alloys,  Part  1  -  The  Results  of  Four  Years’  Exposure  in  the  Bristol  Channel,” 
+
+J.  Inst.  Metals  39:111  (1928) 
+
+8.  Bengough,  G.D.,  and  Hudson,  O.F.,  J.  Inst.  Metals  21:143  (1919) 
+
+9.  Dix,  E.H.,  Jr.,  Brown,  R,H,,  and  Binger,  W.W.,  “The  Resistance  of  Aluminum  Alloys 
+to  Corrosion,”  Metals  Handbook  8tb  ed.,  ASM,  Vol.  1,  pp.  916-927,  1961 
+
+10.  Dix,  E.H.,  Jr.,  and  Mear  E.B.,  “The  Resistance  of  Aluminum  Base  Alloys  to  Atmo¬ 
+spheric  Exposure,”  Symposium  on  Atmospheric  Exposure  Tests  on  Non-Ferrous 
+Metals,  ASTM,  Philadelphia,  pp.  57-71,  1946 
+
+11.  ASM  Committee  on  Magnesium,  “The  Corrosion  of  Magnesium  Alloys,”  in  “Metals 
+Handbook,”  Vol.  1,  8th  ed.,  p.  1090,  1961 
+
+12.  Peloubet,  J.A.,  “Sea- Air  Corrosion  of  Magnesium  Alloys,”  Metals  and  Alloys 
+21:1327-1333  (May  1945) 
+
+
+14 
+
+
+Security  Classification 
+
+
+DOCUMENT  CONTROL  DATA  •  R&D 
+
+
+fSocurity  o/  body  o1  sb»ttmet  mnd  ind^ning  mnnolmtion  must  bo  ontorod  vdion  tho  ovoroll  report  io  ctoBaHiod) 
+
+
+1  ORIGINATIN  G  ACTIUC'Y  fCoiporal*  muthot) 
+
+2*  RCPONT  ICCURITV  CLASSIFICATION 
+
+U.S.  Naval  Research  Laboratory 
+
+Unclassified 
+
+Washington,  D.C. 
+
+26  CMOUP 
+
+|3  nCPORT  TITLE  1 
+
+CORROSION  OF  MFTALS  IN  TROPICAL  ENVIRONMENTS 
+PART  6  -  ALUMINUM  AND  MAGNESIUM 
+
+
+4>  DESCRIPTIVE  NOTES  (Typs  of  report  ond  tnetativo  dotoo) 
+
+Interim  report. 
+
+5-  AUTHORfS)  (Lmat  name,  tint  name,  initimt) 
+
+Southwell,  C.R.,  Hummer,  C.W.,  Jr.,  and  Alexander,  A.L. 
+
+
+«.  REPORT  DATE 
+
+December  1,  1964 
+
+7«  total  KO.  of  paces  7b.  NO.  OF  REFS  ] 
+
+18  12 
+
+S«  CONTRACT  OR  GRANT  NO. 
+
+NRL  Problem  C03-11 
+
+6  PROJECT  NO. 
+
+Project  RR  007-08-44-5506 
+'Army  MIPR-64-33-02-01 
+
+d. 
+
+9«.  ORIGINATOR’S  REPORT  NUMBERfS; 
+
+NRL  Report  6105 
+
+9b.  OTHER  REPORT  NO^S^  (Any  othor  numbora  tbmt  njmy  ba  maal0iad 
+thia  taf>ott) 
+
+10  availability/limitation  notices 
+
+Unlimited  availability  -  Copies  available  from  OTS  -  $.50 
+
+n  SUPPLEMENTARY  NOTES 
+
+12  SPONSORING  MILITARY  ACTIVITY 
+
+Dept,  of  the  Navy  (Office  of  Naval 
+Research),  Dept,  of  the  Army 
+
+13  AeSTRACT 
+
+The  corrOiSion  resistance  of  three  alloys  of  aluminum  and  two  alloys  of 
+magnesium  has  been  studied  following  exposure  up  to  16  years  in  five  natural 
+tropical  environments.  These  include  sea-water  immersion,  fresh-water 
+immersion,  and  exposure  to  tidal  sea  water,  a  tropical  marine  atmosphere,  and 
+a  tropical  inland  atmosphere.  Aluminum  1100,  aluminum  alloy  6061-T,  and 
+magnesium  alloy  AZ31X  were  exposed  to  each  of  the  environments  listed.  In 
+addition,  Alclad  aluminum  2024-T  and  magnesium  alloy  AZ61X  were  exposed  to 
+the  two  tropical  atmospheres.  Weight  loss,  pitting,  and  change  in  tensile 
+properties  were  measured  to  show  the  extent  of  corrosion  for  each  of  these 
+materials.  Aluminum  alloys  demonstrate  extremely  high  resistance  to  each 
+environment,  with  the  exception  of  tropical  fresh  water,  in  which  case  serious 
+pitting  occurred.  Alloy  6061-T  demonstrated  some  superiority  in  all  environ¬ 
+ments  to  aluminum  1100. 
+
+
+DD 
+
+
+FORM 
+
+I  64 
+
+
+1473 
+
+
+Security  Classification 
+
+
+15 
+
+
+14. 
+
+
+KEY  WORDS 
+
+
+UHK  A 
+
+
+LINK  B 
+
+
+Corrosion 
+
+Tropical  environments 
+Aluminum 
+Magnesium 
+Sea-water  immersion 
+Fresh-water  immersion 
+Tropical  atmosphere 
+
+
+LINK  C 
+
+
+ROLC 
+
+WT 
+
+ROUE 
+
+WT 
+
+ROLE 
+
+WT 
+
+INSTRUCTIONS 
+
+
+ORIGINATING  ACTIVITY:  Enter  the  name  and  address 
+of  the  contractor,  subcontractor,  grantee.  Department  of  De> 
+feme  activity  or  other  organization  (corporate  author)  issuing 
+the  report. 
+
+2a.  REPORT  SECUWTY  CLASSIFICATION;  Enter  the  over¬ 
+all  security  classification  of  the  report.  Indicate  whether 
+"Restricted  Data*'  is  included  Marking  is  to  be  in  accord¬ 
+ance  with  appropriate  security  regulations. 
+
+26.  GROUP:  Automatic  downgrading  is  specified  in  DoD  Di¬ 
+rective  5200,10  and  Armed  Forces  Industriai  Manual.  Enter 
+the  group  number.  Also,  when  applicable,  show  that  optional 
+markings  have  beer  used  for  Group  3  and  Group  4  as  author¬ 
+ized. 
+
+3.  REPORT  TITLE:  Enter  the  complete  report  title  in  all 
+capital  letters.  Titles  in  all  cases  should  be  unclassified. 
+
+If  a  meaningful  title  cannot  be  selected  without  classifica¬ 
+tion,  show  title  classification  in  all  capitals  in  parenthesis 
+immediately  following  the  title. 
+
+4.  DESCRIPTIVE  NOTES:  If  appropriate,  enter  the  type  of 
+report,  e.g.,  interim,  progress,  summary,  annual,  or  final. 
+
+Give  the  inclusive  dates  when  a  specific  reporting  period  i. 
+covered. 
+
+5.  AUTHOR(S);  Enter  the  name(s)  of  authoKs)  as  shown  on 
+or  in  the  repo  Entei  last  name,  first  name,  middle  initial. 
+
+If  military,  show  rank  and  branch  of  service.  The  name  of 
+the  piincipal  author  in  an  absolute  minimum  requirement. 
+
+6.  REPORT  DATE.  Enter  the  date  of  the  report  as  day, 
+month,  year;  or  month,  year.  If  more  than  one  date  appears 
+on  (he  report,  use  date  of  publication. 
+
+7a.  TOTAL  NUMBER  OF  PAGES.  The  total  page  count 
+should  follow  noimal  pagination  procedures,  i.e.,  enter  the 
+number  of  pages  containing  information. 
+
+76.  NUMBER  OF  REFERENCES:  Enter  the  total  number  of 
+references  cited  in  the  report. 
+
+8a.  CONTRACT  OR  GRANT  NUMBER:  If  appropriate,  enter 
+the  applicable  number  of  the  contract  or  grant  under  which 
+the  report  was  written. 
+
+8b,  8c,  (k  8d.  PROJECT  NUMBER:  Enter  the  appropriate 
+mili'ary  department  identification,  such  as  project  number, 
+sulipioject  number,  system  numbers,  task  number,  etc.  | 
+
+9a.  ORIGINATOR’S  REPORT  NUMBER(Sj.  Enter  the  offi- 
+cial  report  number  by  which  the  document  will  be  identified 
+and  controlled  by  the  originating  oclivity.  This  number  must 
+be  uninue  to  this  report. 
+
+96  OTHEP  REPORT  NUMBERfS)  If  the  report  has  been 
+assigned  a.  other  report  numbers  (either  6i  the  originator 
+or  by  ihe  sponsorj,  also  enter  this  r  imber(s). 
+
+!0.  AVAILABILITY,  LIMITAT’ON  NOTICES  Enter  any  lim¬ 
+itations  on  further  dissemination  of  the  report,  other  than  those 
+
+
+imposed  by  security  classification,  using  standard  statements 
+such  as: 
+
+(1)  "Qualified  requesters  may  obtain  copies  of  this 
+report  from  DDC" 
+
+(2)  "Foreign  announcement  and  dissemination  of  this 
+report  by  DDC  is  not  authorized." 
+
+(3)  "U.  S.  Government  agencies  may  obtain  copies  at 
+this  report  directly  from  DDC.  Other  qualified  DDC 
+users  shall  request  through 
+
+M 
+
+_ _ _ _ _  _  ..  . . 4 
+
+(4)  "U.  S.  military  agencies  may  obtain  copies  of  this 
+report  directly  from  DDC  Other  qualified  users 
+shall  request  through 
+
+»• 
+
+
+(5)  "All  distribution  of  this  report  is  controlled,  ^al- 
+ified  DDC  users  shall  request  through 
+
+
+If  the  report  has  been  furrushed  to  the  Office  of  Technical 
+Services,  Department  of  Commerce,  for  sale  'o  the  public,  indi¬ 
+cate  this  fact  and  enter  the  price,  if  known. 
+
+IL  SUPPLEMENTARY  NOTES:  Use  for  additional  explana¬ 
+tory  notes. 
+
+12.  SPONSORING  MILITARY  ACTIVITY:  Enter  the  name  of 
+the  departmental  project  office  or  laboratory  sponsoring  (pay¬ 
+ing  lor)  the  research  and  development.  Include  address. 
+
+13.  ABSTRACT:  Enter  an  abstract  giving  a  brief  and  factual 
+summary  of  the  document  indicative  of  the  report,  even  though 
+It  may  also  appear  elsewhere  in  the  body  of  the  technical  re¬ 
+port.  If  additional  space  is  required,  a  continuation  sheet  shall 
+be  attached. 
+
+It  IS  highly  desirable  that  the  abstract  of  classified  reports 
+be  unclassified.  Each  paragraph  of  the  abstract  shall  end  with 
+an  indication  of  the  military  security  classification  of  the  in¬ 
+formation  in  the  paragraph,  represented  as  (TS).  (S),  (C).  or  (U) 
+
+There  is  no  limitation  on  the  length  of  the  abstract.  How¬ 
+ever,  the  suggested  length  is  from  ISO  to  225  words. 
+
+14.  KEY  WORDS.  Key  words  are  technically  meaningful  terms 
+or  short  phrases  that  chtracterize  a  report  and  may  be  used  as 
+index  entries  for  cataloging  the  report  Key  words  must  be 
+selected  so  that  no  security  classification  is  required.  Identi¬ 
+fiers,  such  as  equipment  model  designation,  trade  name,  military 
+project  code  name,  geographic  location,  may  be  used  as  key 
+words  but  will  be  followed  by  an  indication  of  technical  con¬ 
+text  The  assignment  of  links,  rales,  and  weights  is  optional 
+
+
+16 
+
+
+Security  Classification 
+
+
+>  «>  p 
+
+C  X  :r 
+H’g  O 
+
+gg'< 
+
+§  C  7 
+
+5-2-*^ 
+
+i  &« 
+
+S  -  3 
+
+
+tc 
+
+
+a 
+
+o  a 
+
+
+w  S 
+
+to  3-  j) 
+
+^  3  <D 
+p  <  2. 
+3  »  C 
+
+“•  2  3 
+3  3  p 
+
+£  ra  = 
+w  3  o 
+2 
+
+Q  tfi 
+2  "  > 
+“=  N 
+3  2.  w 
+^  re  *■* 
+
+2.  P-  ^ 
+■§  S'" 
+
+>  p  re 
+
+SI 
+
+Xo 
+
+3 
+
+
+C  w  tft 
+
+*-  p  o 
+
+^Zp 
+
+3  ^ 
+
+fcj  51  *1 
+
+3  0  0 
+
+a  *1  w) 
+
+^■pf 
+
+i  ^  I 
+
+5  « 
+
+
+S'  S’  3 
+S  2.  c 
+E  -  s 
+o  ® 
+<5  € 
+
+
+<  3 
+-W 
+O  re 
+
+3  « 
+
+3? 
+
+
+p  *-3 
+
+3  3* 
+
+a  o 
+
+
+Cft  ^  o 
+5. 
+
+
+Vi 
+
+■  tJ  ^ 
+
+?  E3 
+P  g  3 
+
+3  3  0 
+
+3  "  i 
+
+3  E  3 
+3  3  = 
+
+3  o  “• 
+—is  re 
+
+§11 
+-  re  g 
+
+c  3  « 
+3  a? 
+
+3  P  ^ 
+
+3  w  S 
+
+3  3  £i 
+
+*3 
+
+
+^  O 
+O  T 
+
+e3 
+
+5  c  STff 
+
+50  3  *<  2 
+
+.  re  CB  s 
+
+,  c  o  T 
+'-J'o  S,  re 
+
+?  "  3  2 
+
+g  O  i  £ 
+
+"  m'S  S' 
+—  0>  3  3 
+3  O  O 
+O  ^  Oi  O 
+
+CS  C  O 
+
+§•23:: 
+
+re  =  w  f 
+
+S  S!  “  re 
+
+is  re  re  w 
+»  _  re  C 
+
+•s  c  2  w 
+33  g.2 
+3  -S  E 
+§  3 
+
+I  -3  3 
+
+
+SPS 
+
+■a  W2 
+
+■o  2; 
+
+•  se*^ 
+
+p  o  cn 
+s  c  ' 
+
+a5»0 
+
+S!  <  > 
+w  2,  SJ 
+2,~-3 
+
+o  <  > 
+
+o  C 
+
+3  ?a 
+§ig 
+•’3  5 
+r*  re  c 
+
+§sr> 
+
+i.^ 
+
+>> 
+r  o 
+
+r  z 
+
+•  PI 
+
+>a 
+
+re  e 
+
+X  3 
+
+p  *• 
+
+3 
+
+a  cr 
+re  *< 
+>1 
+
+
+50 
+
+»  Z 
+Og 
+
+o- 
+z  a 
+o  S 
+ag 
+
+S*1 
+O 
+
+P3  »■ 
+
+>Er 
+
+SS' 
+
+2 
+
+M  •! 
+»*< 
+O 
+
+2  w 
+
+P-g 
+
+r  2 
+
+PI  <3 
+
+is 
+
+5 
+
+§ 
+
+z 
+
+
+c 
+
+z 
+
+o 
+
+r 
+
+> 
+
+§ 
+
+►■i 
+
+PI 
+
+O 
+
+
+s:  <  >  z  a 
+«  2.»  «« 
+!B  a  H  o  p 
+'  ' 
+
+!?2‘ 
+
+o  ^  ^  n  ST 
+re  ‘  £<*'}»-. 
+
+|fic| 
+
+imi 
+
+ins- 
+
+•  «  2'oa 
+
+s.sS^'g 
+
+
+f 
+
+
+»  S'  o  2.  < 
+
+c  ®  5  ®  j  2 
+
+2.  S  £  »>  <5  „ 
+S'  o  K  "  **  S 
+
+1=^0  =^3-1 
+
+^  £  2.  ^  K 
+
+- 1  o  5  §  i 
+
+
+(9  (9 
+
+
+c 
+
+5 
+
+o 
+
+
+^  A 
+
+3  C  §  1,  3 
+
+S'"  <  «’S 
+
+*1  *0  »i  2 
+
+f  ^  o  I?  c: 
+
+5«rH 
+
+WaH 
+
+
+>  *  s. 
+
+3  O  O  <<  “  2 
+-•<  4?  w  O  * 
+t;  o»^ 
+
+
+S8 
+
+
+gffS- » 
+
+
+2. 
+
+
+w 
+
+o 
+
+
+23  3  If 
+
+2  o  3  <«  o 
+
+go"’?,*’ 
+9  »  (9  IB 
+
+»  S-  X  stJ 
+cr  *.*  ‘^  2: 
+
+»<»<;?  g 
+
+3  Bi  y  o  CJ. 
+3  ft  ^  S 
+
+«  ii'g.o 
+
+^  3 
+
+
+<«  S '*>  S’  2.  < 
+
+•2  «  £  °  I  * 
+
+3  E£8| * 
+
+S'  O  M  O  ®  2 
+
+°  =^§  =^3-S 
+
+S:  r)  ft  o  ^  p 
+
+-I o 5§  a 
+
+3  ^  ft  m  W  ^ 
+
+^  £  (A  C*  o 
+s?  8  ° 
+
+«  S'^B’S  S’ 
+
+i  ?  2  S I  * 
+
+3  o’!  « 
+
+»t  *3  ^  A 
+
+O  S*  *1  *1 
+
+3  ;:  o  d  :r 
+
+III  S"  »-8 
+
+o  c  <  §  **  v 
+
+w  n  c  S'  3  I 
+
+C:  ><  _  " 
+o  n  .< 
+
+»  91 
+
+^  0»^  Q.  a, 
+
+3  «  o 
+
+o  fs’  ^  ^ 
+
+gs-si; 
+
+35325 
+
+"  ls« 
+
+“  5  g 
+
+3  s  2S  o- 
+
+rt.  5 
+
+•  ^  3 
+
+
+3  I 
+
+i^SgSLs 
+
+3  O  n  we  _  2 
+
+S  £ 
+
+
+a^g 
+
+£  <"< 
+
+O  p 
+
+
+91  =•  3  S'  2  ^ 
+C  ^  (»  2  ?  (9 
+•n  <  91  ^  2  "> 
+2  p-w  2«  ** 
+
+S'  o  g  8  »  s 
+
+2  ^  "  O  =  ■? 
+
+-•  1 5  ?  s  a 
+
+s  ™  ST  w 
+
+..  M  »  rS  5? 
+
+
+%i  (A 
+&  ft 
+»-  *1 
+
+ft  o' 
+
+<  s 
+
+e’S 
+
+
+p  (A  O 
+8  «  <»  e 
+3-  a  "O  & 
+
+5§3a 
+
+s.2^S 
+•1  2.  >1  ® 
+ft  M  ff  *«• 
+
+
+3  ^  ft  < 
+
+E?  8  £  >  2  £ 
+
+
+o  S  <  g 
+»  3  5 1  3  3 
+g3  =^3  2  o 
+
+I-  fSl-S 
+I  Si «  =3  I 
+i 581^3 
+iEl-S  “  °  “ 
+
+^  0>  r»  Ct 
+
+§85'* 
+
+
+£  3  3 
+'  o  2 
+
+f?  o  3 
+
+
+£■  ^ 
+9  2 
+*  « 
+
+
+<9  „ 
+
+o 
+
+
+3-0  £  2  91 
+
+§  S  «  «  “ 
+
+»  -  X  £'2 
+
+
+a 
+
+
+"1  5  o  ^ 
+
+(9  g  -  5 
+
+£  3  n  « 
+
+3*  ft  O  ^ 
+91  <  ><  5  2 
+
+Op  ft  3 
+
+3  5*  ?■  S  a. 
+
+3  «  “  2 
+
+(t  ^  TO  g 
+
+

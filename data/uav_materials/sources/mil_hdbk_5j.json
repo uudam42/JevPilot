@@ -1,0 +1,23 @@
+{
+  "id": "MIL-HDBK-5J",
+  "title": "Department of Defense Handbook: Metallic Materials and Elements for Aerospace Vehicle Structures (MIL-HDBK-5J)",
+  "publisher": "U.S. Department of Defense (with the Federal Aviation Administration)",
+  "edition": "31 January 2003",
+  "retrieved": "2026-09-23",
+  "retrieved_from": "https://archive.org/details/milhdbk-5-j",
+  "reuse": {
+    "statement_in_document": "DISTRIBUTION STATEMENT A. Approved for public release; distribution is unlimited.",
+    "basis": "U.S. Government work (17 U.S.C. 105) with Distribution Statement A.",
+    "redistribution_of_extracts": "permitted"
+  },
+  "files": [
+    {"path": "raw/mil_hdbk_5j/MILHDBK5J.pdf", "bytes": 69928300,
+     "sha256": "7f2450863566ff46091d233bdfc8b44a546034a91ac08008386375963198222c",
+     "committed": false, "note": "download with the URL above; verify the checksum"},
+    {"path": "raw/mil_hdbk_5j/table_pages.jsonl", "committed": true,
+     "note": "text layer of every page that holds a design-properties table, extracted with pypdf 6.19.0 (PdfReader.extract_text); regenerate with `python -m domains.uav_materials.ingest.build --from-pdf`"}
+  ],
+  "used": "Room-temperature design allowables from 'Design Mechanical and Physical Properties' tables: Ftu, Fty, Fcy, Fsu, elongation, E, G, density. Original units ksi, percent, 10^3 ksi, lb/in^3.",
+  "not_used": "Bearing allowables; tables the strict parser cannot read unambiguously (row-major letter-spaced layout, one alloy per column, token-count mismatches; see processed/build_report.json); all figures (elevated-temperature curves, fatigue, stress-strain).",
+  "caveats": "MIL-HDBK-5J is superseded by MMPDS; values are historical design allowables, not current certification data. Allowables are statistically based (A, B) or specification minima (S)."
+}

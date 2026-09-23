@@ -46,8 +46,10 @@ _DEFS = [
     UnitDef("GPa", Dimension.STRESS, 1e9),
     UnitDef("psi", Dimension.STRESS, 6894.757293168361),
     UnitDef("ksi", Dimension.STRESS, 6894757.293168361),
+    UnitDef("Msi", Dimension.STRESS, 6894757293.168361),  # 10^3 ksi (MIL-HDBK-5 moduli)
     UnitDef("kg/m^3", Dimension.DENSITY, 1.0),
     UnitDef("g/cm^3", Dimension.DENSITY, 1000.0),
+    UnitDef("lb/in^3", Dimension.DENSITY, 27679.904710203125),  # 0.45359237 kg / 0.0254^3 m^3
     UnitDef("1", Dimension.FRACTION, 1.0),
     UnitDef("%", Dimension.FRACTION, 0.01),
     UnitDef("K", Dimension.TEMPERATURE, 1.0),
@@ -55,9 +57,11 @@ _DEFS = [
     UnitDef("m/s", Dimension.RATE, 1.0),
     UnitDef("mm/year", Dimension.RATE, 1e-3 / 31_557_600),  # Julian year
     UnitDef("um/year", Dimension.RATE, 1e-6 / 31_557_600),
+    UnitDef("mil/year", Dimension.RATE, 25.4e-6 / 31_557_600),  # 1 mil = 0.001 in
     UnitDef("s", Dimension.TIME, 1.0),
     UnitDef("h", Dimension.TIME, 3600.0),
     UnitDef("day", Dimension.TIME, 86_400.0),
+    UnitDef("year", Dimension.TIME, 31_557_600.0),  # Julian year, as for the rate units
 ]
 UNITS: dict[str, UnitDef] = {u.symbol: u for u in _DEFS}
 SI: dict[Dimension, str] = {

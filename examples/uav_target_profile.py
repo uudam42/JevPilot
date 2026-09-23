@@ -22,6 +22,7 @@ SRC = "illustrative weights for this example only"
 
 def main() -> None:
     wa_conditions = {
+        "environment": "lab_water_immersion",
         "medium": "fresh water",
         "exposure_duration": {"value": 24, "unit": "h"},
         "temperature": {"value": 23, "unit": "degC"},

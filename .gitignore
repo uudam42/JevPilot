@@ -13,3 +13,8 @@ experiments/routing/results/
 !.env.example
 dist/
 build/
+
+# UAV materials data: large originals and derived files are rebuilt, not committed
+data/uav_materials/raw/**/*.pdf
+data/uav_materials/interim/
+data/uav_materials/processed/

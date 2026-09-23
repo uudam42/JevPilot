@@ -15,6 +15,7 @@ from jevpilot import Provenance, SourceRef
 
 SYN = Provenance(sources=(SourceRef(kind="synthetic", identifier="unit-test"),))
 WA24 = {
+    "environment": "lab_water_immersion",
     "medium": "fresh water",
     "exposure_duration": {"value": 24, "unit": "h"},
     "temperature": {"value": 23, "unit": "degC"},
