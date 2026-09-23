@@ -1,0 +1,1547 @@
+{
+  "dataset": "uav-materials-synthetic-test-fixtures",
+  "version": "1",
+  "warning": "FICTIONAL materials for software tests only. Values are invented and must not be used for engineering.",
+  "materials": [
+    {
+      "material_id": "syn-metal-a",
+      "name": "SyntheticMetalA",
+      "family": "metal",
+      "provenance_status": "synthetic",
+      "metadata": {
+        "synthetic": true,
+        "note": "fictional test material; not real engineering data"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "kind": "synthetic",
+            "identifier": "jevpilot-uav-materials-test-fixtures",
+            "version": "1"
+          }
+        ]
+      },
+      "density": [
+        {
+          "property": "density",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 4400,
+          "unit": "kg/m^3",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "strength": [
+        {
+          "property": "tensile_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 900,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "test_method": "synthetic tensile procedure T1",
+          "uncertainty": {
+            "kind": "measurement",
+            "interval": [
+              880,
+              920
+            ],
+            "metadata": {
+              "interval": "synthetic 95% range"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "yield_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 820,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "compressive_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 950,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "shear_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 550,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "tensile_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 720,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 300,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "deformation": [
+        {
+          "property": "youngs_modulus",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 110,
+          "unit": "GPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "elongation_at_break",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 14,
+          "unit": "%",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "corrosion": [
+        {
+          "property": "corrosion_rate",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.002,
+          "unit": "mm/year",
+          "conditions": {
+            "medium": "salt water (3.5% NaCl, synthetic spec)",
+            "exposure_duration": {
+              "value": 1000,
+              "unit": "h"
+            },
+            "temperature": {
+              "value": 25,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "water_absorption": [
+        {
+          "property": "water_absorption",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "missing": "not_applicable",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "temperature_effects": [
+        {
+          "property": "max_service_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 400,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "min_service_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": -200,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "glass_transition_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "missing": "not_applicable",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "melting_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 1600,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "tensile_strength_retention",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.8,
+          "unit": "1",
+          "conditions": {
+            "temperature": {
+              "value": 300,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "material_id": "syn-metal-b",
+      "name": "SyntheticMetalB",
+      "family": "metal",
+      "provenance_status": "synthetic",
+      "metadata": {
+        "synthetic": true,
+        "note": "fictional test material; not real engineering data"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "kind": "synthetic",
+            "identifier": "jevpilot-uav-materials-test-fixtures",
+            "version": "1"
+          }
+        ]
+      },
+      "density": [
+        {
+          "property": "density",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 2700,
+          "unit": "kg/m^3",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "strength": [
+        {
+          "property": "tensile_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 480,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "yield_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 410,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "shear_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 290,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "deformation": [
+        {
+          "property": "youngs_modulus",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 70,
+          "unit": "GPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "elongation_at_break",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 11,
+          "unit": "%",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "corrosion": [
+        {
+          "property": "corrosion_rate",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.3,
+          "unit": "mm/year",
+          "conditions": {
+            "medium": "salt water (3.5% NaCl, synthetic spec)",
+            "exposure_duration": {
+              "value": 1000,
+              "unit": "h"
+            },
+            "temperature": {
+              "value": 25,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "corrosion_rate",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.02,
+          "unit": "mm/year",
+          "conditions": {
+            "medium": "fresh water",
+            "exposure_duration": {
+              "value": 1000,
+              "unit": "h"
+            },
+            "temperature": {
+              "value": 25,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "water_absorption": [
+        {
+          "property": "water_absorption",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "missing": "not_applicable",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "temperature_effects": [
+        {
+          "property": "max_service_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 150,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "melting_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 640,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "tensile_strength_retention",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.5,
+          "unit": "1",
+          "conditions": {
+            "temperature": {
+              "value": 200,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "glass_transition_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "missing": "not_applicable",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "material_id": "syn-composite-c",
+      "name": "SyntheticCompositeC",
+      "family": "composite",
+      "provenance_status": "synthetic",
+      "metadata": {
+        "synthetic": true,
+        "note": "fictional test material; not real engineering data"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "kind": "synthetic",
+            "identifier": "jevpilot-uav-materials-test-fixtures",
+            "version": "1"
+          }
+        ]
+      },
+      "density": [
+        {
+          "property": "density",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 1550,
+          "unit": "kg/m^3",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "strength": [
+        {
+          "property": "tensile_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 1500,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            },
+            "specimen": "0-degree unidirectional (synthetic)"
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "compressive_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 900,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "shear_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 90,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "deformation": [
+        {
+          "property": "youngs_modulus",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 70,
+          "unit": "GPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "elongation_at_break",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 1.8,
+          "unit": "%",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "water_absorption": [
+        {
+          "property": "water_absorption",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.6,
+          "unit": "%",
+          "conditions": {
+            "medium": "fresh water",
+            "exposure_duration": {
+              "value": 24,
+              "unit": "h"
+            },
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "temperature_effects": [
+        {
+          "property": "glass_transition_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 180,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "max_service_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 120,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "modulus_retention",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.85,
+          "unit": "1",
+          "conditions": {
+            "temperature": {
+              "value": 100,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "melting_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "missing": "not_applicable",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "material_id": "syn-polymer-d",
+      "name": "SyntheticPolymerD",
+      "family": "polymer",
+      "provenance_status": "synthetic",
+      "metadata": {
+        "synthetic": true,
+        "note": "fictional test material; not real engineering data"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "kind": "synthetic",
+            "identifier": "jevpilot-uav-materials-test-fixtures",
+            "version": "1"
+          }
+        ]
+      },
+      "density": [
+        {
+          "property": "density",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 1150,
+          "unit": "kg/m^3",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "strength": [
+        {
+          "property": "tensile_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 70,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "yield_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 60,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "deformation": [
+        {
+          "property": "youngs_modulus",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 2.5,
+          "unit": "GPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "elongation_at_break",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 50,
+          "unit": "%",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "water_absorption": [
+        {
+          "property": "water_absorption",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 2.5,
+          "unit": "%",
+          "conditions": {
+            "medium": "fresh water",
+            "exposure_duration": {
+              "value": 24,
+              "unit": "h"
+            },
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "temperature_effects": [
+        {
+          "property": "glass_transition_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 60,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "max_service_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 50,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "melting_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 220,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "material_id": "syn-foam-e",
+      "name": "SyntheticFoamE",
+      "family": "polymer",
+      "provenance_status": "synthetic",
+      "metadata": {
+        "synthetic": true,
+        "note": "fictional test material; not real engineering data"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "kind": "synthetic",
+            "identifier": "jevpilot-uav-materials-test-fixtures",
+            "version": "1"
+          }
+        ]
+      },
+      "density": [
+        {
+          "property": "density",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 200,
+          "unit": "kg/m^3",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "strength": [
+        {
+          "property": "tensile_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 3,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "compressive_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 2.5,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "deformation": [
+        {
+          "property": "youngs_modulus",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.1,
+          "unit": "GPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "water_absorption": [
+        {
+          "property": "water_absorption",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 8,
+          "unit": "%",
+          "conditions": {
+            "medium": "salt water (3.5% NaCl, synthetic spec)",
+            "exposure_duration": {
+              "value": 168,
+              "unit": "h"
+            },
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "temperature_effects": [
+        {
+          "property": "max_service_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 90,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "material_id": "syn-composite-f",
+      "name": "SyntheticCompositeF",
+      "family": "composite",
+      "provenance_status": "unsourced",
+      "metadata": {
+        "synthetic": true,
+        "note": "fictional test material; not real engineering data"
+      },
+      "density": [
+        {
+          "property": "density",
+          "provenance_status": "unsourced",
+          "basis": "specified",
+          "value": 1600,
+          "unit": "kg/m^3"
+        }
+      ],
+      "strength": [
+        {
+          "property": "tensile_strength",
+          "provenance_status": "unsourced",
+          "basis": "specified",
+          "value": 1200,
+          "unit": "MPa"
+        }
+      ],
+      "deformation": [
+        {
+          "property": "youngs_modulus",
+          "provenance_status": "unsourced",
+          "basis": "specified",
+          "missing": "not_measured"
+        }
+      ]
+    },
+    {
+      "material_id": "syn-ceramic-g",
+      "name": "SyntheticCeramicG",
+      "family": "ceramic",
+      "provenance_status": "synthetic",
+      "metadata": {
+        "synthetic": true,
+        "note": "fictional test material; not real engineering data"
+      },
+      "provenance": {
+        "sources": [
+          {
+            "kind": "synthetic",
+            "identifier": "jevpilot-uav-materials-test-fixtures",
+            "version": "1"
+          }
+        ]
+      },
+      "density": [
+        {
+          "property": "density",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 3900,
+          "unit": "kg/m^3",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "strength": [
+        {
+          "property": "tensile_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 250,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "compressive_strength",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 2500,
+          "unit": "MPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "deformation": [
+        {
+          "property": "youngs_modulus",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 370,
+          "unit": "GPa",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "elongation_at_break",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.1,
+          "unit": "%",
+          "conditions": {
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "corrosion": [
+        {
+          "property": "corrosion_rate",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.0001,
+          "unit": "mm/year",
+          "conditions": {
+            "medium": "salt water (3.5% NaCl, synthetic spec)",
+            "exposure_duration": {
+              "value": 1000,
+              "unit": "h"
+            },
+            "temperature": {
+              "value": 25,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "water_absorption": [
+        {
+          "property": "water_absorption",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 0.02,
+          "unit": "%",
+          "conditions": {
+            "medium": "fresh water",
+            "exposure_duration": {
+              "value": 24,
+              "unit": "h"
+            },
+            "temperature": {
+              "value": 23,
+              "unit": "degC"
+            }
+          },
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ],
+      "temperature_effects": [
+        {
+          "property": "max_service_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "value": 1400,
+          "unit": "degC",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        },
+        {
+          "property": "glass_transition_temperature",
+          "provenance_status": "synthetic",
+          "basis": "specified",
+          "missing": "not_applicable",
+          "provenance": {
+            "sources": [
+              {
+                "kind": "synthetic",
+                "identifier": "jevpilot-uav-materials-test-fixtures",
+                "version": "1"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

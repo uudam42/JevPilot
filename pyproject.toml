@@ -20,6 +20,7 @@ jev = ["typesafe-sdk>=0.7.1,<0.8"]
 [project.entry-points."jevpilot.domains"]
 arithmetic = "domains.demo:ArithmeticDomain"
 stats = "domains.stats_demo:StatsDomain"
+uav_materials = "domains.uav_materials:UAVMaterialsDomain"
 
 [tool.hatch.build.targets.wheel]
 packages = ["jevpilot", "domains", "integrations"]
