@@ -192,8 +192,8 @@ Jev exists** (enforced by `test_generic_orchestration_does_not_name_routing_impl
 ### FallbackRouter: explicit fallback by composition
 
 ```python
-FallbackRouter(JevRouter(...), RuleRouter(rules))                     # Jev → Rule
-FallbackRouter(JevRouter(...), LLMRouter(...), RuleRouter(rules))     # Jev → LLM → Rule
+FallbackRouter(JevRouter(...), RuleRouter(rules))  # Jev → Rule
+FallbackRouter(JevRouter(...), LLMRouter(...), RuleRouter(rules))  # Jev → LLM → Rule
 FallbackRouter(primary, fallback, fallback_on=(MalformedRoutingDecisionError,))
 ```
 

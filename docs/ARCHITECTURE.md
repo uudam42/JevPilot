@@ -33,10 +33,11 @@ runs, over one structured **workflow state**.
 ┌──────────────────────────────┴───────────────────────────────────────┐
 │ Domain modules: capabilities, evaluators, state extensions, reducers, │
 │ routing heuristics, schemas, models, data                            │
-│   domains/demo (arithmetic)   domains/stats_demo   …future domains   │
+│   domains/demo (arithmetic)  domains/stats_demo  domains/uav_materials│
 ├──────────────────────────────────────────────────────────────────────┤
-│ integrations/  SDK-backed provider adapters (AnthropicLLMAdapter)    │
+│ integrations/  SDK-backed provider adapters (Claude, TypeSafe Jev)   │
 │ experiments/   routing benchmark: fixtures, suites, metrics, CLI     │
+│ apps/          end-to-end applications: composition roots + CLI      │
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -52,6 +53,7 @@ runs, over one structured **workflow state**.
 | `adapters` | `core`, `interfaces`, `routing`, `exceptions` |
 | `planning` | `core`, `interfaces` |
 | `domains/*`, `integrations/*`, `experiments/*` | any public `jevpilot` name |
+| `apps/*` | public `jevpilot` names, `jevpilot.routing`, `jevpilot.adapters`, `domains/*`, `integrations/*` |
 
 `jevpilot` → `domains`, `integrations`, `experiments` is **forbidden**, and so
 is `routing` → `adapters`: adapters implement routing contracts, never the
@@ -226,12 +228,32 @@ logged traces, and use `read_jsonl_trace` to reload one.
 - A workflow in `AWAITING_HUMAN` stops. There is no resume-with-human-input API yet.
 - Router timeouts are soft deadlines: the adapter receives `timeout_s`, and
   late answers are discarded. Nothing is cancelled mid-call.
-- The only real provider adapter is `AnthropicLLMAdapter`. There is no real
-  Jev adapter yet; `JevRouter` runs with `FakeJevAdapter` or any
-  user-supplied `RoutingModelAdapter`.
+- The real provider adapters (`AnthropicLLMAdapter`, `TypeSafeJevAdapter`) are
+  verified through their SDKs with mocked transports; live calls need
+  credentials and have not been run in the development environment.
 - `ScriptedRouter` is stateful (use one instance per run).
 - Full state snapshots in the trace are simple but can be large.
 - Demo domains ship in the same distribution as the core, for convenience.
+
+## 7. Applications: the end-to-end layer
+
+An *application* (`apps/`) is a composition root: it chooses the router, the
+model adapters and the domain, and exposes one entry point. The UAV materials
+application wires the `uav_materials` domain to either live providers (Claude
+for requirement interpretation, Jev for routing) or offline stand-ins, runs
+the unmodified controller loop, and returns a structured report plus
+Markdown:
+
+```python
+from apps.uav_materials import run_uav_material_workflow
+
+result = run_uav_material_workflow()  # OFFLINE_DEMO; mode="LIVE" needs API keys
+```
+
+The domain never imports routers, adapters or provider SDKs (a domain test
+enforces it); the application does, so provider choice stays outside both the
+core and the domain. `jevpilot uav-materials --demo` is the command-line
+entry point. See [UAV_MATERIALS.md](UAV_MATERIALS.md) for the methodology.
 
 ## Phase 1 (done)
 
@@ -253,6 +275,14 @@ offline and live modes. Git history and version 0.1.0 (experimental). See
 and [EXPERIMENTS.md](EXPERIMENTS.md). No core module changed except
 `ModelRouter`, which now keeps adapter metadata on every `RoutingAttempt`.
 
+## UAV materials iterations and productization (done)
+
+A real domain on the unchanged core: real material data with provenance,
+requirement semantics per material system, evidence-aware evaluation,
+NASA-sourced micromechanics and lamination theory, bounded inverse design, a
+configurable decision policy, the end-to-end application with offline and
+live modes, and report-integrity tests. See [UAV_MATERIALS.md](UAV_MATERIALS.md).
+
 ## Phase 2 backlog
 
 1. Live runs: the smoke tests, then `--mode live` on validation and eval with
@@ -264,8 +294,8 @@ and [EXPERIMENTS.md](EXPERIMENTS.md). No core module changed except
 3. `HybridRouter` (for example rules for known states, a model otherwise) and
    learned routers trained on logged `RoutingRequest` → decision pairs.
 4. Confidence-calibration analysis over benchmark records.
-5. LLM adapters for requirement parsing, planning and reporting behind
-   `Planner` and new interfaces.
+5. LLM adapters for planning and reporting behind `Planner` and new
+   interfaces (requirement interpretation exists for the UAV application).
 6. Async and parallel capability execution, hard timeouts and cancellation.
 7. A persistent provenance store and artifact storage (URIs, content hashing).
 8. Richer uncertainty propagation and conflicting-observation handling.

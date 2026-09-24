@@ -23,15 +23,26 @@ uncertainty and provenance chains).
 
 ```python
 from pydantic import BaseModel
-from jevpilot import (Capability, CapabilitySpec, CapabilityResult, ExecutionContext,
-                      Artifact, ArtifactKind, SourceRef, StateEffects, Uncertainty)
+from jevpilot import (
+    Capability,
+    CapabilitySpec,
+    CapabilityResult,
+    ExecutionContext,
+    Artifact,
+    ArtifactKind,
+    SourceRef,
+    StateEffects,
+    Uncertainty,
+)
+
 
 class LookupInput(BaseModel):
     key: str
 
+
 class Lookup(Capability):
     spec = CapabilitySpec(
-        id="mydomain.lookup",               # "<domain>.<name>", globally unique
+        id="mydomain.lookup",  # "<domain>.<name>", globally unique
         name="lookup",
         description="Fetch a record by key from the reference table.",  # routers read this
         domain="mydomain",
@@ -40,14 +51,15 @@ class Lookup(Capability):
         tags=frozenset({"data", "read-only"}),
         preconditions=("reference table configured",),
         effects=("adds a record artifact",),
-        cost_estimate=0.01, latency_estimate=0.2,
+        cost_estimate=0.01,
+        latency_estimate=0.2,
     )
 
-    def is_applicable(self, state) -> bool:           # executable precondition
+    def is_applicable(self, state) -> bool:  # executable precondition
         return "table" in state.context
 
     def execute(self, inputs: LookupInput, ctx: ExecutionContext) -> CapabilityResult:
-        record = ...                                   # your domain logic
+        record = ...  # your domain logic
         return CapabilityResult(
             output=record,
             artifacts=(Artifact(name=inputs.key, kind=ArtifactKind.JSON, content=record),),
@@ -74,13 +86,17 @@ Rules for capabilities:
 ```python
 from jevpilot import Evaluator, EvaluationResult, ControlAction, ConstraintStatus
 
+
 class MyEvaluator(Evaluator):
     evaluator_id = "mydomain.goal_met"
+
     def evaluate(self, state):
         ok = ...  # read goal.success_criteria, observations, artifacts
         return EvaluationResult(
-            evaluator_id=self.evaluator_id, step=state.step,
-            goal_progress=..., constraint_status=(ConstraintStatus(constraint_id="x", satisfied=ok),),
+            evaluator_id=self.evaluator_id,
+            step=state.step,
+            goal_progress=...,
+            constraint_status=(ConstraintStatus(constraint_id="x", satisfied=ok),),
             remaining_gaps=() if ok else ("x not satisfied",),
             recommendation=ControlAction.TERMINATE_SUCCESS if ok else ControlAction.CONTINUE,
         )
@@ -96,12 +112,16 @@ control policy applies generic budgets on top.
 class MyState(WorkflowState):
     best_score: float | None = None
 
+
 class ScoreReducer(StateReducer):
     def reduce(self, state, observation):
-        if isinstance(state, MyState) and observation.capability_id == "mydomain.score" \
-                and observation.success:
+        if (
+            isinstance(state, MyState)
+            and observation.capability_id == "mydomain.score"
+            and observation.success
+        ):
             return state.evolve(best_score=max(state.best_score or 0, observation.result.score))
-        return state      # ignore observations you don't own
+        return state  # ignore observations you don't own
 ```
 
 Reducers must be pure and must ignore state types and observations that aren't
@@ -114,10 +134,18 @@ at all; `stats_demo` shows this style.
 class MyDomain(DomainModule):
     name = "mydomain"
     version = "0.1.0"
-    def capabilities(self): return [Lookup(), ...]
-    def evaluators(self):   return [MyEvaluator()]
-    def reducers(self):     return [ScoreReducer()]
-    def state_type(self):   return MyState
+
+    def capabilities(self):
+        return [Lookup(), ...]
+
+    def evaluators(self):
+        return [MyEvaluator()]
+
+    def reducers(self):
+        return [ScoreReducer()]
+
+    def state_type(self):
+        return MyState
 ```
 
 `create_state(goal, **fields)` builds the initial state and tags
@@ -129,7 +157,7 @@ class MyDomain(DomainModule):
 from jevpilot import Runtime, RuleRouter, Goal
 
 rt = Runtime()
-dom = rt.load("mypackage.domain:MyDomain")   # or rt.load(MyDomain()) or rt.load("mydomain")
+dom = rt.load("mypackage.domain:MyDomain")  # or rt.load(MyDomain()) or rt.load("mydomain")
 ctl = rt.controller(RuleRouter(my_rules), domains=["mydomain"])
 result = ctl.run(dom.create_state(Goal(description="...", success_criteria={...})))
 ```

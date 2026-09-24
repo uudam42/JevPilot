@@ -144,3 +144,25 @@ python -m experiments.routing.benchmark --mode live --routers jev --split valida
 "Real model identifier is valid" and "adapter works against the live API"
 therefore remain **unverified** until the smoke tests are run with
 credentials.
+
+## 5. UAV materials workflow in LIVE mode
+
+The end-to-end application uses both integrations: Claude interprets the
+request into structured requirements (validated like the offline parser's
+output; no material values are accepted from the model), and Jev routes the
+workflow capabilities.
+
+```bash
+pip install -e '.[anthropic,jev]'
+export ANTHROPIC_API_KEY=... TYPESAFE_API_KEY=...
+jevpilot uav-materials --live --request "your request"
+JEVPILOT_LIVE_TESTS=1 pytest tests/apps/test_uav_live.py -s     # opt-in end-to-end test
+```
+
+Missing keys or SDKs stop the command with exit code 2 and a list of what is
+missing; there is no silent fallback to the offline demo. The workflow
+capabilities take no inputs, so Jev only chooses *which* step runs next and
+never has to produce a value (see "Unavoidable differences" above). The live
+end-to-end run has **not** been performed in the development environment
+(no credentials).
+
