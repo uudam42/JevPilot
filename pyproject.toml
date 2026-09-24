@@ -24,8 +24,12 @@ arithmetic = "domains.demo:ArithmeticDomain"
 stats = "domains.stats_demo:StatsDomain"
 uav_materials = "domains.uav_materials:UAVMaterialsDomain"
 
+# One command for the end-to-end applications (the core itself ships no CLI).
+[project.scripts]
+jevpilot = "apps.cli:main"
+
 [tool.hatch.build.targets.wheel]
-packages = ["jevpilot", "domains", "integrations"]
+packages = ["jevpilot", "domains", "integrations", "apps"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

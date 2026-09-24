@@ -204,9 +204,21 @@ def test_duplicate_soft_keys_are_rejected() -> None:
         EngineeringTarget(
             profile_id="x",
             name="x",
-            requirements=(er(Aspect.TENSILE_ULTIMATE, Direction.MATERIAL_1, **soft),
-                          er(Aspect.TENSILE_ULTIMATE, Direction.MATERIAL_2, **soft)),
-        )  # fmt: skip
+            requirements=(er(Aspect.TENSILE_ULTIMATE, **soft), er(Aspect.TENSILE_ULTIMATE, **soft)),
+        )
+
+
+def test_directional_soft_preferences_have_distinct_keys() -> None:
+    """Maximizing stiffness along x and along y are two preferences, not a duplicate."""
+    soft = {"operator": "maximize", "value": None, "unit": None, "priority": "soft", "weight": 1.0,
+            "weight_source": "test"}  # fmt: skip
+    t = EngineeringTarget(
+        profile_id="x",
+        name="x",
+        requirements=(er(Aspect.NORMAL_STIFFNESS, Direction.LAMINATE_X, **soft),
+                      er(Aspect.NORMAL_STIFFNESS, Direction.LAMINATE_Y, **soft)),
+    )  # fmt: skip
+    assert [r.property for r in t.carrier_profile().requirements] == ["laminate_ex", "laminate_ey"]
 
 
 # -- unified evaluator integration ------------------------------------------------------------

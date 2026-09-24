@@ -159,6 +159,8 @@ class RequirementEvidence(FrozenModel):
     uncertainty_known: bool = False
     check: str | None = None  # hard constraints: satisfied / violated / undetermined
     value: str | None = None
+    numeric_value: float | None = None  # the selected value in `unit`
+    unit: str | None = None
     sufficient: bool
     reasons: tuple[GapReason, ...] = ()
     detail: str = ""
@@ -345,6 +347,8 @@ def _assess_requirement(
         uncertainty_known=known,
         check=status.value if status else None,
         value=f"{m.qualifier.value if m.qualifier.value != '=' else ''}{shown:.4g} {unit}".strip(),
+        numeric_value=shown,
+        unit=unit,
         sufficient=not reasons,
         reasons=tuple(reasons),
         detail=sel.reason,

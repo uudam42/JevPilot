@@ -245,7 +245,8 @@ class EngineeringRequirement(FrozenModel):
         """
         if self.legacy is not None:
             return self.legacy
-        return self.as_property_requirement(NOMINAL[self.aspect])
+        prop = NOMINAL_DIRECTIONAL.get((self.aspect, self.direction), NOMINAL[self.aspect])
+        return self.as_property_requirement(prop)
 
 
 # -- material-system semantics ---------------------------------------------------------------
@@ -535,6 +536,11 @@ NOMINAL: dict[Aspect, str] = {
     **BULK_PROPERTY,
     Aspect.POISSON_RATIO: "ply_major_poisson_ratio",
     Aspect.TENSILE_FAILURE_STRAIN: "ply_longitudinal_tensile_failure_strain",
+}
+# Directional requirements get a direction-specific key, so that e.g. "maximize stiffness
+# along x" and "... along y" are distinct preferences. Still only a key/unit carrier.
+NOMINAL_DIRECTIONAL: dict[tuple[Aspect, Direction], str] = {
+    (a, d): p for p, (a, d) in LIFT.items() if d is not Direction.UNSPECIFIED
 }
 
 

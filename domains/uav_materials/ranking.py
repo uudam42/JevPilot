@@ -20,9 +20,11 @@ target     dᵢ = |vᵢ − t| / |t|
 ``maximize`` and ``minimize`` use the *relative gap to the best viable value*:
 "this candidate is x·100 % worse than the best option in the normalisation
 pool". The pool is the candidates that are not infeasible (all candidates if
-fewer than two remain). A relative gap is scale-free and does not exaggerate
-tiny spreads the way min–max range normalisation does: a 2 % density
-difference stays 0.02. The best values used are reported in
+fewer than two remain). If no candidate in the pool has a value for a
+preference, that preference's scale comes from all candidates instead: a
+missing scale must never make every value look perfect. A relative gap is
+scale-free and does not exaggerate tiny spreads the way min–max range
+normalisation does: a 2 % density difference stays 0.02. The best values used are reported in
 :meth:`TargetRelativeExtractor.parameters`. ``between`` and ``target`` are
 measured against the target itself.
 
@@ -92,7 +94,9 @@ class TargetRelativeExtractor:
         ranges: dict[str, tuple[float, float]],
         worst: dict[str, float],
         resolve: Resolve | None = None,
+        scale_source: dict[str, str] | None = None,
     ) -> None:
+        self.scale_source = scale_source or {}
         self.resolve = resolve or _identity
         self.profile = profile
         self.scored = [r for r in profile.soft_preferences if r.weight is not None]
@@ -109,22 +113,31 @@ class TargetRelativeExtractor:
         profile: TargetMaterialProfile,
         materials: Sequence[MaterialRecord],
         resolve: Resolve | None = None,
+        fallback: Sequence[MaterialRecord] = (),
     ) -> TargetRelativeExtractor:
+        """Fit scales on ``materials``; a preference none of them has uses ``fallback``."""
         ranges: dict[str, tuple[float, float]] = {}
         values: dict[str, list[float]] = {}
+        source: dict[str, str] = {}
         for r in profile.soft_preferences:
             if r.weight is None:
                 continue
             vals = [v for m in materials if (v := _value(m, r, resolve)) is not None]
+            source[_key(r)] = "pool"
+            if not vals and fallback:
+                vals = [v for m in fallback if (v := _value(m, r, resolve)) is not None]
+                source[_key(r)] = "all candidates (no value in the pool)"
             values[_key(r)] = vals
             if vals:
                 ranges[_key(r)] = (min(vals), max(vals))
+            else:
+                source[_key(r)] = "no candidate has a value"
         draft = cls(profile, ranges, {}, resolve)
         worst = {
             _key(r): max([draft.penalty(r, v) for v in values[_key(r)]] + [1.0])
             for r in draft.scored
         }
-        return cls(profile, ranges, worst, resolve)
+        return cls(profile, ranges, worst, resolve, source)
 
     # -- penalties -------------------------------------------------------------------
 
@@ -274,6 +287,7 @@ class TargetRelativeExtractor:
             "weight_sum": self.total_weight,
             "preferences": prefs,
             "worst_penalty_for_missing": self.worst,
+            "scale_source": self.scale_source,
             "unscored_preferences": list(self.unscored),
         }
 

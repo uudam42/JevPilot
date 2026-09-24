@@ -280,6 +280,7 @@ def fit_normalization(
 
     Infeasible candidates must not set the scale for "how far from the best viable":
     the pool is the non-infeasible candidates, or all of them if fewer than two remain.
+    A preference with no value in the pool takes its scale from all candidates.
     """
     from domains.uav_materials.ranking import TargetRelativeExtractor
 
@@ -290,7 +291,8 @@ def fit_normalization(
         if pool is viable
         else f"all candidates ({len(pool)}); fewer than 2 were non-infeasible"
     )
-    return TargetRelativeExtractor.fit(profile, pool, resolve), label
+    everyone = [c.material for c, _ in screened]
+    return TargetRelativeExtractor.fit(profile, pool, resolve, fallback=everyone), label
 
 
 def _counts(assessed: Sequence[RankedCandidate]) -> dict[str, int]:

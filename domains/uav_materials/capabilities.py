@@ -49,7 +49,8 @@ class ConstructTargetProfile(Capability):
     )
 
     def is_applicable(self, state: WorkflowState) -> bool:
-        return isinstance(state, UAVMaterialsState)
+        # structured set-up only; request-driven workflows use the workflow capabilities
+        return isinstance(state, UAVMaterialsState) and state.request_text is None
 
     def execute(self, inputs: ProfileInput, ctx: ExecutionContext) -> CapabilityResult:
         profile = inputs.profile
@@ -76,7 +77,8 @@ class RegisterCandidateMaterials(Capability):
     )
 
     def is_applicable(self, state: WorkflowState) -> bool:
-        return isinstance(state, UAVMaterialsState)
+        # structured set-up only; request-driven workflows use the workflow capabilities
+        return isinstance(state, UAVMaterialsState) and state.request_text is None
 
     def execute(self, inputs: CandidatesInput, ctx: ExecutionContext) -> CapabilityResult:
         return CapabilityResult(

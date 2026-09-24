@@ -149,9 +149,7 @@ def test_generic_orchestration_does_not_name_routing_implementations() -> None:
             continue
         code = _code_without_docstrings(p)
         hits += [f"{p.relative_to(ROOT)}: {n}" for n in ROUTER_SPECIFIC_NAMES if n in code]
-    assert not hits, "routing implementation leaked into generic orchestration:\n" + "\n".join(
-        hits
-    )
+    assert not hits, "routing implementation leaked into generic orchestration:\n" + "\n".join(hits)
 
 
 def test_routing_never_depends_on_concrete_adapters() -> None:
