@@ -43,13 +43,15 @@ def scripted(*bodies: dict[str, Any], seen: list[Any] | None = None, status: int
     return handler
 
 
-def adapter(handler: Callable[[Any], Any]) -> TypeSafeJevAdapter:
+def adapter(handler: Callable[[Any], Any], **options: Any) -> TypeSafeJevAdapter:
     client = typesafe_sdk.TypeSafeClient(
         api_key="test-key",
         transport=httpx2.MockTransport(handler),
         retry=typesafe_sdk.RetryPolicy(max_retries=0),
     )
-    return TypeSafeJevAdapter(client=client)
+    options.setdefault("model", "jev-latest")
+    options.setdefault("max_retries", 0)
+    return TypeSafeJevAdapter(client=client, **options)
 
 
 def test_two_call_decision_with_grounded_string_input() -> None:

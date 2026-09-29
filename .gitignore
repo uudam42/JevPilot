@@ -6,7 +6,8 @@ __pycache__/
 .ruff_cache/
 *.egg-info/
 experiments/**/traces/
-experiments/routing/results/
+experiments/routing/results/*
+!experiments/routing/results/published/
 .env
 .DS_Store
 .env.*

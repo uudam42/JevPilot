@@ -170,6 +170,23 @@ def attempt_summary(attempts: Any) -> Record:
         ),
         "actual_models": sorted({a["model"] for a in attempts if a.get("model")}),
     }
+    # Transport events recorded by real adapters (kinds and HTTP status only; never headers).
+    events = [
+        e
+        for a, m in zip(attempts, meta, strict=True)
+        for e in (
+            m.get("transport_events")
+            or ((a.get("error") or {}).get("details") or {}).get("transport_events")
+            or []
+        )
+    ]
+    out["transport_events"] = [{"kind": e.get("kind"), "status": e.get("status")} for e in events]
+    out["transport_retries"] = sum(1 for e in events if e.get("retried"))
+    out["adapter_failures"] = [
+        ((a.get("error") or {}).get("details") or {}).get("failure")
+        for a in attempts
+        if a.get("error") and ((a["error"].get("details") or {}).get("failure"))
+    ]
     for key in USAGE:
         known = [
             a["usage"][key] for a in attempts if a.get("usage") and a["usage"].get(key) is not None

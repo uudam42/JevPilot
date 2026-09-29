@@ -94,7 +94,7 @@ def _jev_payload(state: Any, specs: list[Any]) -> dict[str, Any]:
         transport=httpx2.MockTransport(handler),
         retry=typesafe_sdk.RetryPolicy(max_retries=0),
     )
-    JevRouter(TypeSafeJevAdapter(client=client)).select_next(state, specs)
+    JevRouter(TypeSafeJevAdapter(client=client, model="jev-test")).select_next(state, specs)
     body = seen[0]
     criteria = body["questions"]["next_action"]["criteria"]
     caps = [{"id": k, **v} for k, v in criteria.items() if k not in (FINISH, ASK_HUMAN)]
