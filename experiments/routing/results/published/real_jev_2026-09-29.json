@@ -1,0 +1,2598 @@
+{
+  "artifact": "jevpilot.real-jev-validation/1",
+  "label": "REAL_JEV",
+  "date": "2026-09-29",
+  "provider": "typesafe",
+  "jev": {
+    "preflight": {
+      "requested_model": "jev-preview",
+      "model_source": "discovered",
+      "listed_models": [
+        "jev-latest",
+        "jev-preview"
+      ],
+      "release_date": "2026-09-10T18:39:06.057655+00:00",
+      "sdk_version": "0.7.1",
+      "authentication": "ok"
+    },
+    "adapter": {
+      "adapter_version": "typesafe-jev-adapter/2",
+      "request_format": "jevpilot-jev-questions/1",
+      "mode": "strict",
+      "retries": {
+        "max_retries": 2,
+        "backoff_s": 0.5,
+        "backoff_max_s": 8.0,
+        "retried_kinds": [
+          "connection",
+          "rate_limited",
+          "server_error",
+          "timeout"
+        ],
+        "bounded_by": "the router deadline (timeout_s)",
+        "sdk_retries": 0
+      }
+    }
+  },
+  "stages": {
+    "smoke": {
+      "run_mode": "live",
+      "benchmark_version": "jevpilot.routing.generalization/1",
+      "split": "eval",
+      "split_digest": "6e6ea718d04a9ddf7639903c371a62b1704c12fafe6619cbf32d518efd046bf7",
+      "sample": {
+        "name": "tiny_live_v1",
+        "digest": "551087864fdd0aee76430a43acadf73a03fea93868f0a3077e00286d1abd1558"
+      },
+      "experiments": [
+        "main"
+      ],
+      "repetitions": 1,
+      "timestamp": "2026-09-29T22:52:51.109877+00:00",
+      "git_commit": "4636192e5e0110880fc9d49b6752658ac7dd2fbc",
+      "routers": {
+        "REAL_JEV": {
+          "decision": {
+            "decisions": 11,
+            "cases": 11,
+            "repetitions": 1,
+            "valid_typed_decision_rate": {
+              "value": 1.0,
+              "numerator": 11,
+              "denominator": 11
+            },
+            "acceptable_next_action_accuracy": {
+              "value": 0.7272727272727273,
+              "numerator": 8,
+              "denominator": 11
+            },
+            "preferred_action_rate": {
+              "value": 0.7272727272727273,
+              "numerator": 8,
+              "denominator": 11
+            },
+            "forbidden_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "unnecessary_selection_rate": {
+              "value": 0.2727272727272727,
+              "numerator": 3,
+              "denominator": 11
+            },
+            "ask_human": {
+              "recall": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "precision": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "inappropriate": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 10
+              },
+              "appropriate_stop": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              }
+            },
+            "finish": {
+              "recall": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "explicit_finish_recall": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "premature": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 9
+              }
+            },
+            "invalid_capability_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "invalid_input_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "malformed_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "adapter_failure_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "routing_errors_by_type": {},
+            "timeouts": 0,
+            "fallback_count": 0,
+            "accuracy_by_level": {
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              },
+              "level:3": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              },
+              "level:4": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "level:5": {
+                "value": 0.5,
+                "numerator": 1,
+                "denominator": 2
+              }
+            },
+            "accuracy_by_slice": {
+              "category:failure_recovery": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "category:finish": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "category:literal_goal": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "category:missing_information": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "category:multiple_valid": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              },
+              "category:paraphrased_goal": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "category:similar_capabilities": {
+                "value": 0.5,
+                "numerator": 1,
+                "denominator": 2
+              },
+              "category:state_dependent": {
+                "value": 0.5,
+                "numerator": 1,
+                "denominator": 2
+              },
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              },
+              "level:3": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              },
+              "level:4": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "level:5": {
+                "value": 0.5,
+                "numerator": 1,
+                "denominator": 2
+              },
+              "unseen:no": {
+                "value": 0.75,
+                "numerator": 6,
+                "denominator": 8
+              },
+              "unseen:yes": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              }
+            },
+            "latency_ms": {
+              "p50": 217.8,
+              "p95": 534.3,
+              "max": 635.0
+            },
+            "confidence": {
+              "all_valid": {
+                "n": 11,
+                "mean": 0.7145,
+                "median": 0.66,
+                "min": 0.44,
+                "max": 1.0
+              },
+              "when_acceptable": {
+                "n": 8,
+                "mean": 0.8125,
+                "median": 0.86,
+                "min": 0.55,
+                "max": 1.0
+              },
+              "when_not_acceptable": {
+                "n": 3,
+                "mean": 0.4533,
+                "median": 0.46,
+                "min": 0.44,
+                "max": 0.46
+              },
+              "note": "self-reported by Jev; descriptive only, no calibration claim"
+            },
+            "api": {
+              "api_requests": 13,
+              "failed_api_requests": 0,
+              "api_error_rate": {
+                "value": 0.0,
+                "n": 0,
+                "of": 13
+              },
+              "rate_limited": {
+                "value": 0.0,
+                "n": 0,
+                "of": 13
+              },
+              "server_errors": 0,
+              "timeouts": 0,
+              "errors_by_kind": {},
+              "retries": 0
+            },
+            "models": [
+              "jev-1.13.0"
+            ],
+            "order_sensitivity": null,
+            "distractor_robustness": null
+          }
+        },
+        "RULE_ROUTER": {
+          "decision": {
+            "decisions": 11,
+            "cases": 11,
+            "repetitions": 1,
+            "valid_typed_decision_rate": {
+              "value": 1.0,
+              "numerator": 11,
+              "denominator": 11
+            },
+            "acceptable_next_action_accuracy": {
+              "value": 0.9090909090909091,
+              "numerator": 10,
+              "denominator": 11
+            },
+            "preferred_action_rate": {
+              "value": 0.7272727272727273,
+              "numerator": 8,
+              "denominator": 11
+            },
+            "forbidden_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "unnecessary_selection_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "ask_human": {
+              "recall": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "precision": {
+                "value": null,
+                "numerator": 0,
+                "denominator": 0
+              },
+              "inappropriate": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 10
+              },
+              "appropriate_stop": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              }
+            },
+            "finish": {
+              "recall": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "explicit_finish_recall": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "premature": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 9
+              }
+            },
+            "invalid_capability_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "invalid_input_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "malformed_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "adapter_failure_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 11
+            },
+            "routing_errors_by_type": {},
+            "timeouts": 0,
+            "fallback_count": 0,
+            "accuracy_by_level": {
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 1.0,
+                "numerator": 3,
+                "denominator": 3
+              },
+              "level:3": {
+                "value": 1.0,
+                "numerator": 3,
+                "denominator": 3
+              },
+              "level:4": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "level:5": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              }
+            },
+            "accuracy_by_slice": {
+              "category:failure_recovery": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "category:finish": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "category:literal_goal": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "category:missing_information": {
+                "value": 1.0,
+                "numerator": 1,
+                "denominator": 1
+              },
+              "category:multiple_valid": {
+                "value": 1.0,
+                "numerator": 3,
+                "denominator": 3
+              },
+              "category:paraphrased_goal": {
+                "value": 0.5,
+                "numerator": 1,
+                "denominator": 2
+              },
+              "category:similar_capabilities": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "category:state_dependent": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 1.0,
+                "numerator": 3,
+                "denominator": 3
+              },
+              "level:3": {
+                "value": 1.0,
+                "numerator": 3,
+                "denominator": 3
+              },
+              "level:4": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "level:5": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "unseen:no": {
+                "value": 1.0,
+                "numerator": 8,
+                "denominator": 8
+              },
+              "unseen:yes": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              }
+            },
+            "latency_ms": {
+              "p50": 0.0,
+              "p95": 0.0,
+              "max": 0.0
+            },
+            "confidence": {
+              "all_valid": {
+                "n": 8,
+                "mean": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "when_acceptable": {
+                "n": 8,
+                "mean": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "when_not_acceptable": {
+                "n": 0
+              },
+              "note": "self-reported by Jev; descriptive only, no calibration claim"
+            },
+            "api": {
+              "api_requests": 0,
+              "failed_api_requests": 0,
+              "api_error_rate": {
+                "value": null,
+                "n": 0,
+                "of": 0
+              },
+              "rate_limited": {
+                "value": null,
+                "n": 0,
+                "of": 0
+              },
+              "server_errors": 0,
+              "timeouts": 0,
+              "errors_by_kind": {},
+              "retries": 0
+            },
+            "models": [],
+            "order_sensitivity": null,
+            "distractor_robustness": null
+          }
+        }
+      }
+    },
+    "benchmark": {
+      "run_mode": "live",
+      "benchmark_version": "jevpilot.routing.generalization/1",
+      "split": "eval",
+      "split_digest": "6e6ea718d04a9ddf7639903c371a62b1704c12fafe6619cbf32d518efd046bf7",
+      "sample": {
+        "name": "jev_live_v1",
+        "digest": "b66391ce59ae239607de4ff856dc80dee1708275125f8b25dec88e860ab6ea8d"
+      },
+      "experiments": [
+        "main",
+        "order",
+        "distractors"
+      ],
+      "repetitions": 1,
+      "timestamp": "2026-09-29T22:53:13.489947+00:00",
+      "git_commit": "4636192e5e0110880fc9d49b6752658ac7dd2fbc",
+      "routers": {
+        "REAL_JEV": {
+          "decision": {
+            "decisions": 32,
+            "cases": 32,
+            "repetitions": 1,
+            "valid_typed_decision_rate": {
+              "value": 0.9375,
+              "numerator": 30,
+              "denominator": 32
+            },
+            "acceptable_next_action_accuracy": {
+              "value": 0.65625,
+              "numerator": 21,
+              "denominator": 32
+            },
+            "preferred_action_rate": {
+              "value": 0.65625,
+              "numerator": 21,
+              "denominator": 32
+            },
+            "forbidden_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "unnecessary_selection_rate": {
+              "value": 0.28125,
+              "numerator": 9,
+              "denominator": 32
+            },
+            "ask_human": {
+              "recall": {
+                "value": 0.42857142857142855,
+                "numerator": 3,
+                "denominator": 7
+              },
+              "precision": {
+                "value": 1.0,
+                "numerator": 3,
+                "denominator": 3
+              },
+              "inappropriate": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 25
+              },
+              "appropriate_stop": {
+                "value": 0.42857142857142855,
+                "numerator": 3,
+                "denominator": 7
+              }
+            },
+            "finish": {
+              "recall": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "explicit_finish_recall": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "premature": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 23
+              }
+            },
+            "invalid_capability_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "invalid_input_rate": {
+              "value": 0.0625,
+              "numerator": 2,
+              "denominator": 32
+            },
+            "malformed_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "adapter_failure_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "routing_errors_by_type": {
+              "InvalidRoutingInputError": 2
+            },
+            "timeouts": 0,
+            "fallback_count": 0,
+            "accuracy_by_level": {
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 0.8333333333333334,
+                "numerator": 5,
+                "denominator": 6
+              },
+              "level:3": {
+                "value": 0.5,
+                "numerator": 5,
+                "denominator": 10
+              },
+              "level:4": {
+                "value": 0.8,
+                "numerator": 4,
+                "denominator": 5
+              },
+              "level:5": {
+                "value": 0.5555555555555556,
+                "numerator": 5,
+                "denominator": 9
+              }
+            },
+            "accuracy_by_slice": {
+              "category:failure_recovery": {
+                "value": 0.8,
+                "numerator": 4,
+                "denominator": 5
+              },
+              "category:finish": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "category:forbidden_action": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "category:impossible": {
+                "value": 0.3333333333333333,
+                "numerator": 1,
+                "denominator": 3
+              },
+              "category:literal_goal": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              },
+              "category:missing_information": {
+                "value": 0.5,
+                "numerator": 2,
+                "denominator": 4
+              },
+              "category:multiple_valid": {
+                "value": 0.5555555555555556,
+                "numerator": 5,
+                "denominator": 9
+              },
+              "category:paraphrased_goal": {
+                "value": 0.5384615384615384,
+                "numerator": 7,
+                "denominator": 13
+              },
+              "category:similar_capabilities": {
+                "value": 0.75,
+                "numerator": 3,
+                "denominator": 4
+              },
+              "category:state_dependent": {
+                "value": 0.75,
+                "numerator": 3,
+                "denominator": 4
+              },
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 0.8333333333333334,
+                "numerator": 5,
+                "denominator": 6
+              },
+              "level:3": {
+                "value": 0.5,
+                "numerator": 5,
+                "denominator": 10
+              },
+              "level:4": {
+                "value": 0.8,
+                "numerator": 4,
+                "denominator": 5
+              },
+              "level:5": {
+                "value": 0.5555555555555556,
+                "numerator": 5,
+                "denominator": 9
+              },
+              "unseen:no": {
+                "value": 0.6666666666666666,
+                "numerator": 12,
+                "denominator": 18
+              },
+              "unseen:yes": {
+                "value": 0.6428571428571429,
+                "numerator": 9,
+                "denominator": 14
+              }
+            },
+            "latency_ms": {
+              "p50": 231.2,
+              "p95": 408.7,
+              "max": 495.7
+            },
+            "confidence": {
+              "all_valid": {
+                "n": 30,
+                "mean": 0.8047,
+                "median": 0.975,
+                "min": 0.39,
+                "max": 1.0
+              },
+              "when_acceptable": {
+                "n": 21,
+                "mean": 0.9057,
+                "median": 0.99,
+                "min": 0.52,
+                "max": 1.0
+              },
+              "when_not_acceptable": {
+                "n": 9,
+                "mean": 0.5689,
+                "median": 0.47,
+                "min": 0.39,
+                "max": 1.0
+              },
+              "note": "self-reported by Jev; descriptive only, no calibration claim"
+            },
+            "api": {
+              "api_requests": 220,
+              "failed_api_requests": 0,
+              "api_error_rate": {
+                "value": 0.0,
+                "n": 0,
+                "of": 220
+              },
+              "rate_limited": {
+                "value": 0.0,
+                "n": 0,
+                "of": 220
+              },
+              "server_errors": 0,
+              "timeouts": 0,
+              "errors_by_kind": {},
+              "retries": 0
+            },
+            "models": [
+              "jev-1.13.0"
+            ],
+            "order_sensitivity": {
+              "decision_changed": {
+                "value": 0.1875,
+                "numerator": 6,
+                "denominator": 32
+              },
+              "correctness_changed": {
+                "value": 0.15625,
+                "numerator": 5,
+                "denominator": 32
+              },
+              "accuracy_by_permutation": {
+                "order:0": {
+                  "value": 0.78125,
+                  "numerator": 25,
+                  "denominator": 32
+                },
+                "order:1": {
+                  "value": 0.75,
+                  "numerator": 24,
+                  "denominator": 32
+                }
+              }
+            },
+            "distractor_robustness": {
+              "16": {
+                "decisions": 32,
+                "routing_accuracy": {
+                  "value": 0.6875,
+                  "numerator": 22,
+                  "denominator": 32
+                },
+                "valid_decision_rate": {
+                  "value": 0.9375,
+                  "numerator": 30,
+                  "denominator": 32
+                },
+                "unnecessary_selection_rate": {
+                  "value": 0.25,
+                  "numerator": 8,
+                  "denominator": 32
+                },
+                "workflows": 0,
+                "task_completion_rate": null,
+                "unnecessary_call_rate": null
+              },
+              "48": {
+                "decisions": 32,
+                "routing_accuracy": {
+                  "value": 0.75,
+                  "numerator": 24,
+                  "denominator": 32
+                },
+                "valid_decision_rate": {
+                  "value": 0.9375,
+                  "numerator": 30,
+                  "denominator": 32
+                },
+                "unnecessary_selection_rate": {
+                  "value": 0.15625,
+                  "numerator": 5,
+                  "denominator": 32
+                },
+                "workflows": 0,
+                "task_completion_rate": null,
+                "unnecessary_call_rate": null
+              }
+            }
+          }
+        },
+        "RULE_ROUTER": {
+          "decision": {
+            "decisions": 32,
+            "cases": 32,
+            "repetitions": 1,
+            "valid_typed_decision_rate": {
+              "value": 1.0,
+              "numerator": 32,
+              "denominator": 32
+            },
+            "acceptable_next_action_accuracy": {
+              "value": 0.6875,
+              "numerator": 22,
+              "denominator": 32
+            },
+            "preferred_action_rate": {
+              "value": 0.40625,
+              "numerator": 13,
+              "denominator": 32
+            },
+            "forbidden_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "unnecessary_selection_rate": {
+              "value": 0.03125,
+              "numerator": 1,
+              "denominator": 32
+            },
+            "ask_human": {
+              "recall": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 7
+              },
+              "precision": {
+                "value": null,
+                "numerator": 0,
+                "denominator": 0
+              },
+              "inappropriate": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 25
+              },
+              "appropriate_stop": {
+                "value": 0.7142857142857143,
+                "numerator": 5,
+                "denominator": 7
+              }
+            },
+            "finish": {
+              "recall": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "explicit_finish_recall": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 2
+              },
+              "premature": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 23
+              }
+            },
+            "invalid_capability_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "invalid_input_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "malformed_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "adapter_failure_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "routing_errors_by_type": {},
+            "timeouts": 0,
+            "fallback_count": 0,
+            "accuracy_by_level": {
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 1.0,
+                "numerator": 6,
+                "denominator": 6
+              },
+              "level:3": {
+                "value": 0.9,
+                "numerator": 9,
+                "denominator": 10
+              },
+              "level:4": {
+                "value": 0.2,
+                "numerator": 1,
+                "denominator": 5
+              },
+              "level:5": {
+                "value": 0.4444444444444444,
+                "numerator": 4,
+                "denominator": 9
+              }
+            },
+            "accuracy_by_slice": {
+              "category:failure_recovery": {
+                "value": 0.2,
+                "numerator": 1,
+                "denominator": 5
+              },
+              "category:finish": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "category:forbidden_action": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "category:impossible": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              },
+              "category:literal_goal": {
+                "value": 1.0,
+                "numerator": 3,
+                "denominator": 3
+              },
+              "category:missing_information": {
+                "value": 1.0,
+                "numerator": 4,
+                "denominator": 4
+              },
+              "category:multiple_valid": {
+                "value": 0.4444444444444444,
+                "numerator": 4,
+                "denominator": 9
+              },
+              "category:paraphrased_goal": {
+                "value": 0.3076923076923077,
+                "numerator": 4,
+                "denominator": 13
+              },
+              "category:similar_capabilities": {
+                "value": 1.0,
+                "numerator": 4,
+                "denominator": 4
+              },
+              "category:state_dependent": {
+                "value": 1.0,
+                "numerator": 4,
+                "denominator": 4
+              },
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 1.0,
+                "numerator": 6,
+                "denominator": 6
+              },
+              "level:3": {
+                "value": 0.9,
+                "numerator": 9,
+                "denominator": 10
+              },
+              "level:4": {
+                "value": 0.2,
+                "numerator": 1,
+                "denominator": 5
+              },
+              "level:5": {
+                "value": 0.4444444444444444,
+                "numerator": 4,
+                "denominator": 9
+              },
+              "unseen:no": {
+                "value": 0.9444444444444444,
+                "numerator": 17,
+                "denominator": 18
+              },
+              "unseen:yes": {
+                "value": 0.35714285714285715,
+                "numerator": 5,
+                "denominator": 14
+              }
+            },
+            "latency_ms": {
+              "p50": 0.0,
+              "p95": 0.0,
+              "max": 0.0
+            },
+            "confidence": {
+              "all_valid": {
+                "n": 16,
+                "mean": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "when_acceptable": {
+                "n": 15,
+                "mean": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "when_not_acceptable": {
+                "n": 1,
+                "mean": 1.0,
+                "median": 1.0,
+                "min": 1.0,
+                "max": 1.0
+              },
+              "note": "self-reported by Jev; descriptive only, no calibration claim"
+            },
+            "api": {
+              "api_requests": 0,
+              "failed_api_requests": 0,
+              "api_error_rate": {
+                "value": null,
+                "n": 0,
+                "of": 0
+              },
+              "rate_limited": {
+                "value": null,
+                "n": 0,
+                "of": 0
+              },
+              "server_errors": 0,
+              "timeouts": 0,
+              "errors_by_kind": {},
+              "retries": 0
+            },
+            "models": [],
+            "order_sensitivity": {
+              "decision_changed": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 32
+              },
+              "correctness_changed": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 32
+              },
+              "accuracy_by_permutation": {
+                "order:0": {
+                  "value": 0.6875,
+                  "numerator": 22,
+                  "denominator": 32
+                },
+                "order:1": {
+                  "value": 0.6875,
+                  "numerator": 22,
+                  "denominator": 32
+                }
+              }
+            },
+            "distractor_robustness": {
+              "16": {
+                "decisions": 32,
+                "routing_accuracy": {
+                  "value": 0.71875,
+                  "numerator": 23,
+                  "denominator": 32
+                },
+                "valid_decision_rate": {
+                  "value": 1.0,
+                  "numerator": 32,
+                  "denominator": 32
+                },
+                "unnecessary_selection_rate": {
+                  "value": 0.0,
+                  "numerator": 0,
+                  "denominator": 32
+                },
+                "workflows": 0,
+                "task_completion_rate": null,
+                "unnecessary_call_rate": null
+              },
+              "48": {
+                "decisions": 32,
+                "routing_accuracy": {
+                  "value": 0.71875,
+                  "numerator": 23,
+                  "denominator": 32
+                },
+                "valid_decision_rate": {
+                  "value": 1.0,
+                  "numerator": 32,
+                  "denominator": 32
+                },
+                "unnecessary_selection_rate": {
+                  "value": 0.0,
+                  "numerator": 0,
+                  "denominator": 32
+                },
+                "workflows": 0,
+                "task_completion_rate": null,
+                "unnecessary_call_rate": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "repeats": {
+      "run_mode": "live",
+      "benchmark_version": "jevpilot.routing.generalization/1",
+      "split": "eval",
+      "split_digest": "6e6ea718d04a9ddf7639903c371a62b1704c12fafe6619cbf32d518efd046bf7",
+      "sample": {
+        "name": "jev_live_v1",
+        "digest": "b66391ce59ae239607de4ff856dc80dee1708275125f8b25dec88e860ab6ea8d"
+      },
+      "experiments": [
+        "main"
+      ],
+      "repetitions": 3,
+      "timestamp": "2026-09-29T22:54:09.500060+00:00",
+      "git_commit": "4636192e5e0110880fc9d49b6752658ac7dd2fbc",
+      "routers": {
+        "REAL_JEV": {
+          "decision": {
+            "decisions": 96,
+            "cases": 32,
+            "repetitions": 3,
+            "valid_typed_decision_rate": {
+              "value": 0.9375,
+              "numerator": 90,
+              "denominator": 96
+            },
+            "acceptable_next_action_accuracy": {
+              "value": 0.6666666666666666,
+              "numerator": 64,
+              "denominator": 96
+            },
+            "preferred_action_rate": {
+              "value": 0.6666666666666666,
+              "numerator": 64,
+              "denominator": 96
+            },
+            "forbidden_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 96
+            },
+            "unnecessary_selection_rate": {
+              "value": 0.2708333333333333,
+              "numerator": 26,
+              "denominator": 96
+            },
+            "ask_human": {
+              "recall": {
+                "value": 0.42857142857142855,
+                "numerator": 9,
+                "denominator": 21
+              },
+              "precision": {
+                "value": 1.0,
+                "numerator": 9,
+                "denominator": 9
+              },
+              "inappropriate": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 75
+              },
+              "appropriate_stop": {
+                "value": 0.42857142857142855,
+                "numerator": 9,
+                "denominator": 21
+              }
+            },
+            "finish": {
+              "recall": {
+                "value": 1.0,
+                "numerator": 6,
+                "denominator": 6
+              },
+              "explicit_finish_recall": {
+                "value": 1.0,
+                "numerator": 6,
+                "denominator": 6
+              },
+              "premature": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 69
+              }
+            },
+            "invalid_capability_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 96
+            },
+            "invalid_input_rate": {
+              "value": 0.0625,
+              "numerator": 6,
+              "denominator": 96
+            },
+            "malformed_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 96
+            },
+            "adapter_failure_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 96
+            },
+            "routing_errors_by_type": {
+              "InvalidRoutingInputError": 6
+            },
+            "timeouts": 0,
+            "fallback_count": 0,
+            "accuracy_by_level": {
+              "level:1": {
+                "value": 1.0,
+                "numerator": 6,
+                "denominator": 6
+              },
+              "level:2": {
+                "value": 0.8333333333333334,
+                "numerator": 15,
+                "denominator": 18
+              },
+              "level:3": {
+                "value": 0.5,
+                "numerator": 15,
+                "denominator": 30
+              },
+              "level:4": {
+                "value": 0.8,
+                "numerator": 12,
+                "denominator": 15
+              },
+              "level:5": {
+                "value": 0.5925925925925926,
+                "numerator": 16,
+                "denominator": 27
+              }
+            },
+            "accuracy_by_slice": {
+              "category:failure_recovery": {
+                "value": 0.8,
+                "numerator": 12,
+                "denominator": 15
+              },
+              "category:finish": {
+                "value": 1.0,
+                "numerator": 6,
+                "denominator": 6
+              },
+              "category:forbidden_action": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 3
+              },
+              "category:impossible": {
+                "value": 0.3333333333333333,
+                "numerator": 3,
+                "denominator": 9
+              },
+              "category:literal_goal": {
+                "value": 0.7777777777777778,
+                "numerator": 7,
+                "denominator": 9
+              },
+              "category:missing_information": {
+                "value": 0.5,
+                "numerator": 6,
+                "denominator": 12
+              },
+              "category:multiple_valid": {
+                "value": 0.5925925925925926,
+                "numerator": 16,
+                "denominator": 27
+              },
+              "category:paraphrased_goal": {
+                "value": 0.5384615384615384,
+                "numerator": 21,
+                "denominator": 39
+              },
+              "category:similar_capabilities": {
+                "value": 0.75,
+                "numerator": 9,
+                "denominator": 12
+              },
+              "category:state_dependent": {
+                "value": 0.75,
+                "numerator": 9,
+                "denominator": 12
+              },
+              "level:1": {
+                "value": 1.0,
+                "numerator": 6,
+                "denominator": 6
+              },
+              "level:2": {
+                "value": 0.8333333333333334,
+                "numerator": 15,
+                "denominator": 18
+              },
+              "level:3": {
+                "value": 0.5,
+                "numerator": 15,
+                "denominator": 30
+              },
+              "level:4": {
+                "value": 0.8,
+                "numerator": 12,
+                "denominator": 15
+              },
+              "level:5": {
+                "value": 0.5925925925925926,
+                "numerator": 16,
+                "denominator": 27
+              },
+              "unseen:no": {
+                "value": 0.6666666666666666,
+                "numerator": 36,
+                "denominator": 54
+              },
+              "unseen:yes": {
+                "value": 0.6666666666666666,
+                "numerator": 28,
+                "denominator": 42
+              }
+            },
+            "latency_ms": {
+              "p50": 150.7,
+              "p95": 299.7,
+              "max": 383.4
+            },
+            "confidence": {
+              "all_valid": {
+                "n": 90,
+                "mean": 0.7987,
+                "median": 0.98,
+                "min": 0.33,
+                "max": 1.0
+              },
+              "when_acceptable": {
+                "n": 64,
+                "mean": 0.8961,
+                "median": 0.99,
+                "min": 0.45,
+                "max": 1.0
+              },
+              "when_not_acceptable": {
+                "n": 26,
+                "mean": 0.5588,
+                "median": 0.445,
+                "min": 0.33,
+                "max": 1.0
+              },
+              "note": "self-reported by Jev; descriptive only, no calibration claim"
+            },
+            "api": {
+              "api_requests": 135,
+              "failed_api_requests": 0,
+              "api_error_rate": {
+                "value": 0.0,
+                "n": 0,
+                "of": 135
+              },
+              "rate_limited": {
+                "value": 0.0,
+                "n": 0,
+                "of": 135
+              },
+              "server_errors": 0,
+              "timeouts": 0,
+              "errors_by_kind": {},
+              "retries": 0
+            },
+            "models": [
+              "jev-1.13.0"
+            ],
+            "order_sensitivity": null,
+            "distractor_robustness": null
+          },
+          "repeat_consistency": {
+            "cases": 32,
+            "repetitions_per_case": [
+              3
+            ],
+            "identical_decision_across_repetitions": {
+              "value": 0.9688,
+              "n": 31,
+              "of": 32
+            },
+            "identical_correctness_across_repetitions": {
+              "value": 0.9688,
+              "n": 31,
+              "of": 32
+            },
+            "accuracy_per_repetition": [
+              0.6562,
+              0.6562,
+              0.6875
+            ]
+          }
+        }
+      }
+    },
+    "workflows": {
+      "run_mode": "live",
+      "benchmark_version": "jevpilot.routing.generalization/1",
+      "split": "eval",
+      "split_digest": "6e6ea718d04a9ddf7639903c371a62b1704c12fafe6619cbf32d518efd046bf7",
+      "sample": null,
+      "experiments": [
+        "main"
+      ],
+      "repetitions": 1,
+      "timestamp": "2026-09-29T22:54:33.067959+00:00",
+      "git_commit": "4636192e5e0110880fc9d49b6752658ac7dd2fbc",
+      "routers": {
+        "REAL_JEV": {
+          "workflow": {
+            "workflows": 29,
+            "task_completion_rate": {
+              "value": 0.896551724137931,
+              "numerator": 26,
+              "denominator": 29
+            },
+            "status_counts": {
+              "awaiting_human": 7,
+              "failed": 1,
+              "succeeded": 21
+            },
+            "unnecessary_call_rate": {
+              "value": 0.2833333333333333,
+              "numerator": 34,
+              "denominator": 120
+            },
+            "routing_failure_rate": {
+              "value": 0.007692307692307693,
+              "numerator": 1,
+              "denominator": 130
+            },
+            "fallback_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 129
+            },
+            "ask_human_rate": {
+              "value": 0.13793103448275862,
+              "numerator": 4,
+              "denominator": 29
+            },
+            "forbidden_outcome_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 29
+            },
+            "steps_to_completion": {
+              "n": 26,
+              "mean": 4.038461538461538,
+              "max": 10
+            },
+            "excess_steps": {
+              "n": 21,
+              "mean": 0.7619047619047619,
+              "max": 5
+            },
+            "latency_ms_per_decision": {
+              "p50": 140.3,
+              "p95": 261.6
+            },
+            "api": {
+              "api_requests": 172,
+              "failed_api_requests": 0,
+              "api_error_rate": {
+                "value": 0.0,
+                "n": 0,
+                "of": 172
+              },
+              "rate_limited": {
+                "value": 0.0,
+                "n": 0,
+                "of": 172
+              },
+              "server_errors": 0,
+              "timeouts": 0,
+              "errors_by_kind": {},
+              "retries": 0
+            }
+          }
+        },
+        "RULE_ROUTER": {
+          "workflow": {
+            "workflows": 29,
+            "task_completion_rate": {
+              "value": 0.6206896551724138,
+              "numerator": 18,
+              "denominator": 29
+            },
+            "status_counts": {
+              "awaiting_human": 17,
+              "succeeded": 12
+            },
+            "unnecessary_call_rate": {
+              "value": 0.07017543859649122,
+              "numerator": 4,
+              "denominator": 57
+            },
+            "routing_failure_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 76
+            },
+            "fallback_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 76
+            },
+            "ask_human_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 29
+            },
+            "forbidden_outcome_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 29
+            },
+            "steps_to_completion": {
+              "n": 18,
+              "mean": 2.1666666666666665,
+              "max": 5
+            },
+            "excess_steps": {
+              "n": 12,
+              "mean": 0.0,
+              "max": 0
+            },
+            "latency_ms_per_decision": {
+              "p50": 0.0,
+              "p95": 0.1
+            },
+            "api": {
+              "api_requests": 0,
+              "failed_api_requests": 0,
+              "api_error_rate": {
+                "value": null,
+                "n": 0,
+                "of": 0
+              },
+              "rate_limited": {
+                "value": null,
+                "n": 0,
+                "of": 0
+              },
+              "server_errors": 0,
+              "timeouts": 0,
+              "errors_by_kind": {},
+              "retries": 0
+            }
+          }
+        }
+      }
+    },
+    "fake_baseline": {
+      "run_mode": "offline",
+      "benchmark_version": "jevpilot.routing.generalization/1",
+      "split": "eval",
+      "split_digest": "6e6ea718d04a9ddf7639903c371a62b1704c12fafe6619cbf32d518efd046bf7",
+      "sample": {
+        "name": "jev_live_v1",
+        "digest": "b66391ce59ae239607de4ff856dc80dee1708275125f8b25dec88e860ab6ea8d"
+      },
+      "experiments": [
+        "main",
+        "order",
+        "distractors"
+      ],
+      "repetitions": 1,
+      "timestamp": "2026-09-29T22:56:00.684561+00:00",
+      "git_commit": "4636192e5e0110880fc9d49b6752658ac7dd2fbc",
+      "routers": {
+        "FAKE_JEV": {
+          "decision": {
+            "decisions": 32,
+            "cases": 32,
+            "repetitions": 1,
+            "valid_typed_decision_rate": {
+              "value": 0.96875,
+              "numerator": 31,
+              "denominator": 32
+            },
+            "acceptable_next_action_accuracy": {
+              "value": 0.125,
+              "numerator": 4,
+              "denominator": 32
+            },
+            "preferred_action_rate": {
+              "value": 0.125,
+              "numerator": 4,
+              "denominator": 32
+            },
+            "forbidden_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "unnecessary_selection_rate": {
+              "value": 0.84375,
+              "numerator": 27,
+              "denominator": 32
+            },
+            "ask_human": {
+              "recall": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 7
+              },
+              "precision": {
+                "value": null,
+                "numerator": 0,
+                "denominator": 0
+              },
+              "inappropriate": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 25
+              },
+              "appropriate_stop": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 7
+              }
+            },
+            "finish": {
+              "recall": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 2
+              },
+              "explicit_finish_recall": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 2
+              },
+              "premature": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 23
+              }
+            },
+            "invalid_capability_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "invalid_input_rate": {
+              "value": 0.03125,
+              "numerator": 1,
+              "denominator": 32
+            },
+            "malformed_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "adapter_failure_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 32
+            },
+            "routing_errors_by_type": {
+              "InvalidRoutingInputError": 1
+            },
+            "timeouts": 0,
+            "fallback_count": 0,
+            "accuracy_by_level": {
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 6
+              },
+              "level:3": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 10
+              },
+              "level:4": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 5
+              },
+              "level:5": {
+                "value": 0.2222222222222222,
+                "numerator": 2,
+                "denominator": 9
+              }
+            },
+            "accuracy_by_slice": {
+              "category:failure_recovery": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 5
+              },
+              "category:finish": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 2
+              },
+              "category:forbidden_action": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 1
+              },
+              "category:impossible": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 3
+              },
+              "category:literal_goal": {
+                "value": 0.6666666666666666,
+                "numerator": 2,
+                "denominator": 3
+              },
+              "category:missing_information": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 4
+              },
+              "category:multiple_valid": {
+                "value": 0.2222222222222222,
+                "numerator": 2,
+                "denominator": 9
+              },
+              "category:paraphrased_goal": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 13
+              },
+              "category:similar_capabilities": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 4
+              },
+              "category:state_dependent": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 4
+              },
+              "level:1": {
+                "value": 1.0,
+                "numerator": 2,
+                "denominator": 2
+              },
+              "level:2": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 6
+              },
+              "level:3": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 10
+              },
+              "level:4": {
+                "value": 0.0,
+                "numerator": 0,
+                "denominator": 5
+              },
+              "level:5": {
+                "value": 0.2222222222222222,
+                "numerator": 2,
+                "denominator": 9
+              },
+              "unseen:no": {
+                "value": 0.1111111111111111,
+                "numerator": 2,
+                "denominator": 18
+              },
+              "unseen:yes": {
+                "value": 0.14285714285714285,
+                "numerator": 2,
+                "denominator": 14
+              }
+            },
+            "latency_ms": {
+              "p50": 1.1,
+              "p95": 1.3,
+              "max": 4.2
+            },
+            "confidence": {
+              "all_valid": {
+                "n": 31,
+                "mean": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "max": 0.5
+              },
+              "when_acceptable": {
+                "n": 4,
+                "mean": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "max": 0.5
+              },
+              "when_not_acceptable": {
+                "n": 27,
+                "mean": 0.5,
+                "median": 0.5,
+                "min": 0.5,
+                "max": 0.5
+              },
+              "note": "self-reported by Jev; descriptive only, no calibration claim"
+            },
+            "api": {
+              "api_requests": 0,
+              "failed_api_requests": 0,
+              "api_error_rate": {
+                "value": null,
+                "n": 0,
+                "of": 0
+              },
+              "rate_limited": {
+                "value": null,
+                "n": 0,
+                "of": 0
+              },
+              "server_errors": 0,
+              "timeouts": 0,
+              "errors_by_kind": {},
+              "retries": 0
+            },
+            "models": [
+              "fake-jev"
+            ],
+            "order_sensitivity": {
+              "decision_changed": {
+                "value": 0.21875,
+                "numerator": 7,
+                "denominator": 32
+              },
+              "correctness_changed": {
+                "value": 0.03125,
+                "numerator": 1,
+                "denominator": 32
+              },
+              "accuracy_by_permutation": {
+                "order:0": {
+                  "value": 0.15625,
+                  "numerator": 5,
+                  "denominator": 32
+                },
+                "order:1": {
+                  "value": 0.125,
+                  "numerator": 4,
+                  "denominator": 32
+                }
+              }
+            },
+            "distractor_robustness": {
+              "16": {
+                "decisions": 32,
+                "routing_accuracy": {
+                  "value": 0.71875,
+                  "numerator": 23,
+                  "denominator": 32
+                },
+                "valid_decision_rate": {
+                  "value": 1.0,
+                  "numerator": 32,
+                  "denominator": 32
+                },
+                "unnecessary_selection_rate": {
+                  "value": 0.28125,
+                  "numerator": 9,
+                  "denominator": 32
+                },
+                "workflows": 0,
+                "task_completion_rate": null,
+                "unnecessary_call_rate": null
+              },
+              "48": {
+                "decisions": 32,
+                "routing_accuracy": {
+                  "value": 0.25,
+                  "numerator": 8,
+                  "denominator": 32
+                },
+                "valid_decision_rate": {
+                  "value": 1.0,
+                  "numerator": 32,
+                  "denominator": 32
+                },
+                "unnecessary_selection_rate": {
+                  "value": 0.75,
+                  "numerator": 24,
+                  "denominator": 32
+                },
+                "workflows": 0,
+                "task_completion_rate": null,
+                "unnecessary_call_rate": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "uav_end_to_end": {
+    "A_existing_material": {
+      "mode": "LIVE_ROUTING",
+      "llm_backend": "native",
+      "interpreter": "rule_based_interpreter",
+      "expected_decision": "use_existing",
+      "decision": "use_existing",
+      "decision_matches": true,
+      "offline_reference_decision": "use_existing",
+      "report_status": "complete",
+      "workflow_status": "succeeded",
+      "complete": true,
+      "design_ran": false,
+      "design_expected": false,
+      "capability_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "uavm.generate_material_report"
+      ],
+      "reference_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "uavm.generate_material_report"
+      ],
+      "sequence_matches_reference": true,
+      "repeated_capability": false,
+      "routing_decisions": 4,
+      "routing_errors": [],
+      "fallbacks": 0,
+      "retries": 0,
+      "models": [
+        "jev-1.13.0"
+      ],
+      "latency_ms": [
+        107.6,
+        85.4,
+        104.2,
+        89.8
+      ],
+      "confidence": [
+        1.0,
+        1.0,
+        1.0,
+        0.99
+      ],
+      "stop_reason": "evaluator: report written",
+      "scientific_content_equals_offline": true,
+      "routing_log": [
+        {
+          "timestamp": "2026-09-29T22:55:14.108006+00:00",
+          "step": 0,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.interpret_requirements",
+          "confidence": 1.0,
+          "latency_ms": 107.6,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:14.194987+00:00",
+          "step": 1,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.search_existing_materials",
+          "confidence": 1.0,
+          "latency_ms": 85.4,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:14.391916+00:00",
+          "step": 2,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.assess_existing_candidates",
+          "confidence": 1.0,
+          "latency_ms": 104.2,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:14.498445+00:00",
+          "step": 3,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.generate_material_report",
+          "confidence": 0.99,
+          "latency_ms": 89.8,
+          "status": "ok",
+          "retries": 0
+        }
+      ]
+    },
+    "B_inverse_design": {
+      "mode": "LIVE_ROUTING",
+      "llm_backend": "native",
+      "interpreter": "rule_based_interpreter",
+      "expected_decision": "design",
+      "decision": "design",
+      "decision_matches": true,
+      "offline_reference_decision": "design",
+      "report_status": "complete",
+      "workflow_status": "succeeded",
+      "complete": true,
+      "design_ran": true,
+      "design_expected": true,
+      "capability_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "uavm.design_composite_candidate",
+        "uavm.evaluate_designed_candidate",
+        "uavm.generate_material_report"
+      ],
+      "reference_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "uavm.design_composite_candidate",
+        "uavm.evaluate_designed_candidate",
+        "uavm.generate_material_report"
+      ],
+      "sequence_matches_reference": true,
+      "repeated_capability": false,
+      "routing_decisions": 6,
+      "routing_errors": [],
+      "fallbacks": 0,
+      "retries": 0,
+      "models": [
+        "jev-1.13.0"
+      ],
+      "latency_ms": [
+        98.7,
+        95.9,
+        104.1,
+        130.3,
+        111.7,
+        97.1
+      ],
+      "confidence": [
+        1.0,
+        0.99,
+        0.99,
+        1.0,
+        1.0,
+        0.99
+      ],
+      "stop_reason": "evaluator: report written",
+      "scientific_content_equals_offline": true,
+      "routing_log": [
+        {
+          "timestamp": "2026-09-29T22:55:14.952597+00:00",
+          "step": 0,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.interpret_requirements",
+          "confidence": 1.0,
+          "latency_ms": 98.7,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:15.050041+00:00",
+          "step": 1,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.search_existing_materials",
+          "confidence": 0.99,
+          "latency_ms": 95.9,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:15.205940+00:00",
+          "step": 2,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.assess_existing_candidates",
+          "confidence": 0.99,
+          "latency_ms": 104.1,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:15.356094+00:00",
+          "step": 3,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.design_composite_candidate",
+          "confidence": 1.0,
+          "latency_ms": 130.3,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:15.597467+00:00",
+          "step": 4,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.evaluate_designed_candidate",
+          "confidence": 1.0,
+          "latency_ms": 111.7,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:15.720239+00:00",
+          "step": 5,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.generate_material_report",
+          "confidence": 0.99,
+          "latency_ms": 97.1,
+          "status": "ok",
+          "retries": 0
+        }
+      ]
+    },
+    "C_needs_information": {
+      "mode": "LIVE_ROUTING",
+      "llm_backend": "native",
+      "interpreter": "rule_based_interpreter",
+      "expected_decision": "needs_information",
+      "decision": "needs_information",
+      "decision_matches": true,
+      "offline_reference_decision": "needs_information",
+      "report_status": "incomplete",
+      "workflow_status": "awaiting_human",
+      "complete": false,
+      "design_ran": false,
+      "design_expected": false,
+      "capability_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "<ask_human>"
+      ],
+      "reference_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "uavm.generate_material_report"
+      ],
+      "sequence_matches_reference": false,
+      "repeated_capability": false,
+      "routing_decisions": 4,
+      "routing_errors": [],
+      "fallbacks": 0,
+      "retries": 0,
+      "models": [
+        "jev-1.13.0"
+      ],
+      "latency_ms": [
+        145.7,
+        91.9,
+        112.5,
+        90.5
+      ],
+      "confidence": [
+        1.0,
+        0.84,
+        0.97,
+        0.95
+      ],
+      "stop_reason": "router requests human input: ",
+      "scientific_content_equals_offline": false,
+      "routing_log": [
+        {
+          "timestamp": "2026-09-29T22:55:16.095389+00:00",
+          "step": 0,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.interpret_requirements",
+          "confidence": 1.0,
+          "latency_ms": 145.7,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:16.188158+00:00",
+          "step": 1,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.search_existing_materials",
+          "confidence": 0.84,
+          "latency_ms": 91.9,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:16.330379+00:00",
+          "step": 2,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.assess_existing_candidates",
+          "confidence": 0.97,
+          "latency_ms": 112.5,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:16.430757+00:00",
+          "step": 3,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "ask_human",
+          "capability": null,
+          "confidence": 0.95,
+          "latency_ms": 90.5,
+          "status": "ok",
+          "retries": 0
+        }
+      ]
+    },
+    "D_unsupported_property": {
+      "mode": "LIVE_ROUTING",
+      "llm_backend": "native",
+      "interpreter": "rule_based_interpreter",
+      "expected_decision": "no_suitable_existing",
+      "decision": "no_suitable_existing",
+      "decision_matches": true,
+      "offline_reference_decision": "no_suitable_existing",
+      "report_status": "incomplete",
+      "workflow_status": "awaiting_human",
+      "complete": false,
+      "design_ran": false,
+      "design_expected": false,
+      "capability_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "<ask_human>"
+      ],
+      "reference_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "uavm.generate_material_report"
+      ],
+      "sequence_matches_reference": false,
+      "repeated_capability": false,
+      "routing_decisions": 4,
+      "routing_errors": [],
+      "fallbacks": 0,
+      "retries": 0,
+      "models": [
+        "jev-1.13.0"
+      ],
+      "latency_ms": [
+        106.8,
+        110.6,
+        131.6,
+        86.6
+      ],
+      "confidence": [
+        1.0,
+        1.0,
+        0.96,
+        0.59
+      ],
+      "stop_reason": "router requests human input: ",
+      "scientific_content_equals_offline": false,
+      "routing_log": [
+        {
+          "timestamp": "2026-09-29T22:55:16.649144+00:00",
+          "step": 0,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.interpret_requirements",
+          "confidence": 1.0,
+          "latency_ms": 106.8,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:16.760621+00:00",
+          "step": 1,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.search_existing_materials",
+          "confidence": 1.0,
+          "latency_ms": 110.6,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:16.909460+00:00",
+          "step": 2,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.assess_existing_candidates",
+          "confidence": 0.96,
+          "latency_ms": 131.6,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:17.001693+00:00",
+          "step": 3,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "ask_human",
+          "capability": null,
+          "confidence": 0.59,
+          "latency_ms": 86.6,
+          "status": "ok",
+          "retries": 0
+        }
+      ]
+    },
+    "E_langchain_inverse_design": {
+      "mode": "LIVE_ROUTING",
+      "llm_backend": "langchain",
+      "interpreter": "langchain_interpreter",
+      "expected_decision": "design",
+      "decision": "design",
+      "decision_matches": true,
+      "offline_reference_decision": "design",
+      "report_status": "complete",
+      "workflow_status": "succeeded",
+      "complete": true,
+      "design_ran": true,
+      "design_expected": true,
+      "capability_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "uavm.design_composite_candidate",
+        "uavm.evaluate_designed_candidate",
+        "uavm.generate_material_report"
+      ],
+      "reference_sequence": [
+        "uavm.interpret_requirements",
+        "uavm.search_existing_materials",
+        "uavm.assess_existing_candidates",
+        "uavm.design_composite_candidate",
+        "uavm.evaluate_designed_candidate",
+        "uavm.generate_material_report"
+      ],
+      "sequence_matches_reference": true,
+      "repeated_capability": false,
+      "routing_decisions": 6,
+      "routing_errors": [],
+      "fallbacks": 0,
+      "retries": 0,
+      "models": [
+        "jev-1.13.0"
+      ],
+      "latency_ms": [
+        83.0,
+        124.0,
+        80.8,
+        129.9,
+        89.1,
+        89.5
+      ],
+      "confidence": [
+        1.0,
+        1.0,
+        0.99,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "stop_reason": "evaluator: report written",
+      "scientific_content_equals_offline": true,
+      "routing_log": [
+        {
+          "timestamp": "2026-09-29T22:55:17.535141+00:00",
+          "step": 0,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.interpret_requirements",
+          "confidence": 1.0,
+          "latency_ms": 83.0,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:17.663829+00:00",
+          "step": 1,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.search_existing_materials",
+          "confidence": 1.0,
+          "latency_ms": 124.0,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:17.849125+00:00",
+          "step": 2,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.assess_existing_candidates",
+          "confidence": 0.99,
+          "latency_ms": 80.8,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:17.995907+00:00",
+          "step": 3,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.design_composite_candidate",
+          "confidence": 1.0,
+          "latency_ms": 129.9,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:18.212811+00:00",
+          "step": 4,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.evaluate_designed_candidate",
+          "confidence": 1.0,
+          "latency_ms": 89.1,
+          "status": "ok",
+          "retries": 0
+        },
+        {
+          "timestamp": "2026-09-29T22:55:18.327299+00:00",
+          "step": 5,
+          "router": "jev_router[live]",
+          "model": "jev-1.13.0",
+          "intent": "invoke",
+          "capability": "uavm.generate_material_report",
+          "confidence": 1.0,
+          "latency_ms": 89.5,
+          "status": "ok",
+          "retries": 0
+        }
+      ]
+    }
+  },
+  "notes": [
+    "REAL_JEV: real TypeSafe System One API through TypeSafeJevAdapter; no fallback in the main benchmark.",
+    "RULE_ROUTER: deterministic baseline; FAKE_JEV: offline fake adapter (infrastructure test, not model performance).",
+    "Cases were frozen before the live runs (benchmarks/routing/samples); nothing was tuned on live results.",
+    "Confidence values are Jev's self-reports; no calibration is claimed.",
+    "Contains metrics only: no API key, Authorization header, environment variable value, request or state content."
+  ]
+}

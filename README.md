@@ -121,10 +121,47 @@ mypy --strict jevpilot domains experiments integrations examples apps
 ```
 
 - Offline suite: **842 passed, 3 skipped** (older opt-in live tests), 3 deselected (`live_jev`).
-- Real Jev: the benchmark configuration is frozen (32 eval decision cases in
-  `benchmarks/routing/samples/jev_live_v1.json`, plus order and distractor
-  perturbations, 3 repetitions, and the four UAV branches). **No real-Jev result is
-  reported yet**: the live runs have not been executed in this environment.
+- Live tests: `pytest -m live_jev` **3 passed** against the real service.
+
+**Real Jev** (TypeSafe System One API, 2026-09-29). The model was discovered from
+`GET /v1/models` as `jev-preview`, and the API reports serving it as `jev-1.13.0`. The
+cases were frozen before the runs (`benchmarks/routing/samples/jev_live_v1.json`, 32
+eval decision cases across levels L1–L5), there was no fallback, and nothing was tuned
+afterwards. Full sanitized results:
+[`real_jev_2026-09-29.json`](experiments/routing/results/published/real_jev_2026-09-29.json).
+
+| Measured | REAL_JEV | RULE_ROUTER |
+|---|---|---|
+| Valid typed decisions (32 cases) | 93.8% (30/32) | 100% (32/32) |
+| Acceptable next action | 65.6% (21/32) | 68.8% (22/32) |
+| Preferred action | 65.6% (21/32) | 40.6% (13/32) |
+| Forbidden action chosen | 0/32 | 0/32 |
+| Ask-human recall / precision | 3/7 / 3/3 | 0/7 / – |
+| Finish recall (premature finishes) | 2/2 (0/23) | 2/2 (0/23) |
+| Accuracy on paraphrased goals | 53.8% (7/13) | 30.8% (4/13) |
+| Decision changed by capability order (2 permutations) | 18.8% (6/32) | 0% |
+| Accuracy with 16 / 48 capabilities offered | 68.8% / 75.0% | 71.9% / 71.9% |
+| Workflow completion (29 eval workflows) | 89.7% (26/29) | 62.1% (18/29) |
+| Unnecessary calls in those workflows | 28.3% (34/120) | 7.0% (4/57) |
+| Routing latency p50 / p95 (Stage B) | 231 / 409 ms | < 1 ms |
+
+- Repetition (3 runs of the 32 cases): the same decision in 31/32 cases; accuracy per
+  run 65.6%, 65.6%, 68.8%.
+- Confidence (Jev's self-report, no calibration claimed): median 0.99 for acceptable
+  decisions (n = 64) and 0.445 for the rest (n = 26).
+- API: 540 benchmark requests, 0 errors, 0 rate limits, 0 retries.
+- Invalid decisions all came from missing-information cases: Jev chose a step whose
+  required input is absent instead of asking a human, and JevPilot rejected it rather
+  than guessing a value.
+- UAV workflow with real Jev routing (LIVE_ROUTING; requirements interpreted offline):
+  the existing-material, design and LangChain-interpreter runs follow the reference
+  path, give the same decision and scientific content, and produce complete reports
+  (design never runs on the existing-material branch). For the needs-information and
+  unsupported-property requests, Jev reaches the correct decision and then asks for a
+  human instead of generating the report, so the report is marked incomplete. Its
+  scientific content is identical.
+- No live LLM run yet (no Anthropic key): the LangChain path was exercised with a
+  scripted offline chat model and real Jev routing.
 
 ## Scientific Scope
 
@@ -140,8 +177,8 @@ mypy --strict jevpilot domains experiments integrations examples apps
 - Small dataset (46 records) with gaps; constituent data are handbook values.
 - Composite strength, failure, corrosion, moisture and temperature are not predicted.
 - Models are checked against their sources, not validated by experiments.
-- Live LLM interpretation and live Jev routing depend on external services; see Testing
-  for what has actually been measured.
+- Live LLM interpretation has not been run yet; real Jev routing was measured on a small
+  frozen benchmark (see Testing), which is evidence, not a general guarantee.
 
 ## Repository Structure
 

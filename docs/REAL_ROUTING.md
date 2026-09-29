@@ -9,7 +9,7 @@ missing.
 |---|---|---|
 | `RuleRouter` | none | real, deterministic |
 | `LLMRouter` | `integrations/anthropic_llm.py` (`AnthropicLLMAdapter`) | real code against `anthropic` 1.8.0; **verified through the SDK with a mock transport; no live call made yet** |
-| `JevRouter` | `integrations/typesafe_jev.py` (`TypeSafeJevAdapter`) | real code against `typesafe-sdk` 0.7.1; **verified through the SDK with a mock transport; no live call made yet**; see [identity caveat](#is-this-the-intended-jev) |
+| `JevRouter` | `integrations/typesafe_jev.py` (`TypeSafeJevAdapter`) | real code against `typesafe-sdk` 0.7.1; **validated against the live API on 2026-09-29** (section 7); see [identity caveat](#is-this-the-intended-jev) |
 | `LLMRouter` / `JevRouter` | `jevpilot/adapters` fakes | mocked, offline, infrastructure tests only |
 | (not a router) | `integrations/langchain_chat.py` + `apps/uav_materials/langchain_interpreter.py` | optional LangChain layer for **requirement interpretation only**; see section 6 |
 
@@ -66,7 +66,7 @@ from those:
 | Invocation | `TypeSafeClient(...).system_one(state, questions, model=..., timeout=...)`, which is `POST https://api.typesafe.ai/v1/systemone` |
 | Input | `state`: text or JSON. `questions`: named `Choice` (≤ 255 labels with descriptions), `Noul` (yes/no), `Score` (ordered rubric) |
 | Output | per question: `Choice` → `choice`, `confidence`, full `probabilities`; `Noul` → probability of yes; `Score` → expected score, confidence. Plus `model` (served) and `usage` (input/output tokens; output documented as free) |
-| Models | `GET /v1/models` (`client.models.list()`) returns name, description, release date. The docs list `jev-1.13.0`, with the alias `jev-latest` pointing to it |
+| Models | `GET /v1/models` (`client.models.list()`) returns name, description, release date. The docs list `jev-1.13.0`, with the alias `jev-latest` pointing to it. On 2026-09-29 the API listed `jev-latest` and `jev-preview` ("a preview version of `jev-latest`"), and reported `jev-1.13.0` as the served model for `jev-preview` |
 | Auth | `TYPESAFE_API_KEY` (also `TYPESAFE_BASE_URL`, `TYPESAFE_DEFAULT_MODEL`) |
 | Determinism controls | none exposed |
 | Errors | typed; `TypeSafeAPITimeoutError` subclasses `TimeoutError`; HTTP status on `.status`; the docs name 401, 422, 429 and 529 and ask for backoff on 429/529 |
@@ -175,12 +175,11 @@ pytest -m live_jev                                                  # opt-in liv
 | Preflight (`models.retrieve` / `models.list`) | same | no |
 | Model discovery, bounded retries, 401/403/404/422/429/5xx classes, deadline, malformed answers, confidence parsing, redaction | `tests/integrations/test_typesafe_jev_reliability.py` (real SDK, mock transport) | no |
 | UAV workflow under misbehaving routers (repeated step, prohibited step, step budget, malformed, timeout, early finish) | `tests/apps/test_uav_routing_reliability.py` | no |
-| One real call per provider | `tests/integrations/test_live_smoke.py`, skipped unless `JEVPILOT_LIVE_TESTS=1` plus key | **not run: no credentials here** |
-| Real Jev: auth + discovery, one decision with probabilities, one UAV run | `tests/live/test_real_jev.py`, `pytest -m live_jev`, skipped without `TYPESAFE_API_KEY` | **not run: no credentials here** |
+| One real call per provider | `tests/integrations/test_live_smoke.py`, skipped unless `JEVPILOT_LIVE_TESTS=1` plus key | Jev: **passed (2026-09-29)**; Claude: not run (no key) |
+| Real Jev: auth + discovery, one decision with probabilities, one UAV run | `tests/live/test_real_jev.py`, `pytest -m live_jev`, skipped without `TYPESAFE_API_KEY` | **yes: 3 passed (2026-09-29)** |
 
-"Real model identifier is valid" and "adapter works against the live API"
-therefore remain **unverified** until the smoke tests are run with
-credentials.
+For Jev, the model identifier and the adapter were verified against the live API
+(section 7). For Claude they remain **unverified** until a run with credentials.
 
 ## 5. UAV materials workflow with live services
 
@@ -224,3 +223,28 @@ LangChain reduces provider-specific coupling. It does not make models
 interchangeable: they still differ in schema adherence, latency, cost and
 interpretation quality. **LangChain never routes**: Jev (or another JevPilot router)
 chooses every step.
+
+## 7. Live Jev validation (2026-09-29)
+
+TypeSafe System One API through `TypeSafeJevAdapter`, with authentication OK. The model
+was discovered as `jev-preview` (newest listed; `jev-latest` was also listed), and the API
+reports it as served by `jev-1.13.0`. The cases were frozen before the runs, and neither
+fallback nor tuning was used. The sanitized summary is in
+`experiments/routing/results/published/real_jev_2026-09-29.json`. Headline numbers are in
+the README ("Testing").
+
+Findings:
+
+- **Operations.** 540 benchmark API requests with 0 errors, 0 rate limits and 0 retries.
+  Routing latency p50 231 ms and p95 409 ms (Stage B); two calls when inputs are needed.
+- **Missing information.** Ask-human recall was 3/7, with precision 3/3. In the missed
+  cases Jev chose a step whose required input is absent. The grounded-input question then
+  had no value to pick, and the decision was rejected as `InvalidRoutingInputError`. This
+  is the designed behaviour: no value is guessed.
+- **Workflows.** Completion 89.7% vs 62.1% for the rule baseline, at the cost of more
+  unnecessary calls (28.3% vs 7.0%).
+- **Order sensitivity.** Reordering the offered capabilities changed 18.8% of decisions.
+- **UAV workflow.** Existing-material, design and LangChain-interpreter runs matched the
+  reference path exactly. For needs-information and unsupported-property requests Jev
+  asked for a human after the (correct) decision instead of generating the report. The
+  application then reports "incomplete" with unchanged scientific content.
