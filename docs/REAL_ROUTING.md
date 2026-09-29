@@ -231,47 +231,79 @@ chooses every step.
 
 TypeSafe System One API through `TypeSafeJevAdapter`, with authentication OK. The model
 was discovered as `jev-preview` (newest listed; `jev-latest` was also listed), and the API
-reports it as served by `jev-1.13.0`. The cases were frozen before the runs, and neither
-fallback nor tuning was used. The sanitized summary is in
-`experiments/routing/results/published/real_jev_2026-09-29.json`. Headline numbers are in
-the README ("Testing").
+reports it as served by `jev-1.13.0`. Requirements were interpreted offline (REAL_JEV,
+not fully live). The cases were frozen before the runs
+(`benchmarks/routing/samples/jev_live_v1.json`: 32 eval decision cases across levels
+L1–L5), and neither fallback nor tuning was used. Sanitized results:
+`experiments/routing/results/published/real_jev_2026-09-29.json`.
+
+Stages: A, smoke (11 decisions); B, the 32 cases plus 2 capability-order permutations
+and 16 / 48 offered capabilities; C, the 32 cases repeated 3 times; plus the 29 frozen
+eval workflows run end to end.
+
+| Measured (Stage B unless noted) | REAL_JEV | RULE_ROUTER |
+|---|---|---|
+| Valid typed decisions | 93.8% (30/32) | 100% (32/32) |
+| Acceptable next action | 65.6% (21/32) | 68.8% (22/32) |
+| Preferred action | 65.6% (21/32) | 40.6% (13/32) |
+| Forbidden action chosen | 0/32 | 0/32 |
+| Ask-human recall / precision | 3/7 / 3/3 | 0/7 / – |
+| Finish recall (premature finishes) | 2/2 (0/23) | 2/2 (0/23) |
+| Accuracy on paraphrased goals | 53.8% (7/13) | 30.8% (4/13) |
+| Decision changed by capability order | 18.8% (6/32) | 0% |
+| Accuracy with 16 / 48 capabilities offered | 68.8% / 75.0% | 71.9% / 71.9% |
+| Workflow completion (29 eval workflows) | 89.7% (26/29) | 62.1% (18/29) |
+| Unnecessary calls in those workflows | 28.3% (34/120) | 7.0% (4/57) |
+| Routing latency p50 / p95 | 231 / 409 ms | < 1 ms |
 
 Findings:
 
+- **Repetition (Stage C).** The same decision in all 3 repetitions for 31/32 cases;
+  accuracy per repetition was 65.6%, 65.6% and 68.8%.
+- **Confidence.** Jev's self-report, with no calibration claimed: median 0.99 for
+  acceptable decisions (n = 64) and 0.445 for the rest (n = 26), in Stage C.
 - **Operations.** 540 benchmark API requests with 0 errors, 0 rate limits and 0 retries.
-  Routing latency p50 231 ms and p95 409 ms (Stage B); two calls when inputs are needed.
-- **Missing information.** Ask-human recall was 3/7, with precision 3/3. In the missed
-  cases Jev chose a step whose required input is absent. The grounded-input question then
-  had no value to pick, and the decision was rejected as `InvalidRoutingInputError`. This
-  is the designed behaviour: no value is guessed.
-- **Workflows.** Completion 89.7% vs 62.1% for the rule baseline, at the cost of more
-  unnecessary calls (28.3% vs 7.0%).
-- **Order sensitivity.** Reordering the offered capabilities changed 18.8% of decisions.
-- **UAV workflow.** Existing-material, design and LangChain-interpreter runs matched the
-  reference path exactly. For needs-information and unsupported-property requests Jev
-  asked for a human after the (correct) decision instead of generating the report. The
-  application then reports "incomplete" with unchanged scientific content.
+  A decision takes two calls when inputs are needed.
+- **Missing information.** In the missed ask-human cases, Jev chose a step whose
+  required input is absent. The grounded-input question then had no value to pick, and
+  the decision was rejected as `InvalidRoutingInputError`. This is the designed
+  behaviour (no value is guessed), and it accounts for every invalid decision.
+- **Workflows.** Higher completion than the rule baseline, at the cost of more
+  unnecessary calls.
+- **UAV workflow (LIVE_ROUTING).** The existing-material, design and scripted-LangChain
+  runs matched the reference path exactly. For the needs-information and
+  unsupported-property requests, Jev asked for a human after the (correct) decision
+  instead of generating the report. The application then reports "incomplete" with
+  unchanged scientific content.
 
 ## 8. Fully live validation (2026-09-29)
 
-This is the FULLY_LIVE path: real Claude through LangChain, then real Jev, the controller,
-the UAV capabilities, the scientific models and the report. Run with
-`python -m experiments.routing.real_jev fully-live`; the results are in
-`experiments/routing/results/published/fully_live_2026-09-29.json`.
+The FULLY_LIVE path runs real Claude through LangChain, then real Jev, the controller,
+the UAV capabilities, the scientific models and the report. Run it with
+`python -m experiments.routing.real_jev fully-live`; sanitized results are in
+`experiments/routing/results/published/fully_live_2026-09-29.json`. Claude was validated
+as the **interpreter**, not as the router.
 
 Claude `claude-opus-5` was both requested and served (repository default, confirmed
-by `models.retrieve`). Jev `jev-preview` was served as `jev-1.13.0`. An interpretation
-smoke test and 5 runs were made (4 frozen UAV branches and the CLI demo), and all
-completed. All five interpretations were schema-valid, with no integrity findings and
-every limit quoted from the request. For the demo request, Claude produced the same
-requirement set as the offline parser. All four branch decisions equal the frozen
-offline references.
+by `models.retrieve`). Jev `jev-preview` was served as `jev-1.13.0`. Expected decisions
+are the frozen offline references.
 
-Across the four branch runs there were no untraced report numbers, no routing errors,
-no fallbacks, and design ran only after a `design` decision. The scientific results
-equal an offline replay of the same interpretation. As with real-Jev-only routing, for
-the needs-information and unsupported-property requests Jev asked for a human before
-the report step (report marked incomplete).
+| Frozen request | Claude's requirements | Decision (offline reference) | Report |
+|---|---|---|---|
+| Existing material (spar) | 4 hard, 3 soft | `use_existing` (same) | complete; design not run |
+| Inverse design (built-in demo) | 4 hard, 4 soft: the offline parser's set | `design` (same) | complete |
+| Needs information (no limits) | 0 hard, 3 soft | `needs_information` (same) | incomplete: Jev asked for a human before the report step |
+| Unsupported property (temperature only) | 1 hard | `no_suitable_existing` (same) | incomplete: as above |
+| CLI: `jevpilot uav-materials --live --llm-backend langchain` | – | `design` | complete, exit code 0 |
 
-Latency: Claude interpretation took 4.0–10.4 s; Jev routing p50 was 113 ms and p95
-308 ms (24 decisions).
+- **Runs.** 5 of 5 runs completed: 3 complete reports and 2 incomplete reports ending in
+  a request for human input. There was also a Claude-only interpretation smoke test.
+- **Interpretations.** The smoke test and the four branch runs were schema-valid, with
+  no integrity findings and every limit quoted from the request.
+- **Branch runs.** No untraced report numbers, no routing errors, no fallbacks, and
+  design only after a `design` decision. The scientific results equal an offline replay
+  of the same interpretation.
+- **Latency.** Claude interpretation 4.0–10.4 s; Jev routing p50 113 ms and p95 308 ms
+  (24 decisions); end to end 4.7–12.2 s per run.
+- **Scale.** This is a small validation (5 runs) of one provider, not a benchmark of
+  Claude.

@@ -2,215 +2,141 @@
 
 # JevPilot
 
-JevPilot 是一个领域无关的 Agentic AI 编排框架：
+JevPilot 是一个领域无关的 Agentic AI 编排框架：由可选的 LangChain 大语言模型解释层、
+TypeSafe Jev 决策路由、专业执行能力和确定性科学模型组合而成。
 
-- **LangChain / LLM** 负责自然语言理解和结构化输出；
-- **Jev**（TypeSafe）负责决策和路由；
-- **JevPilot** 负责共享状态、执行控制和能力编排；
-- **专业 Capability** 负责执行具体任务；
-- **科学模型** 负责真实计算。
+**状态：** v0.1 研究原型，已冻结；不保证 API 稳定。
 
-项目自带一个 UAV（无人机）材料示例：用户用一句自然语言描述需求，系统最后给出一份
-有证据、有出处的工程报告。
+## JevPilot 做什么
 
-**状态：** 实验性研究原型（v0.1.0），不保证 API 稳定。
+它把一段自然语言的工程需求，变成一份证据可追溯的工程报告。每个部分只负责自己的事：
 
-## 为什么这样设计
+| 组成 | 职责 | 绝不做 |
+|---|---|---|
+| Claude（经 LangChain 或原生接口） | 大语言模型解释层：把需求转成经过校验的结构化需求 | 编造材料属性、数值限制或单位 |
+| TypeSafe Jev | Jev 决策路由：决定下一步做什么（或结束、或请人工补充） | 执行任何操作 |
+| JevPilot | 编排与状态控制：共享状态、校验、执行控制 | 猜测用户的意思 |
+| Capability | 专业执行能力：完成具体的工作流步骤 | 自己决定路由 |
+| 科学模型 | 确定性科学模型：负责真实的工程计算 | 超出文献依据下结论 |
 
-工程结论里的每个数字都必须可追溯，所以 JevPilot 不让 LLM 编造材料属性。材料数值只来自：
-
-- 数据（真实航空材料数据集，保留原始单位、测试条件和出处）；
-- 物理模型（细观力学、经典层合板理论）；
-- 明确的用户输入（每个数值都必须能在用户原话里找到）。
-
-这里说的"Agentic"，是指在共享工作流状态下协调多个专业能力，而不是让一群自主的
-LLM 智能体各行其是。每一步只有一个路由器在"前置条件已满足"的能力中做选择，
-并且决策在执行前都会被校验。
+材料数值只来自数据、物理模型和用户明确给出的输入，JevPilot 不让大语言模型编造材料属性。
+这是在共享状态下协调多个专业能力的编排，而不是一群各自为政的自主 LLM 智能体；
+LangChain 不参与路由。
 
 ## 架构
 
 ```text
-用户请求
+用户
   ↓
-LangChain / 原生 LLM 解释器     → 经过校验的结构化需求
+Claude（经 LangChain / 原生接口）     自然语言 → 结构化需求
   ↓
-TypeSafe Jev                   → 下一步调用哪个能力（或结束 / 请人工补充）
+TypeSafe Jev                         决策路由
   ↓
-JevPilot 控制器 + 共享状态      → 执行 · 更新状态 · 评估 · 停止
+JevPilot 控制器 + 共享状态            校验 · 执行 · 更新 · 评估 · 停止
   ↓
-专业 Capability
+6 个专业执行能力
   ↓
-科学领域（UAV 材料）            → 数据检索 · 细观力学 · CLT
+UAV 材料领域                          真实数据 · 需求语义 · 证据
   ↓
-评估 → 报告
+科学模型                              细观力学 · 经典层合板理论
+  ↓
+工程报告
 ```
 
-核心包 `jevpilot/` 不认识任何材料、LangChain 或模型厂商；领域包只依赖核心的公开
-API；应用层 `apps/` 负责选择解释器和路由器。
+核心包 `jevpilot/` 不认识任何材料、LangChain 或模型厂商。详见
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
 
-## UAV Materials 示例
+## UAV 材料示例
 
 ```text
-自然语言需求
- → 结构化需求（数值必须引用用户原话）
- → 在 46 条真实航空材料记录中检索，并保留出处
- → 基于证据的决策：用现有材料、进入设计，或请求补充信息
- → 需要时进行有界复合材料逆向设计（纤维体积分数 × 对称铺层）
- → 细观力学 + 经典层合板理论预测，用同一个评估器评估
- → 仅根据计算状态生成结构化报告和 Markdown
+需求 → 结构化需求 → 在 46 条航空材料记录中检索
+     → 基于证据的决策（用现有材料 / 进入设计 / 请求补充信息）
+     → 需要时进行有界复合材料逆向设计（共 28 个设计）
+     → 细观力学 + 经典层合板理论 → 报告
 ```
 
 内置的机翼蒙皮需求（密度 ≤ 1800 kg/m³，x、y 方向刚度 ≥ 40 GPa，面内剪切刚度 ≥
-15 GPa）没有现有材料能满足，于是进入设计分支，给出一个虚拟的 [0/45/-45/90]s
-碳/环氧层合板（V_f 0.65，预测密度 1579 kg/m³，Ex = Ey = 53.4 GPa，Gxy = 20.4 GPa），
-并明确说明其强度、腐蚀和温度性能没有被预测。
+15 GPa）没有现有材料能满足。在检索的 28 个设计中有 8 个可行，最优的是一个虚拟的
+[0/45/-45/90]s 碳/环氧层合板（V_f 0.65，预测密度 1579 kg/m³，Ex = Ey = 53.4 GPa，
+Gxy = 20.4 GPa）。报告会明确说明它的强度、腐蚀和温度性能没有被预测。方法详见
+[docs/UAV_MATERIALS.md](docs/UAV_MATERIALS.md)。
 
-## 离线 Demo
+## 快速开始
 
 ```bash
 git clone https://github.com/uudam42/JevPilot.git && cd JevPilot
-uv venv && uv pip install -e '.[dev]'
-jevpilot uav-materials --demo                  # 离线、确定性，不需要密钥和网络
+uv venv && uv pip install -e '.[dev]'        # 或：python -m venv .venv && pip install -e '.[dev]'
+jevpilot uav-materials --demo                 # 离线、确定性，不需要密钥和网络
 jevpilot uav-materials --demo --request "The density must not exceed 3000 kg/m^3 ..."
-jevpilot uav-materials --demo --output report.md --json report.json --routing-log routing.jsonl
+jevpilot uav-materials --demo --output report.md --json report.json
 ```
 
-离线运行一律标记为 **OFFLINE_DEMO**：需求由确定性的短语解析器理解，路由由脚本化
-策略给出。它只演示编排流程，不代表任何模型的能力。
+离线运行一律标记为 **OFFLINE_DEMO**，不代表任何模型的能力。
 
-## LangChain
-
-LangChain 是可选依赖（`pip install -e '.[langchain]'`，只装 `langchain-core` 和
-`langchain-anthropic`，不引入 LangGraph），提供模型厂商抽象和结构化输出，降低对单一
-厂商 SDK 的耦合：
+## 真实服务模式
 
 ```bash
-jevpilot uav-materials --demo --llm-backend langchain                  # 离线脚本化聊天模型
-jevpilot uav-materials --live --llm-backend langchain --request "..."  # 真实 LLM + 真实 Jev
+uv pip install -e '.[jev,langchain]'
+export TYPESAFE_API_KEY="..."                 # 仅为占位符，切勿提交真实密钥
+export ANTHROPIC_API_KEY="..."
+jevpilot uav-materials --live --llm-backend langchain --request "..."   # Claude + Jev
+jevpilot uav-materials --live-routing          # 真实 Jev 路由，需求在本地离线解释
+pytest -m live_jev                             # 可选的真实服务测试
 ```
 
-已通过 `ChatAnthropic` 用真实 Claude（`claude-opus-5`）完成验证，见"测试结果"。
-`LangChainRequirementInterpreter` 与原生解释器实现同一个接口，使用同一份提示词、同一个
-schema（通过 tool calling 获得结构化输出），并经过同一套校验。**LangChain 不做 Jev 的
-路由**，也不替代控制器。换了模型厂商后，schema 遵循程度、延迟、成本和理解质量仍可能不同。
+密钥只从环境变量读取；缺少凭据时命令以退出码 2 停止，绝不会悄悄退回 Demo。
+LangChain 是可选依赖（只用 `langchain-core` 和 `langchain-anthropic`，不引入 LangGraph），
+能降低对单一厂商的耦合，但不同模型在 schema 遵循程度、延迟和成本上仍有差异。配置详见
+[docs/REAL_ROUTING.md](docs/REAL_ROUTING.md)。
 
-## 真实 Jev 配置
+## 验证结果
 
-```bash
-uv pip install -e '.[jev]'
-export TYPESAFE_API_KEY="..."                 # 仅为占位符，切勿提交或粘贴真实密钥
-python -m experiments.routing.real_jev preflight         # 鉴权 + 模型发现
-jevpilot uav-materials --live-routing                    # 真实 Jev 路由；需求在本地离线解释
-pytest -m live_jev                                       # 可选的真实服务测试
-```
+测量日期 2026-09-29。Claude 为 `claude-opus-5`；Jev 请求 `jev-preview`，实际服务模型为 `jev-1.13.0`。
 
-密钥只从环境变量读取。模型通过 `GET /v1/models` 自动发现（也可用
-`TYPESAFE_DEFAULT_MODEL` 指定），路由请求经官方 SDK 发往 `POST /v1/systemone`。
-`--live` 还需要 `ANTHROPIC_API_KEY`。缺少凭据时命令以退出码 2 停止，绝不会悄悄退回
-Demo。详见 [docs/REAL_ROUTING.md](docs/REAL_ROUTING.md)。
+- **全链路真实运行**（真实 Claude → LangChain → 真实 Jev → JevPilot → UAV 工作流）：
+  5/5 次运行全部完成，其中 3 次生成了完整报告；另外 2 次（信息不足、属性不受支持）
+  Jev 在生成报告前请求人工补充，因此报告标记为未完成。所有决策都与冻结的离线参考结果一致。
+- **真实 Jev 冻结评测集：** 540 次 API 请求，0 次 API 错误；重复 3 次时，32 个冻结用例中
+  31 个决策完全一致；冻结工作流评测完成率 89.7%（26/29）。
+- **延迟（全链路真实运行）：** Claude 解释 4.0–10.4 秒；Jev 路由 p50 113 ms、p95 308 ms
+  （24 次决策）；端到端 4.7–12.2 秒。
+- **测试：** 离线 843 通过、3 跳过、3 未选中（真实服务测试）；`pytest -m live_jev`
+  3 项通过；11 个示例全部可运行。
+- **科学结果：** 接入 LangChain 和 Jev 后科学计算结果完全不变。Claude 验证的是解释层角色，
+  不是路由角色。
 
-## 测试结果
-
-```bash
-pytest                                                    # 离线运行，无需密钥和网络
-ruff check . && ruff format --check .
-mypy --strict jevpilot domains experiments integrations examples apps
-```
-
-下面三类验证分开报告，互不混合：
-
-**1. 离线与脚本化测试**（无需密钥和网络）：**843 通过，3 跳过**（旧的可选真实服务测试），
-3 未选中（`live_jev`）。这里的 LangChain 测试使用确定性的脚本化聊天模型，不是语言模型。
-
-**2. 仅真实 Jev**（REAL_JEV，需求在本地离线解释）。TypeSafe System One API，2026-09-29；
-`pytest -m live_jev` **3 项全部通过**。模型通过 `GET /v1/models`
-自动发现为 `jev-preview`，API 返回的实际服务模型是 `jev-1.13.0`。评测用例在运行前已经冻结
-（`benchmarks/routing/samples/jev_live_v1.json`，覆盖 L1–L5 的 32 个 eval 决策用例），
-全程没有兜底路由，也没有根据结果调整任何东西。完整的脱敏结果见
-[`real_jev_2026-09-29.json`](experiments/routing/results/published/real_jev_2026-09-29.json)。
-
-| 指标 | 真实 Jev | 规则路由 |
-|---|---|---|
-| 有效的类型化决策（32 例） | 93.8%（30/32） | 100%（32/32） |
-| 下一步可接受 | 65.6%（21/32） | 68.8%（22/32） |
-| 选中首选动作 | 65.6%（21/32） | 40.6%（13/32） |
-| 选中禁止动作 | 0/32 | 0/32 |
-| 请人工补充：召回 / 精确 | 3/7 / 3/3 | 0/7 / – |
-| 正确结束（过早结束） | 2/2（0/23） | 2/2（0/23） |
-| 改写后目标的准确率 | 53.8%（7/13） | 30.8%（4/13） |
-| 调换能力顺序后决策改变（2 种排列） | 18.8%（6/32） | 0% |
-| 提供 16 / 48 个能力时的准确率 | 68.8% / 75.0% | 71.9% / 71.9% |
-| 工作流完成率（29 个 eval 工作流） | 89.7%（26/29） | 62.1%（18/29） |
-| 工作流中的多余调用 | 28.3%（34/120） | 7.0%（4/57） |
-| 路由延迟 p50 / p95 | 231 / 409 ms | < 1 ms |
-
-- 重复 3 次：32 例中有 31 例三次决策完全相同；每轮准确率 65.6%、65.6%、68.8%。
-- 置信度（Jev 自报，不做校准结论）：可接受决策的中位数 0.99（n = 64），其余为 0.445（n = 26）。
-- API：共 540 次评测请求，0 错误、0 限流、0 重试。
-- 无效决策全部出现在"缺少信息"的用例中：Jev 选择了一个缺少必需输入的能力，而不是请人工补充；
-  JevPilot 拒绝了该决策，没有替它猜一个值。
-- UAV 工作流由真实 Jev 路由（LIVE_ROUTING，需求在本地离线解释）：现有材料分支、设计分支和
-  LangChain 解释器分支都与参考路径一致，决策和科学结果相同，报告完整（现有材料分支中设计步骤
-  从未执行）。对"信息不足"和"属性不受支持"两个请求，Jev 做出了正确决策，但随后选择请人工补充，
-  而没有生成报告，因此报告被标记为未完成，其中的科学内容不变。
-
-**3. 全链路真实运行**（FULLY_LIVE：真实 Claude 经 LangChain → 真实 Jev → 控制器 →
-UAV 能力 → 科学模型 → 报告，2026-09-29）。Claude 请求和实际服务的模型都是
-`claude-opus-5`（`ChatAnthropic`，tool calling 结构化输出）；Jev 请求 `jev-preview`，
-实际服务模型为 `jev-1.13.0`。预期决策取自运行前冻结的离线参考结果，运行后没有调整任何东西。
-结果见 [`fully_live_2026-09-29.json`](experiments/routing/results/published/fully_live_2026-09-29.json)。
-
-| 冻结的请求 | Claude 解释出的需求 | 决策（与离线参考比较） | 报告 |
-|---|---|---|---|
-| 现有材料（翼梁） | 4 条硬约束，3 条偏好 | `use_existing`（一致） | 完整；未执行设计 |
-| 逆向设计（内置示例） | 4 条硬约束，4 条偏好，与离线解析器完全相同 | `design`（一致） | 完整 |
-| 信息不足（没有数值限制） | 0 条硬约束，3 条偏好 | `needs_information`（一致） | 未完成：Jev 在生成报告前选择请人工补充 |
-| 属性不受支持（只有温度要求） | 1 条硬约束 | `no_suitable_existing`（一致） | 未完成：同上 |
-| 命令行：`jevpilot uav-materials --live --llm-backend langchain` | – | `design` | 完整，退出码 0 |
-
-- 5 次运行全部完成，另有一次仅测 Claude 的冒烟测试。每次解释都符合 schema，没有完整性问题，
-  每个数值限制都引用自用户原话。
-- 任何报告中都没有计算状态之外的数字。科学结果与对同一解释的离线重放完全一致。
-- 能力前置条件始终有效：0 路由错误，0 兜底，没有重复步骤，只有在 `design` 决策之后才执行设计。
-  报告记录了 `LIVE` 模式、LangChain 语言模型解释器和 TypeSafe 路由。
-- 延迟：Claude 解释 4.0–10.4 秒；Jev 路由 p50 113 ms、p95 308 ms（24 次决策）；
-  每次端到端运行 4.7–12.2 秒。
-- 这只是一次小规模验证（5 次运行），不是对 Claude 的基准评测。
+完整结果、方法和发现的问题见 [docs/REAL_ROUTING.md](docs/REAL_ROUTING.md)（第 7–8 节），
+脱敏后的原始结果见
+[`experiments/routing/results/published/`](experiments/routing/results/published/)。
 
 ## 科学范围
 
-- 46 条真实航空材料记录（MIL-HDBK-5J、NRL 与 NASA 报告），全部保留出处
-- NASA 来源的单层板细观力学（TM-83320、TP-3290），用原文算例核对
-- 经典层合板理论（NASA RP-1351），用原文给出的矩阵核对
-- 在小而明确的网格上做有界复合材料逆向设计
-- 证据处理：缺数据记为"证据缺口"，预测值永远不当作实测值
+- 46 条航空材料记录（MIL-HDBK-5J、NRL 与 NASA 报告），证据可追溯
+- NASA 来源的单层板细观力学和经典层合板理论，均用原始文献核对
+- 有界复合材料逆向设计：4 种纤维体积分数 × 7 种对称铺层
+- 缺数据记为"证据缺口"，预测值永远不当作实测值
 
 ## 局限性
 
 - 这是研究原型；验收策略只是演示用，不是设计规范。
-- 数据集较小（46 条）且有缺口；组分材料数据为手册值。
-- 不预测复合材料的强度、失效、腐蚀、吸湿和温度性能。
-- 模型只与原始文献核对过，没有经过实验验证。
-- 真实 Jev 只在一个小规模冻结评测上测过，全链路真实运行只有 5 次（见"测试结果"）：只是证据，
-  不是普遍保证。真实 LLM 只测试了一家厂商（Anthropic，经 LangChain）。
+- 数据集较小且有缺口；不预测复合材料的强度、失效、腐蚀、吸湿和温度性能；
+  模型没有经过实验验证。
+- 真实服务验证规模有限：一个冻结评测集加 5 次全链路真实运行，只测试了一家大语言模型厂商；
+  只是证据，不是普遍保证。
 
-## 目录结构
+## 目录与文档
 
 ```text
-jevpilot/        核心：状态、控制循环、路由器、校验（不含领域知识，不依赖 LangChain）
-integrations/    Jev（TypeSafe SDK）、Anthropic、LangChain 聊天模型、脱敏工具
-domains/         uav_materials（科学计算 + 工作流）及两个测试用的小领域
-apps/            UAV 材料应用：命令行、解释器、离线/真实服务接线
-benchmarks/, experiments/   路由评测数据、评测框架和已发布的真实评测结果
+jevpilot/       核心：状态、控制循环、路由器、校验
+integrations/   TypeSafe Jev、Anthropic、LangChain 适配器；脱敏工具
+domains/        uav_materials（科学计算 + 工作流）及两个测试用的小领域
+apps/           UAV 材料应用与命令行
+benchmarks/, experiments/   冻结的路由评测集、评测框架、已发布结果
 tests/, examples/, docs/
 ```
 
-## 许可与数据来源
-
-软件许可证尚未确定，由项目所有者决定。材料数据全部来自美国政府公开文件（带
-Distribution Statement A 的 MIL-HDBK-5J，以及标注为公开发布的 NASA、NRL 报告）。
-`data/uav_materials/sources/` 中的清单记录了复用依据、获取日期和校验和；原始 PDF 不入库。
-TypeSafe Jev 和 Anthropic 是第三方服务，适用其各自条款。
-
-更多文档：[ARCHITECTURE](docs/ARCHITECTURE.md) · [UAV_MATERIALS](docs/UAV_MATERIALS.md) ·
+[ARCHITECTURE](docs/ARCHITECTURE.md) · [UAV_MATERIALS](docs/UAV_MATERIALS.md) ·
 [REAL_ROUTING](docs/REAL_ROUTING.md) · [BENCHMARK_DESIGN](docs/BENCHMARK_DESIGN.md)
+
+软件许可证尚未确定。材料数据全部来自美国政府公开文件（复用依据和校验和见
+`data/uav_materials/sources/`）。TypeSafe Jev 和 Anthropic 是第三方服务，适用其各自条款。
