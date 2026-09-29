@@ -15,6 +15,9 @@ dev = ["pytest>=8", "mypy>=1.10", "ruff>=0.5"]
 # Real model providers are optional; the core, RuleRouter and all fakes need none of them.
 anthropic = ["anthropic>=1.8,<2"]
 jev = ["typesafe-sdk>=0.7.1,<0.8"]
+# Optional LLM communication layer: langchain-core + one provider package only
+# (no `langchain` meta-package, no LangGraph). LangChain never routes.
+langchain = ["langchain-core>=1.0,<2", "langchain-anthropic>=1.0,<2"]
 # Only needed to re-extract source PDFs (python -m domains.uav_materials.ingest.build --from-pdf)
 data = ["pypdf>=6"]
 
@@ -33,7 +36,9 @@ packages = ["jevpilot", "domains", "integrations", "apps"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-q"
+# Real-service tests are opt-in: `pytest -m live_jev` (they skip without TYPESAFE_API_KEY).
+addopts = "-q -m 'not live_jev'"
+markers = ["live_jev: calls the real TypeSafe Jev API (needs TYPESAFE_API_KEY; costs money)"]
 
 [tool.ruff]
 line-length = 100

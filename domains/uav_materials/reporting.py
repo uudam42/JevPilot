@@ -668,10 +668,15 @@ def build_report(
     if interpretation is not None:
         limitations += [f"Missing information: {m}" for m in interpretation.missing_information]
         limitations += [f"Stated concern not evaluated: {c}" for c in interpretation.concerns]
+        kind = interp.interpreter.get("kind") if interp is not None else None
         mode_note = (
             "Requirements were interpreted by the deterministic offline parser, which handles "
             "common phrasings only; review the interpreted requirements."
-            if interpretation.interpreter == "rule_based_interpreter"
+            if kind == "rule_based"
+            else "Requirements were produced offline by a deterministic scripted chat model "
+            "(no language model was called) and validated (quotes, stated numbers and units); "
+            "review the interpreted requirements."
+            if kind == "scripted"
             else "Requirements were interpreted by a language model and validated (quotes, "
             "stated numbers and units); review the interpreted requirements."
         )

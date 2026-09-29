@@ -7,7 +7,9 @@ print(result.markdown)
 
 from apps.uav_materials.workflow import (
     DEMO_REQUEST,
+    ComponentUnavailable,
     LiveModeUnavailable,
+    LLMBackend,
     RunMode,
     UAVWorkflowResult,
     execute_workflow,
@@ -16,6 +18,8 @@ from apps.uav_materials.workflow import (
 
 __all__ = [
     "DEMO_REQUEST",
+    "ComponentUnavailable",
+    "LLMBackend",
     "LiveModeUnavailable",
     "RunMode",
     "UAVWorkflowResult",

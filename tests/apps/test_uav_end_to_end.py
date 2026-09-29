@@ -395,8 +395,32 @@ def test_live_components_are_wired_to_the_real_adapters(monkeypatch: pytest.Monk
 
     monkeypatch.setattr(socket, "create_connection", refuse)
     monkeypatch.setattr(socket.socket, "connect", refuse)
+    from integrations.typesafe_jev import TypeSafeJevAdapter
+
+    # The Jev preflight (authentication + model discovery) is a network call: stubbed here.
+    monkeypatch.setattr(TypeSafeJevAdapter, "verify", lambda self: {"authentication": "ok"})
     interpreter, router = live_components()
     assert isinstance(interpreter, LLMRequirementInterpreter)
     assert interpreter.describe()["adapter"]["provider"] == "anthropic"
     config = router.config()
     assert config["type"] == "JevRouter" and config["adapter"]["provider"] == "typesafe"
+
+
+def test_failed_jev_preflight_stops_before_anything_runs(monkeypatch: pytest.MonkeyPatch) -> None:
+    import importlib.util
+
+    from apps.uav_materials.workflow import live_components
+    from jevpilot.exceptions import RouterAdapterError
+
+    if importlib.util.find_spec("typesafe_sdk") is None:
+        pytest.skip("TypeSafe SDK not installed")
+    from integrations.typesafe_jev import TypeSafeJevAdapter
+
+    monkeypatch.setenv("TYPESAFE_API_KEY", "dummy-key-for-wiring-test")
+
+    def reject(self: Any) -> Any:
+        raise RouterAdapterError("Jev models.list failed (authentication, HTTP 401)")
+
+    monkeypatch.setattr(TypeSafeJevAdapter, "verify", reject)
+    with pytest.raises(LiveModeUnavailable, match="preflight failed.*Nothing was run"):
+        live_components(routing_only=True)

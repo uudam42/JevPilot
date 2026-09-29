@@ -9,22 +9,32 @@ router chooses each next capability from the capabilities whose
 preconditions hold; the domain capabilities do the work; the report is
 generated from the resulting state.
 
-Two modes, always labelled in the result and the report:
+Three modes, always labelled in the result and the report:
 
-``OFFLINE_DEMO``  deterministic rule-based interpretation and a scripted reference routing
+``OFFLINE_DEMO``  deterministic offline interpretation and a scripted reference routing
                   policy served through the real ``JevRouter`` pipeline by the offline
                   ``FakeJevAdapter``. No credentials, no network. It demonstrates the
                   orchestration; it says nothing about live-model routing quality.
-``LIVE``          requirements interpreted by Claude (``AnthropicLLMAdapter``) and routing by
-                  Jev (``TypeSafeJevAdapter``). Needs ``ANTHROPIC_API_KEY`` and
-                  ``TYPESAFE_API_KEY``. If they are missing, the call fails with
-                  :class:`LiveModeUnavailable`; it never falls back to the demo silently.
+``LIVE``          requirements interpreted by a language model and routing by Jev
+                  (``TypeSafeJevAdapter``). Needs ``ANTHROPIC_API_KEY`` and
+                  ``TYPESAFE_API_KEY``.
+``LIVE_ROUTING``  routing by the real Jev service; requirements interpreted offline (the
+                  deterministic parser, or a scripted chat model through LangChain). Needs
+                  only ``TYPESAFE_API_KEY``. Not fully live, and labelled so.
+
+The LLM backend (``native`` or ``langchain``) selects how requirements reach a chat
+model: the native Anthropic adapter, or LangChain structured output. Both use the same
+prompt, schema and validation. LangChain never routes.
+
+If a live mode's credentials, SDKs or Jev preflight are missing, the call fails with
+:class:`LiveModeUnavailable` before anything runs; it never falls back to the demo.
 """
 
 from __future__ import annotations
 
 import importlib.util
 import os
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
@@ -35,7 +45,15 @@ from domains.uav_materials.interpretation import RequirementInterpreter, RuleBas
 from domains.uav_materials.inverse_design import DesignSearchConfig
 from domains.uav_materials.reporting import MaterialWorkflowReport, build_report, render_markdown
 from domains.uav_materials.workflow import REPORT, REPORT_MARKDOWN, reference_routing_payload
-from jevpilot import DefaultControlPolicy, JevRouter, Router, Runtime, WorkflowResult
+from jevpilot import (
+    DefaultControlPolicy,
+    JevRouter,
+    Router,
+    Runtime,
+    TraceEvent,
+    TraceEventType,
+    WorkflowResult,
+)
 from jevpilot.adapters import FakeJevAdapter
 
 DEMO_REQUEST = (
@@ -52,15 +70,31 @@ OFFLINE_NOTE = (
     "through the JevRouter pipeline by the offline FakeJevAdapter; no language model or Jev "
     "service was called, and this run says nothing about live-model routing quality"
 )
+OFFLINE_LANGCHAIN_NOTE = (
+    "deterministic scripted chat model (serving the rule-based phrase parser) reached through "
+    "LangChain structured output, and a scripted reference routing policy served through the "
+    "JevRouter pipeline by the offline FakeJevAdapter; no language model or Jev service was "
+    "called, and this run says nothing about live-model routing quality"
+)
 
 
 class RunMode(StrEnum):
     LIVE = "LIVE"
+    LIVE_ROUTING = "LIVE_ROUTING"
     OFFLINE_DEMO = "OFFLINE_DEMO"
 
 
-class LiveModeUnavailable(RuntimeError):
-    """LIVE mode was requested but its credentials or SDKs are missing."""
+class LLMBackend(StrEnum):
+    NATIVE = "native"
+    LANGCHAIN = "langchain"
+
+
+class ComponentUnavailable(RuntimeError):
+    """A requested component (backend, SDK, credential) is not available here."""
+
+
+class LiveModeUnavailable(ComponentUnavailable):
+    """A live mode was requested but its credentials, SDKs or Jev preflight are missing."""
 
 
 @dataclass(frozen=True)
@@ -82,46 +116,151 @@ class UAVWorkflowResult:
     def to_json(self, indent: int | None = 2) -> str:
         return self.report.model_dump_json(indent=indent)
 
+    def routing_log(self) -> list[dict[str, Any]]:
+        return routing_log(self.run.trace)
+
+
+def routing_log(trace: Sequence[TraceEvent]) -> list[dict[str, Any]]:
+    """One sanitized record per routing decision or failure.
+
+    Only these fields are kept: timestamp, step, router, model, intent, capability,
+    confidence, latency_ms, status and retries. No state, request, prompt, header or
+    credential is ever included.
+    """
+    records = []
+    for event in trace:
+        if event.type not in (TraceEventType.ROUTING_DECISION, TraceEventType.ROUTING_FAILURE):
+            continue
+        payload = event.payload
+        attempts = payload.get("attempts") or []
+        last = attempts[-1] if attempts else {}
+        meta = last.get("metadata") or {}
+        decision = payload.get("decision") or {}
+        error = payload.get("error") or {}
+        status = (
+            f"error:{error.get('type')}"
+            if error
+            else "fallback"
+            if payload.get("fallback_used")
+            else "ok"
+        )
+        records.append(
+            {
+                "timestamp": event.timestamp.isoformat(),
+                "step": event.step,
+                "router": decision.get("router_id") or last.get("router_id"),
+                "model": last.get("model") or meta.get("requested_model"),
+                "intent": decision.get("intent"),
+                "capability": decision.get("capability_id"),
+                "confidence": decision.get("confidence"),
+                "latency_ms": round(float(payload.get("routing_latency_s") or 0.0) * 1000, 1),
+                "status": status,
+                "retries": sum(
+                    int((a.get("metadata") or {}).get("retries") or 0) for a in attempts
+                ),
+            }
+        )
+    return records
+
 
 # -- components ------------------------------------------------------------------------------
 
 
-def offline_components() -> tuple[RequirementInterpreter, Router]:
+def offline_interpreter(
+    llm_backend: LLMBackend | str = LLMBackend.NATIVE,
+) -> RequirementInterpreter:
+    """The deterministic interpreter for a backend (no language model, no network)."""
+    if LLMBackend(llm_backend) is LLMBackend.NATIVE:
+        return RuleBasedInterpreter()
+    if importlib.util.find_spec("langchain_core") is None:
+        raise ComponentUnavailable(
+            "the LangChain backend needs langchain-core: pip install 'jevpilot[langchain]'"
+        )
+    from apps.uav_materials.langchain_interpreter import offline_langchain_interpreter
+
+    return offline_langchain_interpreter()
+
+
+def offline_components(
+    llm_backend: LLMBackend | str = LLMBackend.NATIVE,
+) -> tuple[RequirementInterpreter, Router]:
     adapter = FakeJevAdapter(
         policy=reference_routing_payload,
         model="offline-demo-reference-policy",
         label="OFFLINE_DEMO: scripted reference routing policy (not a model)",
     )
-    return RuleBasedInterpreter(), JevRouter(adapter, router_id="jev_router[offline_demo]")
+    router = JevRouter(adapter, router_id="jev_router[offline_demo]")
+    return offline_interpreter(llm_backend), router
 
 
-def live_requirements() -> list[str]:
-    """What LIVE mode still needs in this environment (empty when ready)."""
+def live_requirements(
+    llm_backend: LLMBackend | str = LLMBackend.NATIVE, *, routing_only: bool = False
+) -> list[str]:
+    """What a live mode still needs in this environment (empty when ready). Never shows values."""
     missing = []
-    if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
-        missing.append("ANTHROPIC_API_KEY (Claude requirement interpretation)")
-    if not os.environ.get("TYPESAFE_API_KEY"):
+    if not os.environ.get("TYPESAFE_API_KEY", "").strip():
         missing.append("TYPESAFE_API_KEY (Jev routing)")
-    if importlib.util.find_spec("anthropic") is None:
-        missing.append("the Anthropic SDK: pip install 'jevpilot[anthropic]'")
     if importlib.util.find_spec("typesafe_sdk") is None:  # what TypeSafeJevAdapter imports
         missing.append("the TypeSafe SDK: pip install 'jevpilot[jev]'")
+    backend = LLMBackend(llm_backend)
+    if backend is LLMBackend.LANGCHAIN and importlib.util.find_spec("langchain_core") is None:
+        missing.append("langchain-core: pip install 'jevpilot[langchain]'")
+    if routing_only:
+        return missing
+    if backend is LLMBackend.LANGCHAIN:
+        if importlib.util.find_spec("langchain_core") is not None:
+            from integrations.langchain_chat import missing_requirements
+
+            missing += missing_requirements()
+    else:
+        if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
+            missing.append("ANTHROPIC_API_KEY (requirement interpretation)")
+        if importlib.util.find_spec("anthropic") is None:
+            missing.append("the Anthropic SDK: pip install 'jevpilot[anthropic]'")
     return missing
 
 
-def live_components(*, timeout_s: float = 120.0) -> tuple[RequirementInterpreter, Router]:
-    missing = live_requirements()
+def live_router(*, timeout_s: float = 120.0) -> tuple[Router, dict[str, Any]]:
+    """JevRouter over the real Jev service, after a preflight (authentication, model)."""
+    from integrations.typesafe_jev import TypeSafeJevAdapter
+    from jevpilot.exceptions import RoutingError
+
+    adapter = TypeSafeJevAdapter()
+    try:
+        preflight = adapter.verify()
+    except RoutingError as exc:
+        raise LiveModeUnavailable(f"Jev preflight failed: {exc}. Nothing was run.") from exc
+    return JevRouter(adapter, router_id="jev_router[live]", timeout_s=timeout_s), preflight
+
+
+def live_components(
+    *,
+    llm_backend: LLMBackend | str = LLMBackend.NATIVE,
+    routing_only: bool = False,
+    timeout_s: float = 120.0,
+) -> tuple[RequirementInterpreter, Router]:
+    backend = LLMBackend(llm_backend)
+    missing = live_requirements(backend, routing_only=routing_only)
     if missing:
+        mode = RunMode.LIVE_ROUTING if routing_only else RunMode.LIVE
         raise LiveModeUnavailable(
-            "LIVE mode needs: " + "; ".join(missing) + ". Nothing was run. Use the offline "
+            f"{mode} mode needs: " + "; ".join(missing) + ". Nothing was run. Use the offline "
             "demonstration (--demo / mode=OFFLINE_DEMO) instead, or set the credentials."
         )
-    from apps.uav_materials.llm_interpreter import LLMRequirementInterpreter
-    from integrations.anthropic_llm import AnthropicLLMAdapter
-    from integrations.typesafe_jev import TypeSafeJevAdapter
+    interpreter: RequirementInterpreter
+    if routing_only:
+        interpreter = offline_interpreter(backend)
+    elif backend is LLMBackend.LANGCHAIN:
+        from apps.uav_materials.langchain_interpreter import LangChainRequirementInterpreter
+        from integrations.langchain_chat import chat_model
 
-    interpreter = LLMRequirementInterpreter(AnthropicLLMAdapter(), timeout_s=timeout_s)
-    router = JevRouter(TypeSafeJevAdapter(), router_id="jev_router[live]", timeout_s=timeout_s)
+        interpreter = LangChainRequirementInterpreter(chat_model(timeout_s=timeout_s))
+    else:
+        from apps.uav_materials.llm_interpreter import LLMRequirementInterpreter
+        from integrations.anthropic_llm import AnthropicLLMAdapter
+
+        interpreter = LLMRequirementInterpreter(AnthropicLLMAdapter(), timeout_s=timeout_s)
+    router, _ = live_router(timeout_s=timeout_s)
     return interpreter, router
 
 
@@ -132,18 +271,34 @@ def run_uav_material_workflow(
     request: str = DEMO_REQUEST,
     *,
     mode: RunMode | str = RunMode.OFFLINE_DEMO,
+    llm_backend: LLMBackend | str = LLMBackend.NATIVE,
     policy: ExistingMaterialAcceptancePolicy | None = None,
     design_config: DesignSearchConfig | None = None,
     max_steps: int = 30,
 ) -> UAVWorkflowResult:
     """Natural-language request → engineering report (see the module docstring)."""
-    mode = RunMode(mode)
+    mode, backend = RunMode(mode), LLMBackend(llm_backend)
+    via = "through LangChain structured output" if backend is LLMBackend.LANGCHAIN else "natively"
     if mode is RunMode.LIVE:
-        interpreter, router = live_components()
-        note = "requirements interpreted by a language model and routing by Jev (live services)"
+        interpreter, router = live_components(llm_backend=backend)
+        note = (
+            f"requirements interpreted by a language model ({via}) and routing by Jev "
+            "(live services)"
+        )
+    elif mode is RunMode.LIVE_ROUTING:
+        interpreter, router = live_components(llm_backend=backend, routing_only=True)
+        note = (
+            "routing by the real Jev service; requirements interpreted offline by "
+            + (
+                "a deterministic scripted chat model through LangChain"
+                if backend is LLMBackend.LANGCHAIN
+                else "the deterministic phrase parser"
+            )
+            + " (no language model was called); this run is not fully live"
+        )
     else:
-        interpreter, router = offline_components()
-        note = OFFLINE_NOTE
+        interpreter, router = offline_components(backend)
+        note = OFFLINE_NOTE if backend is LLMBackend.NATIVE else OFFLINE_LANGCHAIN_NOTE
     return execute_workflow(
         request,
         interpreter=interpreter,
