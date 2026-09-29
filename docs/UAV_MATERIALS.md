@@ -29,9 +29,11 @@ The router sees only a compact progress record (`WorkflowProgress`) and short
 step summaries; large results stay in artifacts. The domain evaluator declares
 success when the report exists. In **OFFLINE_DEMO** mode a scripted reference
 policy (first applicable step in the order above) is served through the real
-`JevRouter` pipeline by `FakeJevAdapter`. In **LIVE** mode Jev
-(`TypeSafeJevAdapter`) chooses among the same capabilities. If the loop ends
-early, the application still builds a report from the state and marks it
+`JevRouter` pipeline by `FakeJevAdapter`. In **LIVE_ROUTING** and **LIVE** modes the
+real Jev service (`TypeSafeJevAdapter`) chooses among the same capabilities; a step
+whose preconditions do not hold is never offered, so it cannot run (a router that
+names it gets a routing error). If the loop ends early (routing error, step budget,
+premature finish), the application still builds a report from the state and marks it
 *incomplete* with the reason.
 
 ## 2. Requirement interpretation
@@ -51,12 +53,16 @@ for a material or a material property**. Every item is validated by
 
 Failing items are dropped and listed as integrity findings. Soft preferences
 get equal weights by a stated convention; interpreters never assign weights.
-Two interpreters exist:
+Three interpreters exist, all with the same contract and the same validation:
 
 - `RuleBasedInterpreter`: deterministic phrase patterns (limits, directions,
   qualitative wishes, marine exposure); used offline;
-- `LLMRequirementInterpreter` (application layer): Claude with the domain's
-  prompt (`interpretation_system_prompt()`), same validation.
+- `LLMRequirementInterpreter` (application layer): a language model through the
+  native Anthropic adapter, with the domain's prompt (`interpretation_system_prompt()`);
+- `LangChainRequirementInterpreter` (application layer, optional): the same prompt and
+  schema through LangChain structured output (tool calling), so the provider can change
+  without changing anything downstream. Offline it runs on a scripted chat model and is
+  reported as such, never as a language model.
 
 ## 3. Requirement semantics
 

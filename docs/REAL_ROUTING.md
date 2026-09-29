@@ -11,8 +11,9 @@ missing.
 | `LLMRouter` | `integrations/anthropic_llm.py` (`AnthropicLLMAdapter`) | real code against `anthropic` 1.8.0; **verified through the SDK with a mock transport; no live call made yet** |
 | `JevRouter` | `integrations/typesafe_jev.py` (`TypeSafeJevAdapter`) | real code against `typesafe-sdk` 0.7.1; **verified through the SDK with a mock transport; no live call made yet**; see [identity caveat](#is-this-the-intended-jev) |
 | `LLMRouter` / `JevRouter` | `jevpilot/adapters` fakes | mocked, offline, infrastructure tests only |
+| (not a router) | `integrations/langchain_chat.py` + `apps/uav_materials/langchain_interpreter.py` | optional LangChain layer for **requirement interpretation only**; see section 6 |
 
-Install: `pip install -e '.[anthropic]'` and/or `pip install -e '.[jev]'`.
+Install: `pip install -e '.[anthropic]'`, `'.[jev]'` and/or `'.[langchain]'`.
 Credentials come from the environment only (see `.env.example`). Nothing
 secret is ever written to manifests or traces.
 
@@ -53,7 +54,7 @@ run only in the `fallback` experiment and are reported as systems.
 
 ## 3. Jev
 
-### Findings (inspected 2026-09-23)
+### Findings (inspected 2026-09-23; API contract re-checked 2026-09-29)
 
 No Jev implementation, package or credential existed in this environment.
 A public Jev was found and inspected from its official artefacts, and only
@@ -65,10 +66,11 @@ from those:
 | Invocation | `TypeSafeClient(...).system_one(state, questions, model=..., timeout=...)`, which is `POST https://api.typesafe.ai/v1/systemone` |
 | Input | `state`: text or JSON. `questions`: named `Choice` (≤ 255 labels with descriptions), `Noul` (yes/no), `Score` (ordered rubric) |
 | Output | per question: `Choice` → `choice`, `confidence`, full `probabilities`; `Noul` → probability of yes; `Score` → expected score, confidence. Plus `model` (served) and `usage` (input/output tokens; output documented as free) |
-| Models | default `jev-latest`; `client.models.list()` returns name, description, release date |
+| Models | `GET /v1/models` (`client.models.list()`) returns name, description, release date. The docs list `jev-1.13.0`, with the alias `jev-latest` pointing to it |
 | Auth | `TYPESAFE_API_KEY` (also `TYPESAFE_BASE_URL`, `TYPESAFE_DEFAULT_MODEL`) |
 | Determinism controls | none exposed |
-| Errors | typed; `TypeSafeAPITimeoutError` subclasses `TimeoutError`; HTTP status on `.status` |
+| Errors | typed; `TypeSafeAPITimeoutError` subclasses `TimeoutError`; HTTP status on `.status`; the docs name 401, 422, 429 and 529 and ask for backoff on 429/529 |
+| SDK vs HTTP docs | agree: `Authorization: Bearer <key>`, body `{state, model, questions}`, same endpoints (SDK 0.7.1 source vs docs.typesafe.ai API reference) |
 | Key property | **Jev generates no text.** It can only select among labels or values you give it |
 
 ### Mapping (`jevpilot-jev-questions/1`)
@@ -114,19 +116,51 @@ must confirm the identity.** If "Jev" means something else, delete
 `integrations/typesafe_jev.py`. Nothing else depends on it: `JevRouter` accepts
 any `RoutingModelAdapter`.
 
-### What is still missing for a live Jev run
+### Model, reliability and diagnostics (`typesafe-jev-adapter/2`)
 
-1. Confirmation that TypeSafe Jev is the intended model.
-2. A `TYPESAFE_API_KEY` for an account with access to the chosen model.
-3. Optionally, the input-token price and its date, for cost estimates.
+- **Model.** The `model` argument, else `TYPESAFE_DEFAULT_MODEL`, else discovered:
+  the adapter lists the models for the credentials and pins the most recently released
+  one. Nothing is hard-coded. `verify()` (the preflight) authenticates, resolves the model
+  and checks that it is listed.
+- **Retries.** SDK retries are off; the adapter retries itself so each event is
+  recorded (`transport_events`). Rate limits (429, honouring `Retry-After`), timeouts,
+  connection errors and 408/5xx (including 529) are retried at most `max_retries`
+  (default 2) times with exponential backoff, and never past the router deadline.
+  Authentication (401), permission (403), not-found (404) and invalid-request (400/422)
+  errors fail immediately with a clear message.
+- **Malformed answers.** A response without a well-formed `next_action` choice is a
+  non-retryable `malformed_response`. Confidence above 1 by float round-off is
+  clamped; anything else outside [0, 1] is rejected by the decision parser.
+- **Secrets.** The key is read by the SDK from `TYPESAFE_API_KEY` only. Every error
+  message passes through `integrations/redaction.py`; headers are never stored.
+- **Diagnostics.** `UAVWorkflowResult.routing_log()` (CLI: `--routing-log FILE`) keeps
+  only timestamp, step, router, model, intent, capability, confidence, latency_ms,
+  status and retries.
 
-Then:
+### Running the live validation
+
+Needs `TYPESAFE_API_KEY` in the environment. Cases were frozen before any live run
+(`benchmarks/routing/samples/`), and the main benchmark never uses a fallback:
 
 ```bash
-pip install -e '.[jev]'
-JEVPILOT_LIVE_TESTS=1 pytest tests/integrations/test_live_smoke.py -k jev   # one call
-python -m experiments.routing.benchmark --mode live --routers jev --split validation
+python -m experiments.routing.real_jev preflight                    # auth + model
+python -m experiments.routing.benchmark --mode live --routers rule,jev \
+    --sample tiny_live_v1 --experiments main                        # A: smoke
+python -m experiments.routing.benchmark --mode live --routers rule,jev \
+    --sample jev_live_v1 --experiments main,order,distractors \
+    --order-permutations 2 --distractor-levels 16,48                # B: benchmark
+python -m experiments.routing.benchmark --mode live --routers jev \
+    --sample jev_live_v1 --experiments main --repetitions 3         # C: consistency
+python -m experiments.routing.benchmark --mode live --routers rule,jev \
+    --split eval --kinds workflow --experiments main                # workflow completion
+python -m experiments.routing.real_jev uav --out <dir>              # UAV branches A-D
+python -m experiments.routing.real_jev publish --run smoke=<dir> ... --uav <dir>
+pytest -m live_jev                                                  # opt-in live tests
 ```
+
+`publish` writes a sanitized summary to `experiments/routing/results/published/`
+(the only committed results folder). Results are labelled `REAL_JEV`, `RULE_ROUTER` or
+`FAKE_JEV`, and never merged. The writer refuses any text that looks like a credential.
 
 ## 4. Verification performed
 
@@ -139,30 +173,54 @@ python -m experiments.routing.benchmark --mode live --routers jev --split valida
 | Timeout, 404, 429, 500, refusal, truncation | same | no |
 | Malformed model text → routing failure | same | no |
 | Preflight (`models.retrieve` / `models.list`) | same | no |
+| Model discovery, bounded retries, 401/403/404/422/429/5xx classes, deadline, malformed answers, confidence parsing, redaction | `tests/integrations/test_typesafe_jev_reliability.py` (real SDK, mock transport) | no |
+| UAV workflow under misbehaving routers (repeated step, prohibited step, step budget, malformed, timeout, early finish) | `tests/apps/test_uav_routing_reliability.py` | no |
 | One real call per provider | `tests/integrations/test_live_smoke.py`, skipped unless `JEVPILOT_LIVE_TESTS=1` plus key | **not run: no credentials here** |
+| Real Jev: auth + discovery, one decision with probabilities, one UAV run | `tests/live/test_real_jev.py`, `pytest -m live_jev`, skipped without `TYPESAFE_API_KEY` | **not run: no credentials here** |
 
 "Real model identifier is valid" and "adapter works against the live API"
 therefore remain **unverified** until the smoke tests are run with
 credentials.
 
-## 5. UAV materials workflow in LIVE mode
+## 5. UAV materials workflow with live services
 
-The end-to-end application uses both integrations: Claude interprets the
-request into structured requirements (validated like the offline parser's
-output; no material values are accepted from the model), and Jev routes the
-workflow capabilities.
+| Mode | Interpretation | Routing | Needs |
+|---|---|---|---|
+| `OFFLINE_DEMO` (`--demo`) | deterministic parser, or a scripted chat model through LangChain | scripted policy via `FakeJevAdapter` | nothing |
+| `LIVE_ROUTING` (`--live-routing`) | offline, as above: **not fully live**, and labelled so | real Jev | `TYPESAFE_API_KEY` |
+| `LIVE` (`--live`) | a real LLM, natively or through LangChain (`--llm-backend`) | real Jev | `TYPESAFE_API_KEY`, `ANTHROPIC_API_KEY` |
 
 ```bash
-pip install -e '.[anthropic,jev]'
-export ANTHROPIC_API_KEY=... TYPESAFE_API_KEY=...
-jevpilot uav-materials --live --request "your request"
+pip install -e '.[anthropic,jev,langchain]'
+export TYPESAFE_API_KEY="..." ANTHROPIC_API_KEY="..."        # placeholders only
+jevpilot uav-materials --live --llm-backend langchain --request "your request"
 JEVPILOT_LIVE_TESTS=1 pytest tests/apps/test_uav_live.py -s     # opt-in end-to-end test
 ```
 
-Missing keys or SDKs stop the command with exit code 2 and a list of what is
-missing; there is no silent fallback to the offline demo. The workflow
+Missing keys or SDKs, or a failed Jev preflight (authentication, model), stop the
+command before anything runs, with exit code 2 and a clear message. There is no
+silent fallback to the offline demo. The workflow
 capabilities take no inputs, so Jev only chooses *which* step runs next and
 never has to produce a value (see "Unavoidable differences" above). The live
 end-to-end run has **not** been performed in the development environment
 (no credentials).
 
+## 6. LangChain (interpretation only)
+
+LangChain is an optional communication and structured-output layer for turning the
+request into requirements. `LangChainRequirementInterpreter` implements the same
+`RequirementInterpreter` contract as the native `LLMRequirementInterpreter`, sends the
+same system and user prompt, requests the same JSON schema (`InterpretationPayload`)
+via `with_structured_output` (tool calling), and validates the answer with the same
+`parse_interpretation`. A failed call or a missing tool call is a visible failed
+interpretation, never a fallback.
+
+The provider comes from `JEVPILOT_LANGCHAIN_MODEL` (`provider:model`, default Anthropic
+with the native adapter's model). Only `langchain-core` and `langchain-anthropic` are
+used: no `langchain` meta-package and no LangGraph. The core, the domain, the Jev
+adapter and the experiments never import LangChain (enforced by tests).
+
+LangChain reduces provider-specific coupling. It does not make models
+interchangeable: they still differ in schema adherence, latency, cost and
+interpretation quality. **LangChain never routes**: Jev (or another JevPilot router)
+chooses every step.

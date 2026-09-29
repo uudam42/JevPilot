@@ -1,9 +1,12 @@
 # JevPilot Architecture
 
-JevPilot is an **orchestration system**, not a collection of agents. Agents,
-tools, models, simulators, databases and optimisers are all represented as
-**capabilities** that a pluggable **router** selects and a separate **executor**
-runs, over one structured **workflow state**.
+JevPilot is an **orchestration system**, not a collection of autonomous agents:
+agentic orchestration across specialized capabilities. Agents, tools, models,
+simulators, databases and optimisers are all represented as **capabilities** that a
+pluggable **router** selects and a separate **executor** runs, over one structured
+**workflow state**. In the UAV application: an LLM (native or through LangChain)
+interprets, Jev decides and routes, JevPilot orchestrates, capabilities execute, and
+scientific models calculate.
 
 ## 1. Layers
 
@@ -35,7 +38,8 @@ runs, over one structured **workflow state**.
 │ routing heuristics, schemas, models, data                            │
 │   domains/demo (arithmetic)  domains/stats_demo  domains/uav_materials│
 ├──────────────────────────────────────────────────────────────────────┤
-│ integrations/  SDK-backed provider adapters (Claude, TypeSafe Jev)   │
+│ integrations/  provider adapters (Claude, TypeSafe Jev), LangChain   │
+│                chat models (interpretation only), redaction          │
 │ experiments/   routing benchmark: fixtures, suites, metrics, CLI     │
 │ apps/          end-to-end applications: composition roots + CLI      │
 └──────────────────────────────────────────────────────────────────────┘
@@ -239,15 +243,32 @@ logged traces, and use `read_jsonl_trace` to reload one.
 
 An *application* (`apps/`) is a composition root: it chooses the router, the
 model adapters and the domain, and exposes one entry point. The UAV materials
-application wires the `uav_materials` domain to either live providers (Claude
-for requirement interpretation, Jev for routing) or offline stand-ins, runs
-the unmodified controller loop, and returns a structured report plus
-Markdown:
+application wires the `uav_materials` domain to live providers or offline
+stand-ins, runs the unmodified controller loop, and returns a structured report
+plus Markdown:
+
+```text
+User
+ ↓
+LangChain / native LLM interpreter   (apps/uav_materials: same contract, schema, validation)
+ ↓
+TypeSafe Jev                         (integrations/typesafe_jev.py via JevRouter)
+ ↓
+JevPilot controller + shared state   (jevpilot/)
+ ↓
+Specialized capabilities             (domains/uav_materials/workflow.py)
+ ↓
+UAV materials: search · micromechanics · CLT · inverse design · evaluation
+ ↓
+Report
+```
 
 ```python
 from apps.uav_materials import run_uav_material_workflow
 
-result = run_uav_material_workflow()  # OFFLINE_DEMO; mode="LIVE" needs API keys
+result = run_uav_material_workflow()  # OFFLINE_DEMO
+# mode="LIVE_ROUTING": real Jev, offline interpretation; mode="LIVE": real LLM + real Jev
+# llm_backend="langchain": interpretation through LangChain structured output
 ```
 
 The domain never imports routers, adapters or provider SDKs (a domain test
@@ -285,8 +306,8 @@ live modes, and report-integrity tests. See [UAV_MATERIALS.md](UAV_MATERIALS.md)
 
 ## Phase 2 backlog
 
-1. Live runs: the smoke tests, then `--mode live` on validation and eval with
-   repetitions, once credentials (and confirmation of Jev's identity) exist.
+1. Live runs: the staged real-Jev validation (see REAL_ROUTING.md, "Running the
+   live validation") and a live LLM interpretation run, once credentials exist.
    Then a cache-friendly request layout (stable capability list before the
    volatile state) to cut live cost; that needs a new prompt version.
 2. Human-in-the-loop resume (`Controller.resume(state, human_input)`) and a
