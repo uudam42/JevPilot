@@ -15,6 +15,12 @@ Needs ``TYPESAFE_API_KEY`` in the environment (never printed or stored). Stages:
     python -m experiments.routing.real_jev uav --out <dir>                # UAV end to end
     python -m experiments.routing.real_jev publish --run smoke=<dir> --run benchmark=<dir> \\
         --run repeats=<dir> --run workflows=<dir> [--run fake=<offline dir>] --uav <dir>
+    python -m experiments.routing.real_jev fully-live --out <file>        # Claude + Jev
+
+``fully-live`` (FULLY_LIVE) needs ``ANTHROPIC_API_KEY`` too: real Claude through
+LangChain interprets, real Jev routes. It first checks the configured Claude model and
+one interpretation (stopping if the structured output fails validation), then runs the
+UAV branches and the CLI demo. Outcomes are recorded as findings, never retried.
 
 Labels: ``REAL_JEV`` is the real service through ``TypeSafeJevAdapter``; ``RULE_ROUTER``
 the deterministic rule baseline; ``FAKE_JEV`` the offline fake adapter (infrastructure
@@ -441,6 +447,350 @@ def _write_json(path: Path, data: Any) -> None:
     path.write_text(text, encoding="utf-8")
 
 
+# -- fully live: real Claude (LangChain) + real Jev ------------------------------------------
+
+FULLY_LIVE = "FULLY_LIVE"
+FULLY_LIVE_BRANCHES = (
+    "A_existing_material",
+    "B_inverse_design",
+    "C_needs_information",
+    "D_unsupported_property",
+)
+_VOLATILE = {"run", "orchestration", "status", "status_note"}
+
+
+def _requirements(outcome: Any) -> list[dict[str, Any]]:
+    rows = []
+    for r in outcome.requirements:
+        meta = r.provenance.sources[0].metadata if r.provenance else {}
+        rows.append(
+            {
+                "label": r.label,
+                "priority": r.priority.value,
+                "value": r.value,
+                "unit": r.unit,
+                "quote": meta.get("quote"),
+            }
+        )
+    return rows
+
+
+def _numbers_quoted(outcome: Any, request: str) -> bool:
+    """Independent re-check: each limit is written in its quote, and the quote in the request."""
+    from domains.uav_materials.interpretation import numbers_in
+
+    norm = " ".join(request.split()).casefold()
+    for r in outcome.requirements:
+        quote = (r.provenance.sources[0].metadata.get("quote") if r.provenance else "") or ""
+        if " ".join(quote.split()).casefold() not in norm:
+            return False
+        for v in (r.value, r.upper):
+            if v is not None and not any(
+                abs(n - v) <= 1e-9 * max(1.0, abs(v)) for n in numbers_in(quote)
+            ):
+                return False
+    return True
+
+
+def _report_numbers(report: Any) -> list[float]:
+    """Every number in the structured report (same traversal as the end-to-end tests)."""
+    import re
+
+    pattern = re.compile(r"-?\d+(?:\.\d+)?(?:e[+-]?\d+)?")
+    out: list[float] = []
+
+    def walk(x: Any) -> None:
+        if isinstance(x, bool) or x is None:
+            return
+        if isinstance(x, int | float):
+            out.append(float(x))
+        elif isinstance(x, str):
+            out.extend(float(t) for t in pattern.findall(x))
+        elif isinstance(x, dict):
+            for v in x.values():
+                walk(v)
+        elif isinstance(x, list | tuple):
+            for v in x:
+                walk(v)
+
+    walk(report.model_dump(mode="json"))
+    return out
+
+
+def _untraced(report: Any, markdown: str) -> list[str]:
+    """Numbers in the Markdown that the structured report does not contain."""
+    from domains.uav_materials.reporting import numbers_in_markdown
+
+    known = _report_numbers(report)
+    missing = []
+    for token in numbers_in_markdown(markdown):
+        pct = token.endswith("%")
+        text = token.rstrip("%")
+        value = float(text) / (100 if pct else 1)
+        decimals = len(text.split(".")[1]) if "." in text else 0
+        tol = 0.5 * 10**-decimals / (100 if pct else 1) + 1e-12
+        if not any(abs(n - value) <= tol for n in known):
+            missing.append(token)
+    return missing
+
+
+class _Replay:
+    """Returns a recorded interpretation (to re-run the science deterministically offline)."""
+
+    def __init__(self, outcome: Any) -> None:
+        self.outcome = outcome
+
+    def describe(self) -> dict[str, Any]:
+        return dict(self.outcome.interpreter)
+
+    def interpret(self, request_text: str) -> Any:
+        return self.outcome
+
+
+def claude_smoke() -> dict[str, Any]:
+    """Configured Claude model exists; one real interpretation through LangChain validates."""
+    import time
+
+    from apps.uav_materials import DEMO_REQUEST
+    from apps.uav_materials.langchain_interpreter import LangChainRequirementInterpreter
+    from integrations.anthropic_llm import AnthropicLLMAdapter
+    from integrations.langchain_chat import chat_model
+
+    checked = AnthropicLLMAdapter().verify()
+    interpreter = LangChainRequirementInterpreter(chat_model())
+    t0 = time.perf_counter()
+    outcome = interpreter.interpret(DEMO_REQUEST)
+    latency_ms = round((time.perf_counter() - t0) * 1000, 1)
+    return {
+        "label": f"{FULLY_LIVE} (interpretation only)",
+        "claude_preflight": {
+            k: checked.get(k) for k in ("requested_model", "model_id", "display_name")
+        },
+        "interpreter": {k: outcome.interpreter.get(k) for k in ("name", "backend", "kind")}
+        | {
+            "chat_model": outcome.interpreter.get("chat_model"),
+            "served_model": outcome.interpreter.get("served_model"),
+        },
+        "status": outcome.status,
+        "schema_valid": outcome.status != "failed",
+        "error": outcome.error,
+        "requirements": _requirements(outcome),
+        "integrity_findings": [f.model_dump() for f in outcome.findings],
+        "missing_information": list(outcome.missing_information),
+        "all_numbers_quoted_from_request": _numbers_quoted(outcome, DEMO_REQUEST),
+        "latency_ms": latency_ms,
+    }
+
+
+def _fully_live_record(name: str, request: str, live: Any, expected: str | None) -> dict[str, Any]:
+    from apps.uav_materials import RunMode, execute_workflow
+    from apps.uav_materials.workflow import offline_components
+    from domains.uav_materials.workflow import INTERPRETATION
+    from jevpilot import TraceEventType
+
+    artifact = live.state.latest_artifact(INTERPRETATION)
+    outcome = artifact.content if artifact is not None else None
+    log = live.routing_log()
+    sequence = [r["capability"] or f"<{r['intent']}>" for r in log]
+    invoked = [c for c in sequence if not c.startswith("<")]
+    offered_ok = all(
+        e.payload["decision"].get("capability_id")
+        in (e.payload.get("available_capabilities") or [])
+        for e in live.run.trace
+        if e.type is TraceEventType.ROUTING_DECISION and e.payload["decision"].get("capability_id")
+    )
+    interp_ms = next(
+        (
+            round(o.execution_time * 1000, 1)
+            for o in live.state.observations
+            if o.capability_id == "uavm.interpret_requirements"
+        ),
+        None,
+    )
+    replay_equal = None
+    if outcome is not None:
+        _, router = offline_components()
+        replay = execute_workflow(
+            request, interpreter=_Replay(outcome), router=router, mode=RunMode.OFFLINE_DEMO
+        )
+        replay_equal = live.report.model_dump(exclude=_VOLATILE) == replay.report.model_dump(
+            exclude=_VOLATILE
+        )
+    run = live.report.run
+    return {
+        "label": FULLY_LIVE,
+        "app_mode": live.mode.value,
+        "llm_backend": "langchain",
+        "request_case": name,
+        "claude": {
+            "requested_model": ((run.interpreter.get("chat_model") or {}).get("model")),
+            "served_model": outcome.interpreter.get("served_model") if outcome else None,
+            "chat_model_class": (run.interpreter.get("chat_model") or {}).get("class"),
+            "interpretation_latency_ms": interp_ms,
+        },
+        "jev": {
+            "router": sorted({r["router"] for r in log if r["router"]}),
+            "requested_model": (run.router.get("adapter") or {}).get("model"),
+            "served_models": sorted({r["model"] for r in log if r["model"]}),
+        },
+        "interpretation": {
+            "status": outcome.status if outcome else None,
+            "schema_valid": outcome is not None and outcome.status != "failed",
+            "requirements": _requirements(outcome) if outcome else [],
+            "integrity_findings": [f.model_dump() for f in outcome.findings] if outcome else [],
+            "missing_information": list(outcome.missing_information) if outcome else [],
+            "design_allowed": outcome.design_allowed if outcome else None,
+            "all_numbers_quoted_from_request": (
+                _numbers_quoted(outcome, request) if outcome else None
+            ),
+        },
+        "expected_decision_offline_reference": expected,
+        "decision": live.decision,
+        "decision_matches_offline_reference": (
+            None if expected is None else live.decision == expected
+        ),
+        "report_status": live.report.status,
+        "workflow_status": str(live.state.status),
+        "stop_reason": live.run.control.reason,
+        "capability_sequence": sequence,
+        "preconditions_respected": offered_ok
+        and not any("InvalidCapabilityError" in r["status"] for r in log),
+        "design_ran": any(c in invoked for c in DESIGN_STEPS),
+        "design_ran_only_after_design_decision": (
+            not any(c in invoked for c in DESIGN_STEPS) or live.decision == "design"
+        ),
+        "repeated_capability": len(invoked) != len(set(invoked)),
+        "routing_errors": [r["status"] for r in log if r["status"].startswith("error")],
+        "fallbacks": sum(r["status"] == "fallback" for r in log),
+        "untraced_report_numbers": _untraced(live.report, live.markdown),
+        "science_equals_offline_replay_of_same_interpretation": replay_equal,
+        "report_provenance": {
+            "mode": run.mode,
+            "note": run.note,
+            "interpreter_kind": run.interpreter.get("kind"),
+            "interpreter_backend": run.interpreter.get("backend"),
+            "router_provider": (run.router.get("adapter") or {}).get("provider"),
+        },
+        "routing_latency_ms": [r["latency_ms"] for r in log],
+        "routing_confidence": [r["confidence"] for r in log],
+        "routing_log": log,
+    }
+
+
+def run_fully_live(out: Path) -> dict[str, Any]:
+    import os
+    import subprocess
+    import tempfile
+    import time
+
+    from apps.uav_materials import DEMO_REQUEST, RunMode, run_uav_material_workflow
+    from domains.uav_materials.reporting import MaterialWorkflowReport
+
+    smoke = claude_smoke()
+    print(
+        f"[{FULLY_LIVE}] Claude smoke: status={smoke['status']} "
+        f"served={smoke['interpreter']['served_model']} "
+        f"requirements={len(smoke['requirements'])} latency_ms={smoke['latency_ms']}",
+        file=sys.stderr,
+    )
+    runs: dict[str, Any] = {}
+    if smoke["schema_valid"]:
+        for name in FULLY_LIVE_BRANCHES:
+            case = UAV_CASES[name]
+            request = case["request"] or DEMO_REQUEST
+            t0 = time.perf_counter()
+            try:
+                live = run_uav_material_workflow(
+                    request, mode=RunMode.LIVE, llm_backend="langchain"
+                )
+            except Exception as exc:  # a finding, not a retry
+                runs[name] = {
+                    "label": FULLY_LIVE,
+                    "error": f"{type(exc).__name__}: {redact(exc)[:300]}",
+                }
+                continue
+            record = _fully_live_record(name, request, live, case["expected_decision"])
+            record["wall_time_ms"] = round((time.perf_counter() - t0) * 1000, 1)
+            runs[name] = record
+            print(
+                f"[{FULLY_LIVE}] {name}: decision={live.decision} "
+                f"(offline reference {case['expected_decision']}), report={live.report.status}",
+                file=sys.stderr,
+            )
+        with tempfile.TemporaryDirectory() as tmp:  # the normal CLI demo command
+            cli = Path(sys.executable).parent / "jevpilot"
+            files = {
+                k: Path(tmp) / f
+                for k, f in (("json", "r.json"), ("md", "r.md"), ("log", "l.jsonl"))
+            }
+            t0 = time.perf_counter()
+            done = subprocess.run(
+                [
+                    str(cli),
+                    "uav-materials",
+                    "--live",
+                    "--llm-backend",
+                    "langchain",
+                    "--quiet",
+                    "--json",
+                    str(files["json"]),
+                    "--output",
+                    str(files["md"]),
+                    "--routing-log",
+                    str(files["log"]),
+                ],  # fmt: skip
+                capture_output=True,
+                text=True,
+                env=dict(os.environ),
+            )
+            wall = round((time.perf_counter() - t0) * 1000, 1)
+            record = {
+                "label": FULLY_LIVE,
+                "command": "jevpilot uav-materials --live --llm-backend langchain (demo request)",
+                "exit_code": done.returncode,
+                "stderr_status": redact(done.stderr.strip())[-300:],
+                "wall_time_ms": wall,
+            }
+            if files["json"].exists():
+                report = MaterialWorkflowReport.model_validate_json(files["json"].read_text())
+                log = [json.loads(x) for x in files["log"].read_text().splitlines() if x.strip()]
+                record |= {
+                    "decision": report.decision.outcome if report.decision else None,
+                    "report_status": report.status,
+                    "report_mode": report.run.mode,
+                    "interpreter_backend": report.run.interpreter.get("backend"),
+                    "claude_requested_model": (report.run.interpreter.get("chat_model") or {}).get(
+                        "model"
+                    ),
+                    "jev_served_models": sorted({r["model"] for r in log if r["model"]}),
+                    "capability_sequence": [r["capability"] or f"<{r['intent']}>" for r in log],
+                    "untraced_report_numbers": _untraced(report, files["md"].read_text()),
+                    "routing_latency_ms": [r["latency_ms"] for r in log],
+                    "routing_log": log,
+                }
+            runs["E_cli_demo"] = record
+            print(f"[{FULLY_LIVE}] E_cli_demo: exit={done.returncode}", file=sys.stderr)
+    payload = {
+        "artifact": "jevpilot.fully-live-validation/1",
+        "label": FULLY_LIVE,
+        "date": datetime.now(UTC).date().isoformat(),
+        "path": "real Claude via LangChain -> real TypeSafe Jev -> JevPilot controller -> "
+        "UAV capabilities -> scientific models -> report",
+        "claude_smoke": smoke,
+        "runs": runs,
+        "notes": [
+            "FULLY_LIVE runs only: no scripted chat model, RuleRouter or FakeJevAdapter result "
+            "is included here.",
+            "Expected decisions are the offline reference outcomes fixed before any live run; "
+            "differences are findings, nothing was tuned or retried.",
+            "Contains no API key, Authorization header or environment variable value.",
+        ],
+    }
+    out.parent.mkdir(parents=True, exist_ok=True)
+    _write_json(out, payload)
+    return payload
+
+
 # -- CLI -------------------------------------------------------------------------------------
 
 
@@ -454,6 +804,8 @@ def main(argv: list[str] | None = None) -> int:
     pub.add_argument("--run", action="append", default=[], help="stage=results_dir")
     pub.add_argument("--uav", type=Path)
     pub.add_argument("--out", type=Path)
+    fl = sub.add_parser("fully-live")
+    fl.add_argument("--out", type=Path)
     args = p.parse_args(argv)
     if args.command == "preflight":
         result = preflight()
@@ -466,6 +818,17 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "uav":
         run_uav(args.out)
         return 0
+    if args.command == "fully-live":
+        from apps.uav_materials.workflow import live_requirements
+
+        missing = live_requirements("langchain")
+        if missing:
+            print("FULLY_LIVE needs: " + "; ".join(missing), file=sys.stderr)
+            return 2
+        target = args.out or PUBLISHED / f"fully_live_{datetime.now(UTC):%Y-%m-%d}.json"
+        result = run_fully_live(target)
+        print(f"written: {target}")
+        return 0 if result["claude_smoke"]["schema_valid"] else 1
     runs = {k: Path(v) for k, v in (item.split("=", 1) for item in args.run)}
     out = args.out or PUBLISHED / f"real_jev_{datetime.now(UTC):%Y-%m-%d}.json"
     publish(runs, args.uav, out)

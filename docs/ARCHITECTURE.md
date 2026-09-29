@@ -306,8 +306,9 @@ live modes, and report-integrity tests. See [UAV_MATERIALS.md](UAV_MATERIALS.md)
 
 ## Phase 2 backlog
 
-1. Live runs: the real-Jev validation was run on 2026-09-29 (REAL_ROUTING.md,
-   section 7); a live LLM interpretation run still needs an LLM provider key.
+1. Live runs: the real-Jev validation and the fully live Claude (LangChain) + Jev
+   validation were run on 2026-09-29 (REAL_ROUTING.md, sections 7 and 8); Claude as a
+   routing model (`LLMRouter`) has not been run live.
    Then a cache-friendly request layout (stable capability list before the
    volatile state) to cut live cost; that needs a new prompt version.
 2. Human-in-the-loop resume (`Controller.resume(state, human_input)`) and a

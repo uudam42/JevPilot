@@ -50,3 +50,18 @@ def test_publish_from_an_offline_run_labels_the_fake(tmp_path: Path) -> None:
     artifact = publish({"fake": run}, None, tmp_path / "out.json")
     assert set(artifact["stages"]["fake"]["routers"]) == {"FAKE_JEV", "RULE_ROUTER"}
     assert "REAL_JEV" not in artifact["stages"]["fake"]["routers"]
+
+
+def test_fully_live_checks_on_an_offline_result() -> None:
+    """The FULLY_LIVE record builder, exercised offline (no model is called)."""
+    from experiments.routing.real_jev import _fully_live_record
+
+    case = UAV_CASES["B_inverse_design"]
+    result = run_uav_material_workflow(DEMO_REQUEST)
+    record = _fully_live_record("B_inverse_design", DEMO_REQUEST, result, case["expected_decision"])
+    assert record["label"] == "FULLY_LIVE" and record["decision_matches_offline_reference"]
+    assert record["preconditions_respected"] and record["design_ran_only_after_design_decision"]
+    assert record["untraced_report_numbers"] == []
+    assert record["science_equals_offline_replay_of_same_interpretation"] is True
+    assert record["interpretation"]["all_numbers_quoted_from_request"] is True
+    json.dumps(record)

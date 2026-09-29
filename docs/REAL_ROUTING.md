@@ -11,7 +11,7 @@ missing.
 | `LLMRouter` | `integrations/anthropic_llm.py` (`AnthropicLLMAdapter`) | real code against `anthropic` 1.8.0; **verified through the SDK with a mock transport; no live call made yet** |
 | `JevRouter` | `integrations/typesafe_jev.py` (`TypeSafeJevAdapter`) | real code against `typesafe-sdk` 0.7.1; **validated against the live API on 2026-09-29** (section 7); see [identity caveat](#is-this-the-intended-jev) |
 | `LLMRouter` / `JevRouter` | `jevpilot/adapters` fakes | mocked, offline, infrastructure tests only |
-| (not a router) | `integrations/langchain_chat.py` + `apps/uav_materials/langchain_interpreter.py` | optional LangChain layer for **requirement interpretation only**; see section 6 |
+| (not a router) | `integrations/langchain_chat.py` + `apps/uav_materials/langchain_interpreter.py` | optional LangChain layer for **requirement interpretation only**; **validated live with Claude on 2026-09-29** (section 8) |
 
 Install: `pip install -e '.[anthropic]'`, `'.[jev]'` and/or `'.[langchain]'`.
 Credentials come from the environment only (see `.env.example`). Nothing
@@ -175,11 +175,14 @@ pytest -m live_jev                                                  # opt-in liv
 | Preflight (`models.retrieve` / `models.list`) | same | no |
 | Model discovery, bounded retries, 401/403/404/422/429/5xx classes, deadline, malformed answers, confidence parsing, redaction | `tests/integrations/test_typesafe_jev_reliability.py` (real SDK, mock transport) | no |
 | UAV workflow under misbehaving routers (repeated step, prohibited step, step budget, malformed, timeout, early finish) | `tests/apps/test_uav_routing_reliability.py` | no |
-| One real call per provider | `tests/integrations/test_live_smoke.py`, skipped unless `JEVPILOT_LIVE_TESTS=1` plus key | Jev: **passed (2026-09-29)**; Claude: not run (no key) |
+| One real call per provider | `tests/integrations/test_live_smoke.py`, skipped unless `JEVPILOT_LIVE_TESTS=1` plus key | Jev: **passed (2026-09-29)**; Claude as a *router*: not run |
+| Claude through LangChain (interpretation) + real Jev, end to end | `python -m experiments.routing.real_jev fully-live` | **yes: 5/5 runs completed (2026-09-29)**, section 8 |
 | Real Jev: auth + discovery, one decision with probabilities, one UAV run | `tests/live/test_real_jev.py`, `pytest -m live_jev`, skipped without `TYPESAFE_API_KEY` | **yes: 3 passed (2026-09-29)** |
 
 For Jev, the model identifier and the adapter were verified against the live API
-(section 7). For Claude they remain **unverified** until a run with credentials.
+(section 7). For Claude, the model identifier (`models.retrieve`) and the LangChain
+interpretation path were verified live (section 8). Claude as a routing model
+(`LLMRouter`) has not been run live.
 
 ## 5. UAV materials workflow with live services
 
@@ -248,3 +251,27 @@ Findings:
   reference path exactly. For needs-information and unsupported-property requests Jev
   asked for a human after the (correct) decision instead of generating the report. The
   application then reports "incomplete" with unchanged scientific content.
+
+## 8. Fully live validation (2026-09-29)
+
+This is the FULLY_LIVE path: real Claude through LangChain, then real Jev, the controller,
+the UAV capabilities, the scientific models and the report. Run with
+`python -m experiments.routing.real_jev fully-live`; the results are in
+`experiments/routing/results/published/fully_live_2026-09-29.json`.
+
+Claude `claude-opus-5` was both requested and served (repository default, confirmed
+by `models.retrieve`). Jev `jev-preview` was served as `jev-1.13.0`. An interpretation
+smoke test and 5 runs were made (4 frozen UAV branches and the CLI demo), and all
+completed. All five interpretations were schema-valid, with no integrity findings and
+every limit quoted from the request. For the demo request, Claude produced the same
+requirement set as the offline parser. All four branch decisions equal the frozen
+offline references.
+
+Across the four branch runs there were no untraced report numbers, no routing errors,
+no fallbacks, and design ran only after a `design` decision. The scientific results
+equal an offline replay of the same interpretation. As with real-Jev-only routing, for
+the needs-information and unsupported-property requests Jev asked for a human before
+the report step (report marked incomplete).
+
+Latency: Claude interpretation took 4.0–10.4 s; Jev routing p50 was 113 ms and p95
+308 ms (24 decisions).

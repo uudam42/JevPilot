@@ -89,6 +89,7 @@ jevpilot uav-materials --demo --llm-backend langchain                  # 离线�
 jevpilot uav-materials --live --llm-backend langchain --request "..."  # 真实 LLM + 真实 Jev
 ```
 
+已通过 `ChatAnthropic` 用真实 Claude（`claude-opus-5`）完成验证，见"测试结果"。
 `LangChainRequirementInterpreter` 与原生解释器实现同一个接口，使用同一份提示词、同一个
 schema（通过 tool calling 获得结构化输出），并经过同一套校验。**LangChain 不做 Jev 的
 路由**，也不替代控制器。换了模型厂商后，schema 遵循程度、延迟、成本和理解质量仍可能不同。
@@ -116,10 +117,13 @@ ruff check . && ruff format --check .
 mypy --strict jevpilot domains experiments integrations examples apps
 ```
 
-- 离线测试：**842 通过，3 跳过**（旧的可选真实服务测试），3 未选中（`live_jev`）。
-- 真实服务测试：`pytest -m live_jev` 在真实 Jev 上 **3 项全部通过**。
+下面三类验证分开报告，互不混合：
 
-**真实 Jev 结果**（TypeSafe System One API，2026-09-29）。模型通过 `GET /v1/models`
+**1. 离线与脚本化测试**（无需密钥和网络）：**843 通过，3 跳过**（旧的可选真实服务测试），
+3 未选中（`live_jev`）。这里的 LangChain 测试使用确定性的脚本化聊天模型，不是语言模型。
+
+**2. 仅真实 Jev**（REAL_JEV，需求在本地离线解释）。TypeSafe System One API，2026-09-29；
+`pytest -m live_jev` **3 项全部通过**。模型通过 `GET /v1/models`
 自动发现为 `jev-preview`，API 返回的实际服务模型是 `jev-1.13.0`。评测用例在运行前已经冻结
 （`benchmarks/routing/samples/jev_live_v1.json`，覆盖 L1–L5 的 32 个 eval 决策用例），
 全程没有兜底路由，也没有根据结果调整任何东西。完整的脱敏结果见
@@ -149,8 +153,29 @@ mypy --strict jevpilot domains experiments integrations examples apps
   LangChain 解释器分支都与参考路径一致，决策和科学结果相同，报告完整（现有材料分支中设计步骤
   从未执行）。对"信息不足"和"属性不受支持"两个请求，Jev 做出了正确决策，但随后选择请人工补充，
   而没有生成报告，因此报告被标记为未完成，其中的科学内容不变。
-- 还没有真实 LLM 的运行（没有 Anthropic 密钥）：LangChain 路径使用离线脚本化聊天模型，
-  路由使用真实 Jev。
+
+**3. 全链路真实运行**（FULLY_LIVE：真实 Claude 经 LangChain → 真实 Jev → 控制器 →
+UAV 能力 → 科学模型 → 报告，2026-09-29）。Claude 请求和实际服务的模型都是
+`claude-opus-5`（`ChatAnthropic`，tool calling 结构化输出）；Jev 请求 `jev-preview`，
+实际服务模型为 `jev-1.13.0`。预期决策取自运行前冻结的离线参考结果，运行后没有调整任何东西。
+结果见 [`fully_live_2026-09-29.json`](experiments/routing/results/published/fully_live_2026-09-29.json)。
+
+| 冻结的请求 | Claude 解释出的需求 | 决策（与离线参考比较） | 报告 |
+|---|---|---|---|
+| 现有材料（翼梁） | 4 条硬约束，3 条偏好 | `use_existing`（一致） | 完整；未执行设计 |
+| 逆向设计（内置示例） | 4 条硬约束，4 条偏好，与离线解析器完全相同 | `design`（一致） | 完整 |
+| 信息不足（没有数值限制） | 0 条硬约束，3 条偏好 | `needs_information`（一致） | 未完成：Jev 在生成报告前选择请人工补充 |
+| 属性不受支持（只有温度要求） | 1 条硬约束 | `no_suitable_existing`（一致） | 未完成：同上 |
+| 命令行：`jevpilot uav-materials --live --llm-backend langchain` | – | `design` | 完整，退出码 0 |
+
+- 5 次运行全部完成，另有一次仅测 Claude 的冒烟测试。每次解释都符合 schema，没有完整性问题，
+  每个数值限制都引用自用户原话。
+- 任何报告中都没有计算状态之外的数字。科学结果与对同一解释的离线重放完全一致。
+- 能力前置条件始终有效：0 路由错误，0 兜底，没有重复步骤，只有在 `design` 决策之后才执行设计。
+  报告记录了 `LIVE` 模式、LangChain 语言模型解释器和 TypeSafe 路由。
+- 延迟：Claude 解释 4.0–10.4 秒；Jev 路由 p50 113 ms、p95 308 ms（24 次决策）；
+  每次端到端运行 4.7–12.2 秒。
+- 这只是一次小规模验证（5 次运行），不是对 Claude 的基准评测。
 
 ## 科学范围
 
@@ -166,7 +191,8 @@ mypy --strict jevpilot domains experiments integrations examples apps
 - 数据集较小（46 条）且有缺口；组分材料数据为手册值。
 - 不预测复合材料的强度、失效、腐蚀、吸湿和温度性能。
 - 模型只与原始文献核对过，没有经过实验验证。
-- 真实 LLM 解释尚未运行；真实 Jev 只在一个小规模冻结评测上测过（见"测试结果"），只是证据，不是普遍保证。
+- 真实 Jev 只在一个小规模冻结评测上测过，全链路真实运行只有 5 次（见"测试结果"）：只是证据，
+  不是普遍保证。真实 LLM 只测试了一家厂商（Anthropic，经 LangChain）。
 
 ## 目录结构
 

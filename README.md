@@ -90,6 +90,7 @@ jevpilot uav-materials --demo --llm-backend langchain                 # offline 
 jevpilot uav-materials --live --llm-backend langchain --request "..." # real LLM + real Jev
 ```
 
+Validated live with Claude (`claude-opus-5`) through `ChatAnthropic`; see Testing.
 `LangChainRequirementInterpreter` implements the same interpreter contract as the native
 one, sends the same prompt, requests the same schema (tool-calling structured output),
 and passes the answer through the same validation. **LangChain does not perform Jev
@@ -120,10 +121,14 @@ ruff check . && ruff format --check .
 mypy --strict jevpilot domains experiments integrations examples apps
 ```
 
-- Offline suite: **842 passed, 3 skipped** (older opt-in live tests), 3 deselected (`live_jev`).
-- Live tests: `pytest -m live_jev` **3 passed** against the real service.
+Three kinds of validation, reported separately and never merged:
 
-**Real Jev** (TypeSafe System One API, 2026-09-29). The model was discovered from
+**1. Offline and scripted.** No key and no network: **843 passed, 3 skipped** (older
+opt-in live tests), 3 deselected (`live_jev`). The LangChain tests here use a
+deterministic scripted chat model, not a language model.
+
+**2. Real Jev only** (REAL_JEV; requirements interpreted offline). TypeSafe System One
+API, 2026-09-29; `pytest -m live_jev` **3 passed**. The model was discovered from
 `GET /v1/models` as `jev-preview`, and the API reports serving it as `jev-1.13.0`. The
 cases were frozen before the runs (`benchmarks/routing/samples/jev_live_v1.json`, 32
 eval decision cases across levels L1–L5), there was no fallback, and nothing was tuned
@@ -160,8 +165,32 @@ afterwards. Full sanitized results:
   unsupported-property requests, Jev reaches the correct decision and then asks for a
   human instead of generating the report, so the report is marked incomplete. Its
   scientific content is identical.
-- No live LLM run yet (no Anthropic key): the LangChain path was exercised with a
-  scripted offline chat model and real Jev routing.
+
+**3. Fully live** (FULLY_LIVE: real Claude through LangChain, then real Jev, the
+controller, the UAV capabilities, the scientific models and the report; 2026-09-29).
+Claude `claude-opus-5` was both requested and served (`ChatAnthropic`, tool-calling
+structured output). Jev `jev-preview` was served as `jev-1.13.0`. Expected decisions
+are the frozen offline references, and nothing was tuned after the runs. Results:
+[`fully_live_2026-09-29.json`](experiments/routing/results/published/fully_live_2026-09-29.json).
+
+| Frozen request | Claude's requirements | Decision (offline reference) | Report |
+|---|---|---|---|
+| Existing material (spar) | 4 hard, 3 soft | `use_existing` (same) | complete; design not run |
+| Inverse design (built-in demo) | 4 hard, 4 soft: the same set as the offline parser | `design` (same) | complete |
+| Needs information (no limits) | 0 hard, 3 soft | `needs_information` (same) | incomplete: Jev asked for a human before the report step |
+| Unsupported property (temperature only) | 1 hard | `no_suitable_existing` (same) | incomplete: as above |
+| CLI: `jevpilot uav-materials --live --llm-backend langchain` | – | `design` | complete, exit code 0 |
+
+- 5 of 5 runs completed, plus a Claude-only smoke test. Every interpretation was
+  schema-valid, with no integrity findings, and every limit was quoted from the request.
+- No report contains a number that is absent from its computed state. The scientific
+  results equal an offline replay of the same interpretation.
+- Capability preconditions held: 0 routing errors, 0 fallbacks, no repeated step, and
+  design only after a `design` decision. Reports record mode `LIVE`, a LangChain
+  language-model interpreter and TypeSafe routing.
+- Latency: Claude interpretation 4.0–10.4 s; Jev routing p50 113 ms and p95 308 ms
+  (24 decisions); end to end 4.7–12.2 s per run.
+- This is a small validation (5 runs), not a benchmark of Claude.
 
 ## Scientific Scope
 
@@ -177,8 +206,9 @@ afterwards. Full sanitized results:
 - Small dataset (46 records) with gaps; constituent data are handbook values.
 - Composite strength, failure, corrosion, moisture and temperature are not predicted.
 - Models are checked against their sources, not validated by experiments.
-- Live LLM interpretation has not been run yet; real Jev routing was measured on a small
-  frozen benchmark (see Testing), which is evidence, not a general guarantee.
+- Real Jev routing was measured on a small frozen benchmark, and the fully live path on
+  5 runs (see Testing): evidence, not a general guarantee. The live model was one
+  provider (Anthropic) through LangChain.
 
 ## Repository Structure
 
